@@ -61,12 +61,14 @@ function decodeSize( $bytes )
 			// stupid again.
 			// TODO... We actually do, it's the source... but it requires AJAX, or some server side correction
 			$dir = opendir( '/media/storage/' );
-			while( $disk = readdir( $dir ) )
+			foreach( new DirectoryIterator( '/media/storage/' ) as $disk )
 			{
-				if ( $disk == "." or $disk == ".." )
+				// var_dump( $disk );
+				if ( $disk->isDot() )
 					continue;
-				$freespace = decodeSize( disk_free_space( "/media/storage/$disk" ) );
-				echo "<option value=\"{$disk}\">{$disk} ({$freespace} libres)</option>\n";
+				$freespace = decodeSize( disk_free_space( $disk->getPathname() ) );
+				$diskName = $disk->getFilename();
+				echo "<option value=\"{$diskName}\">{$diskName} ({$freespace} libres)</option>\n";
 			}
 			?>
 			</select>
@@ -143,9 +145,9 @@ function decodeSize( $bytes )
 		if ( isset( $_POST['QueueCommand'] ) )
 		{
 			$db = new SQLite3( "tmp/mergequeue.db" );
-			$db->query( $query = "INSERT INTO commands (`time`, `command`, `pid` ) VALUES( strftime('%s','now'), ".
+			$db->query( $query = "INSERT INTO commands (`time`, `command`, `status` ) VALUES( strftime('%s','now'), ".
 				"'" . $db->escapeString( $command ) . "'" .
-				", -1)" );
+				", 0)" );
 			echo "<p><b>Command inserted</p></b>\n";
 		}
 

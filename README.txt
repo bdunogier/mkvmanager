@@ -17,11 +17,11 @@ DB
 BDD SQLite mergequeue.db[#] avec table .
 
 SQL Create statement[#][#]::
-	CREATE TABLE commands (time INTEGER PRIMARY KEY, command TEXT, pid INTEGER);
+	CREATE TABLE commands (time INTEGER PRIMARY KEY, command TEXT, pid INTEGER, status INTEGER, message TEXT);
 
 .. [#] TODO: déplacer dans un autre dossier
-.. [#] TODO: ajouter champ status. 0 = todo, 1 = done, 2 = erreur
-.. [#] TODO: ajouter champ message. Contient l'erreur si status = 1, ou la sortie de la commande en cas de succès
+.. [#] TODO: ajouter champ status. 0 = todo, 1 = done, 2 = erreur - DONE
+.. [#] TODO: ajouter champ message. Contient l'erreur si status = 1, ou la sortie de la commande en cas de succès - DONE
 
 Cron/Daemon
 -----------
