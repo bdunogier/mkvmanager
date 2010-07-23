@@ -91,7 +91,7 @@ function decodeSize( $bytes )
 		// all double backslashes
 		$command = str_replace( '\\\\', '/', $command );
 
-		// Détection Movies / TV Shows
+		// DÃ©tection Movies / TV Shows
 		if ( strstr( $command, '/complete/Movies/' ) !== false )
 		{
 			$type = "Movie";
@@ -121,7 +121,6 @@ function decodeSize( $bytes )
 			// parse the command to get the target / sources
 			if ( !preg_match( '#/media/storage/[^/]+/TV Shows/([^/]+)/([^/]+)\.(avi|mkv)#', $command, $matches ) )
 				echo "Failed matching the target";
-			print_r( $command );
 			$showName = $matches[1];
 			$episodeName = $matches[2];
 			$title = $episodeName;

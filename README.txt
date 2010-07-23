@@ -2,12 +2,12 @@
 MKV Auto-merge
 ==============
 
-IdÈe de base
+Id√©e de base
 ============
-Le merge est effectuÈ par un crontab/daemon qui dÈpile une queue de conversions.
-AprËs le merge, le symlink vers aggregateshare est automatiquement fait, et le
-fichier original est supprimÈ aprËs vÈrification.
-L'ajout d'ÈlÈments ‡ la queue est effectuÈ par un autre script.
+Le merge est effectu√© par un crontab/daemon qui d√©pile une queue de conversions.
+Apr√®s le merge, le symlink vers aggregateshare est automatiquement fait, et le
+fichier original est supprim√© apr√®s v√©rification.
+L'ajout d'√©l√©ments √† la queue est effectu√© par un autre script.
 
 Composantes
 ===========
@@ -19,17 +19,17 @@ BDD SQLite mergequeue.db[#] avec table .
 SQL Create statement[#][#]::
 	CREATE TABLE commands (time INTEGER PRIMARY KEY, command TEXT, pid INTEGER, status INTEGER, message TEXT);
 
-.. [#] TODO: dÈplacer dans un autre dossier
+.. [#] TODO: d√©placer dans un autre dossier
 .. [#] TODO: ajouter champ status. 0 = todo, 1 = done, 2 = erreur - DONE
-.. [#] TODO: ajouter champ message. Contient l'erreur si status = 1, ou la sortie de la commande en cas de succËs - DONE
+.. [#] TODO: ajouter champ message. Contient l'erreur si status = 1, ou la sortie de la commande en cas de succ√®s - DONE
 
 Cron/Daemon
 -----------
 
-Au dÈmarrage, compte les conversions en attente (status = 0) dans mergequeue.
-Si conversion(s) trouvÈe(s), les prend une par une, et effectue la conversion.
+Au d√©marrage, compte les conversions en attente (status = 0) dans mergequeue.
+Si conversion(s) trouv√©e(s), les prend une par une, et effectue la conversion.
 
-Doit Ítre exÈcutÈ en tant que root:
+Doit √™tre ex√©cut√© en tant que root:
 * demande les droits media pour stocker et linker
 * demande les droits download pour supprimer l'original
 
@@ -39,6 +39,6 @@ Script de queue
 ---------------
 
 Convertisseur de commande windows + smb => linux / fs local.
-DÈtecte le type de video (TV Show / Movie) d'aprËs le chemin.
+D√©tecte le type de video (TV Show / Movie) d'apr√®s le chemin.
 Script actuel: tools/mkvmerge.php
-Peut dÈj‡ stocker une commande en queue, reste ‡ traiter le sudo (supprimer)
+Peut d√©j√† stocker une commande en queue, reste √† traiter le sudo (supprimer)
