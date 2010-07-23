@@ -33,12 +33,7 @@ while( $row = $stmt->fetch() )
 	unset( $result, $return );
 
 	$return = $db->quote( $return );
-	$db->query( "UPDATE `commands` SET `status` = 1 WHERE `time` = $time, message = '$return'" );
-	/*$db->query( "UPDATE commands SET `pid` = $myPid WHERE `time` = {$row['time']}" );
-	echo "[" . date('H:i:s') . "] Starting conversion\n";
-	exec( "{$row['command']} > tmp/pid-{$myPid}" );
-	echo "[" . date('H:i:s') . "] Conversion finished\n";
-	$db->query( "UPDATE commands SET `pid` = 0 WHERE `time` = {$row['time']}" );
-	unlink( "tmp/pid-{$myPid}" );*/
+	$sth = $db->prepare( 'UPDATE `commands` SET `status` = 1, message = \':return\' WHERE `time` = :time' );
+	$sth->execute( array( ':return' => $return, ':time' => $time ) );
 }
 ?>
