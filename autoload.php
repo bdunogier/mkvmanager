@@ -7,6 +7,7 @@ $options = new ezcBaseAutoloadOptions;
 $options->debug = true;
 ezcBase::setOptions( $options );
 
-$db = ezcDbFactory::create( 'sqlite:///home/bertrand/gitmisc/mkvmanager/tmp/mergequeue.db' );
+$rootdir = dirname( __FILE__ );
+$db = ezcDbFactory::create( "sqlite://$rootdir/tmp/mergequeue.db" );
 ezcDbInstance::set( $db );
 ?>

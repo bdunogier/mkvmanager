@@ -1,11 +1,13 @@
 <?php
-require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . '../../lib/mkvmerge/commandqueue.php';
 require_once 'PHPUnit/Framework.php';
-require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . '../../autoload.php';
-echo ini_get('include_path');
 
 class lib_MKVMergeCommandQueueTest extends PHPUnit_Framework_TestCase
 {
+	public function __construct()
+	{
+		$this->backupGlobals = false;
+		$this->backupStaticAttributes = false;
+	}
 
 	public function setUp()
 	{

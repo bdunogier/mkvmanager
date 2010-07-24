@@ -8,7 +8,7 @@ require_once 'PHPUnit/Util/Filter.php';
 PHPUnit_Util_Filter::addFileToFilter(__FILE__);
 
 if (!defined('PHPUnit_MAIN_METHOD')) {
-    define('PHPUnit_MAIN_METHOD', 'lib_AllTests::main');
+    define('PHPUnit_MAIN_METHOD', 'lib_mkvmerge_AllTests::main');
     chdir(dirname(dirname(__FILE__)));
 }
 
@@ -16,10 +16,12 @@ require_once 'PHPUnit/Framework/TestSuite.php';
 require_once 'PHPUnit/TextUI/TestRunner.php';
 
 // PHPEdit Inclusions -- dot not remove this comment
-require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'mkvmerge/AllTests.php';
+require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'commandTest.php';
+require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'commandimportwindowsguiTest.php';
+require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'mkvmergecommandqueueTest.php';
 // /PHPEdit Inclusions -- dot not remove this comment
 
-class lib_AllTests
+class lib_mkvmerge_AllTests
 {
     public static function main()
     {
@@ -31,14 +33,16 @@ class lib_AllTests
         $suite = new PHPUnit_Framework_TestSuite('PHPUnit_Framework');
 
 		// PHPEdit Tests suites -- dot not remove this comment
-		$suite->addTest(lib_mkvmerge_AllTests::suite());
-		// /PHPEdit Tests suites -- dot not remove this comment
+		$suite->addTestSuite('lib_mkvmerge_MKVMergeCommandTest');
+		$suite->addTestSuite('lib_mkvmerge_MKVMergeCommandImportWindowsGUITest');
+    	$suite->addTestSuite('lib_MkvMergeCommandQueueTest');
+    	// /PHPEdit Tests suites -- dot not remove this comment
 
         return $suite;
     }
 }
 
-if (PHPUnit_MAIN_METHOD == 'lib_AllTests::main') {
-    lib_AllTests::main();
+if (PHPUnit_MAIN_METHOD == 'lib_mkvmerge_AllTests::main') {
+    lib_mkvmerge_AllTests::main();
 }
 ?>
