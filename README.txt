@@ -42,3 +42,12 @@ Convertisseur de commande windows + smb => linux / fs local.
 Détecte le type de video (TV Show / Movie) d'après le chemin.
 Script actuel: tools/mkvmerge.php
 Peut déjà stocker une commande en queue, reste à traiter le sudo (supprimer)
+
+Interface queue
+---------------
+Affiche les tâches en attente & terminé.
+Info de statut:
+* v vert = fait
+* x rouger = erreur
+* chrono = attente
+sablier = en cours
