@@ -18,7 +18,7 @@ require_once 'PHPUnit/TextUI/TestRunner.php';
 // PHPEdit Inclusions -- dot not remove this comment
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'commandTest.php';
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'commandimportwindowsguiTest.php';
-require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'mkvmergecommandqueueTest.php';
+require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'commandqueueTest.php';
 // /PHPEdit Inclusions -- dot not remove this comment
 
 class lib_mkvmerge_AllTests
@@ -35,7 +35,7 @@ class lib_mkvmerge_AllTests
 		// PHPEdit Tests suites -- dot not remove this comment
 		$suite->addTestSuite('lib_mkvmerge_MKVMergeCommandTest');
 		$suite->addTestSuite('lib_mkvmerge_MKVMergeCommandImportWindowsGUITest');
-    	$suite->addTestSuite('lib_MkvMergeCommandQueueTest');
+    	$suite->addTestSuite('lib_mkvmerge_MKVMergeCommandQueueTest');
     	// /PHPEdit Tests suites -- dot not remove this comment
 
         return $suite;
