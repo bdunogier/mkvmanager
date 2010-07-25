@@ -23,8 +23,9 @@ class MKVMergeCommandQueue
 	}
 
 	/**
-	 * Returns the next command tobe executed
-	 * @return MKVMergeCommand
+	 * Returns the next command to be executed
+	 *
+	 * @return MKVMergeCommand The command, or false if no waiting command
 	 */
 	public static function getNextCommand()
 	{
@@ -39,7 +40,15 @@ class MKVMergeCommandQueue
 		$sth = $q->prepare();
 		$sth->execute();
 
-		return $sth->fetch( PDO::FETCH_ASSOC );
+		$row = $sth->fetch( PDO::FETCH_ASSOC );
+		if ( $row === false )
+		{
+			return false;
+		}
+		else
+		{
+			return new MKVMergeCommand( $row['command'], $row['time'] );
+		}
 	}
 
 	const STATUS_WAITING = 0;

@@ -17,8 +17,10 @@ class MKVMergeCommand
 	 * @param string $command A mkvmerge command generated from the GUI
 	 * @param string $targetDisk A mkvmerge command generated from the GUI
 	 */
-	function __construct( $command )
+	function __construct( $command, $time = null )
 	{
+		if ( $time !== null )
+			$this->time = $time;
 		$this->command = $command;
 		$this->_extractType();
 		$this->_extractFiles();
@@ -108,5 +110,11 @@ class MKVMergeCommand
 	 * @var string
 	 */
 	public $linkTarget;
+
+	/**
+	 * The command time, as stored in the queue. Optional.
+	 * @var int timestamp
+	 */
+	public $time;
 }
 ?>
