@@ -10,16 +10,15 @@ if ( !is_writeable( $storageDir ) )
 }
 
 $sudo = "sudo -u media";
-while( $row = MKVMergeCommandQueue::getNextCommand() )
+while( $command = MKVMergeCommandQueue::getNextCommand() )
 {
 	$result = '';
 	$return = '';
-	extract( $row );
 
 	// @todo Extract target, sources etc using the same code than mkvmerge.php
-	echo "[" . date('H:i:s') . "] Starting conversion\n";
-	// exec( "$sudo $command", $result, $return );
-	echo "$sudo $command\n";
+	echo "[" . date('H:i:s') . "] Starting conversion of {$command->conversionType} '{$command->title}'\n";
+	exec( "$sudo {$command->command}", $result, $return );
+	echo "$sudo {$command->command}\n";
 	echo "[" . date('H:i:s') . "] Conversion finished\n";
 
 
@@ -27,7 +26,7 @@ while( $row = MKVMergeCommandQueue::getNextCommand() )
 	$q->update( 'commands' )
 	  ->set( 'status', $q->bindValue( 1 ) )
 	  ->set( 'message', $q->bindValue( $return ) )
-	  ->where( $q->expr->eq( 'time', $q->bindValue( $time ) ) );
+	  ->where( $q->expr->eq( 'time', $q->bindValue( $command->time ) ) );
 	$sth = $q->prepare();
 	$sth->execute();
 
