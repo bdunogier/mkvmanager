@@ -34,7 +34,7 @@ function decodeSize( $bytes )
 	<legend>Status</legend>
 	<?php
 	$db = new SQLite3( "tmp/mergequeue.db" );
-	$res = $db
+	$array = $db
 		->query( "SELECT * FROM `commands` WHERE `pid` = 0" )
 		->fetchArray( SQLITE3_ASSOC );
 	echo "<pre>"; var_dump( $array ); echo "</pre>";
@@ -68,7 +68,8 @@ function decodeSize( $bytes )
 					continue;
 				$freespace = decodeSize( disk_free_space( $disk->getPathname() ) );
 				$diskName = $disk->getFilename();
-				echo "<option value=\"{$diskName}\">{$diskName} ({$freespace} libres)</option>\n";
+				$selectedText = ( $diskName == $_POST['Target'] ) ? ' selected="selected"' : '';
+				echo "<option value=\"{$diskName}\"{$selectedText}>{$diskName} ({$freespace} libres)</option>\n";
 			}
 			?>
 			</select>
@@ -104,7 +105,9 @@ function decodeSize( $bytes )
 
 			// parse the command to get the target / sources
 			if ( !preg_match( '#/media/storage/[^/]+/Movies/([^/]+)/\1\.(avi|mkv)#', $command, $matches ) )
-				throw new Exception("Unable to identify the target in the transformed command" );
+				// throw new Exception("Unable to identify the target in the transformed command" );
+				die("Unable to identify the target in the transformed command: $command" );
+
 			$title = $matches[1];
 			$target = dirname( $matches[0] );
 			$linkTarget = "/media/aggregateshares/Movies/";
