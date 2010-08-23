@@ -1,0 +1,5 @@
+TODO List
+=========
+
+* Handle subtitle output charset
+* List involved filenames when generating the command
