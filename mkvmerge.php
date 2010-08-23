@@ -98,37 +98,69 @@ function decodeSize( $bytes )
 			$type = "Movie";
 
 			// F: = cible
-			$command = str_replace( 'F:/', '/media/storage/'.$_POST['Target'].'/Movies/', $command );
+			$command = str_replace( 'F:/', "/media/storage/{$_POST['Target']}/Movies/", $command );
 
 			// X:\\complete\\ = /home/download/downloads/complete/
 			$command = str_replace( array( 'X:/complete/', '//FORTRESS/Downloads/complete/' ), '/home/download/downloads/complete/', $command );
 
 			// parse the command to get the target / sources
-			if ( !preg_match( '#/media/storage/[^/]+/Movies/([^/]+)/\1\.(avi|mkv)#', $command, $matches ) )
-				// throw new Exception("Unable to identify the target in the transformed command" );
+			if ( preg_match( '#/media/storage/[^/]+/Movies/([^/]+)(/\1)?\.(avi|mkv)#', $command, $matches ) )
+			{
+				echo "<pre>";
+				print_r( $matches );
+				echo "</pre>";
+				$title = $matches[1];
+				$target = dirname( $matches[0] );
+				if ( $matches[2] == '' )
+				{
+					$target .= DIRECTORY_SEPARATOR . $title . DIRECTORY_SEPARATOR . $title . '.' . $matches[3];
+					$command = str_replace( $matches[0], $target, $command );
+				}
+			}
+			else
+			{
 				die("Unable to identify the target in the transformed command: $command" );
+			}
 
-			$title = $matches[1];
-			$target = dirname( $matches[0] );
 			$linkTarget = "/media/aggregateshares/Movies/";
 		}
 		elseif ( strstr( $command, '/complete/TV/' ) !== false )
 		{
 			$type = "TV Shows";
 
-			$command = str_replace( 'F:/', '/media/storage/'.$_POST['Target'].'/TV Shows/', $command );
+			$command = str_replace( 'F:/', "/media/storage/{$_POST['Target']}/TV Shows/", $command );
 
 			// X:\\complete\\ = /home/download/downloads/complete/
-			$command = str_replace( array( 'X:/complete/', '//FORTRESS/Downloads/complete/' ), '/home/download/downloads/complete/', $command );
+			$command = str_replace(
+				array( 'X:/complete/', '//FORTRESS/Downloads/complete/' ),
+				'/home/download/downloads/complete/',
+				$command );
 
 			// parse the command to get the target / sources
-			if ( !preg_match( '#/media/storage/[^/]+/TV Shows/([^/]+)/([^/]+)\.(avi|mkv)#', $command, $matches ) )
-				echo "Failed matching the target";
-			$showName = $matches[1];
-			$episodeName = $matches[2];
-			$title = $episodeName;
-			$target = $matches[0];
-			$linkTarget = "/media/aggregateshares/$type/$showName/";
+			if ( preg_match( '#/media/storage/[^/]+/TV Shows/([^/]+)/([^/]+)\.(avi|mkv)#', $command, $matches ) )
+			{
+				$target = $matches[0];
+
+				$showName = $matches[1];
+				$episodeName = $matches[2];
+				$title = $episodeName;
+				$linkTarget = "/media/aggregateshares/$type/$showName/";
+			}
+			elseif ( preg_match( '#/media/storage/[^/]+/TV Shows/(([^/]+) \- [0-9]+x[0-9]+ \- .*?)\.(avi|mkv)#', $command, $matches ) )
+			{
+				$target = $matches[0];
+
+				$showName = $matches[2];
+				$episodeName = $matches[1];
+				$replace = $matches[2] . DIRECTORY_SEPARATOR . $matches[1];
+
+				$target = str_replace( $episodeName, $replace, $target );
+				$command = str_replace( $matches[0], $target, $command );
+			}
+			else
+			{
+				die( "Failed matching the target" );
+			}
 		}
 		/*if (!preg_match_all( '#/home/download/downloads/complete/Movies/[^/]+/[^/]+\.(mkv|avi|srt\ssa)#', $command, $matches ) )
 	   	echo "No matches";*/
