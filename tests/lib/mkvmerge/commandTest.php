@@ -10,7 +10,6 @@ class lib_mkvmerge_MKVMergeCommandTest extends PHPUnit_Framework_TestCase
 
 	public function setUp()
 	{
-
 	}
 
 	public function testMovieWithSubfolder()
@@ -61,6 +60,21 @@ class lib_mkvmerge_MKVMergeCommandTest extends PHPUnit_Framework_TestCase
 		self::assertContains( '; echo "Done converting', (string)$command );
 	}
 
+	public function testGetVideoFiles()
+	{
+		$commandString = 'mkvmerge -o "/media/storage/NEFARIAN/Movies/Lock Stock and Two Smoking Barrels (1998)/Lock Stock and Two Smoking Barrels (1998).mkv" "--language" "1:eng" "--default-track" "1:no" "--forced-track" "1:no" "--display-dimensions" "1:640x347" "--language" "2:eng" "--track-name" "2:DTS 5.1 1509kbps" "--default-track" "2:yes" "--forced-track" "2:no" "--language" "3:fre" "--default-track" "3:no" "--forced-track" "3:no" "--language" "4:ger" "--default-track" "4:no" "--forced-track" "4:no" "--language" "5:rum" "--default-track" "5:no" "--forced-track" "5:no" "--language" "6:spa" "--default-track" "6:no" "--forced-track" "6:no" "--language" "7:dut" "--default-track" "7:no" "--forced-track" "7:no" "--language" "8:eng" "--forced-track" "8:no" "-a" "2" "-d" "1" "-s" "3,4,5,6,7,8" "--attachments" "1,2,3" "-T" "--no-global-tags" "--no-chapters" "/home/download/downloads/complete/Movies/Lock Stock and Two Smoking Barrels (1998)/Lock Stock and Two Smoking Barrels (1998).mkv" "--language" "0:fre" "--default-track" "0:yes" "--forced-track" "0:no" "-s" "0" "-D" "-A" "-T" "--no-global-tags" "--no-chapters" "/home/download/downloads/complete/Movies/Lock Stock and Two Smoking Barrels (1998)/Lock Stock and Two Smoking Barrels (1998).srt" "--track-order" "0:1,0:2,0:3,0:4,0:5,0:6,0:7,0:8,1:0"; ln -s "/media/storage/NEFARIAN/Movies/Lock Stock and Two Smoking Barrels (1998)" "/media/aggregateshares/Movies/"';
+		$command = new MKVMergeCommand( $commandString );
+
+		$this->assertEquals( array( '/home/download/downloads/complete/Movies/Lock Stock and Two Smoking Barrels (1998)/Lock Stock and Two Smoking Barrels (1998).mkv' ),
+			$command->videoFiles );
+		$this->assertEquals( array( '/home/download/downloads/complete/Movies/Lock Stock and Two Smoking Barrels (1998)/Lock Stock and Two Smoking Barrels (1998).srt'),
+			$command->subtitleFiles );
+	}
+
+	public function testGetSubtitleFiles()
+	{
+
+	}
 }
 
 ?>

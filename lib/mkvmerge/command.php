@@ -123,6 +123,54 @@ class MKVMergeCommand
 		return $string;
 	}
 
+	public function __get( $property )
+	{
+		switch ( $property )
+		{
+			case 'videoFiles':
+				return $this->_extractCommandFiles( 'video' );
+				break;
+			case 'subtitleFiles':
+				return $this->_extractCommandFiles( 'subtitle');
+				break;
+			default:
+				throw new ezcBasePropertyNotFoundException( $property );
+		} // switch
+	}
+
+	/**
+	 * Returns the video files involved in the command
+	 * @param string $type subtitle or video
+	 * @return string
+	 */
+	protected function _extractCommandFiles( $type )
+	{
+		$return = array();
+
+		switch ( $type)
+		{
+			case 'video':
+			{
+				$extensions = '(avi|mkv)';
+			} break;
+
+			case 'subtitle':
+			{
+				$extensions = '(srt|ass)';
+			} break;
+
+			default:
+				throw new UnexpectedValueException( "Invalid argument given to " . __FUNCTION__ );
+		}
+		if ( preg_match_all( "#/home/download/downloads/complete/(TV/Sorted|Movies)/([^\/]+)/([^\"]+\.{$extensions})#", $this->command, $matches ) )
+		{
+			$return = $matches[0];
+		}
+
+		return $return;
+	}
+
+
 	/**
 	 * The final command, after conversion
 	 * @var string
