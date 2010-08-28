@@ -14,7 +14,10 @@ class MKVMergeCommandImportWindowsGUI
 {
 
 	/**
-	 * Constructor
+	 * Converts a windows GUI generated command to a normal one
+	 * @param string $windowsCommand
+	 * @param string $targetDisk
+	 * @return MKVMergeCommand
 	 */
 	public static function convert( $windowsCommand, $targetDisk )
 	{
@@ -39,8 +42,8 @@ class MKVMergeCommandImportWindowsGUI
 
 	protected static function _convertSlashes( &$command )
 	{
-		$command = str_replace( '\\', '/', $command );
 		$command = str_replace( '\\\\', '/', $command );
+		$command = str_replace( '\\', '/', $command );
 	}
 
 	protected static function _convertSourceFolder( &$command )
@@ -54,7 +57,7 @@ class MKVMergeCommandImportWindowsGUI
 	protected static function _convertTargetFolder( &$command, $targetDisk )
 	{
 		$replace = "/media/storage/{$targetDisk}/";
-		$replace .= ( self::_extractType( $command ) == 'movie' ? 'Movies' : 'TV Shows' ) . '/';
+		$replace .= ( self::_extractType( $command ) == 'movie' ? 'Movies' : 'TV Shows' ) . DIRECTORY_SEPARATOR;
 		$command = str_replace( 'F:/', $replace, $command );
 	}
 
@@ -64,11 +67,11 @@ class MKVMergeCommandImportWindowsGUI
 	 */
 	protected static function _extractType( &$command )
 	{
-		if ( strstr( $command, '/complete/Movies/' ) !== false )
+		if ( strpos( $command, '/complete/Movies/' ) !== false )
 		{
 			return 'movie';
 		}
-		if ( strstr( $command, '/complete/TV/' ) !== false )
+		if ( strpos( $command, '/complete/TV/' ) !== false )
 		{
 			return 'tvshow';
 		}

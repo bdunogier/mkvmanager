@@ -28,7 +28,7 @@ class lib_AllTests
 
     public static function suite()
     {
-        $suite = new PHPUnit_Framework_TestSuite('PHPUnit_Framework');
+        $suite = new PHPUnit_Framework_TestSuite( 'PHPUnit_Framework' );
 
 		// PHPEdit Tests suites -- dot not remove this comment
 		$suite->addTest(lib_mkvmerge_AllTests::suite());

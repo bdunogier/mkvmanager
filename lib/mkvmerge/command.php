@@ -29,25 +29,61 @@ class MKVMergeCommand
 
 	protected function _extractFiles()
 	{
+		// Movie
 		if ( $this->conversionType == 'movie' )
 		{
 			// parse the command to get the target / sources
-			if ( !preg_match( '#/media/storage/[^/]+/Movies/([^/]+)/\1\.(avi|mkv)#', $this->command, $matches ) )
-				throw new Exception("Unable to identify the target in the transformed command" );
-			$this->title = $matches[1];
-			$this->target = dirname( $matches[0] );
+			if ( preg_match( '#/media/storage/[^/]+/Movies/([^/]+)(/\1)?\.(avi|mkv)#', $this->command, $matches ) )
+			{
+				$this->title = $matches[1];
+				$this->target = dirname( $matches[0] );
+
+				// Replace the output conversion so that there is a subfolder for the movie
+				if ( $matches[2] == '' )
+				{
+					$this->target .= DIRECTORY_SEPARATOR . $this->title;
+					$fileTarget = $this->target . DIRECTORY_SEPARATOR . $this->title . '.' . $matches[3];
+					$this->command = str_replace( $matches[0], $fileTarget, $this->command );
+				}
+			}
+			else
+			{
+				throw new Exception( "Error extracting files from the command: {$this->command}" );
+			}
 			$this->linkTarget = "/media/aggregateshares/Movies/";
 		}
+
+		// TV Show
 		elseif ( $this->conversionType == 'tvshow' )
 		{
-			// parse the command to get the target / sources
-			if ( !preg_match( '#/media/storage/[^/]+/TV Shows/([^/]+)/([^/]+)\.(avi|mkv)#', $this->command, $matches ) )
-				throw new Exception("Unable to identify the target in the transformed command" );
-			$this->showName = $matches[1];
-			$this->episodeName = $matches[2];
-			$this->title = $episodeName;
-			$this->target = $matches[0];
-			$this->linkTarget = "/media/aggregateshares/$type/$showName/";
+			// TV Show subfolder
+			if ( preg_match( '#/media/storage/[^/]+/TV Shows/([^/]+)/([^/]+)\.(avi|mkv)#', $this->command, $matches ) )
+			{
+				$this->target = $matches[0];
+
+				$this->showName = $matches[1];
+				$this->episodeName = $matches[2];
+			}
+			// no subfolder
+			elseif ( preg_match( '#/media/storage/[^/]+/TV Shows/(([^/]+) \- [0-9]+x[0-9]+ \- .*?)\.(avi|mkv)#', $this->command, $matches ) )
+			{
+				$this->target = $matches[0];
+
+				$this->showName = $matches[2];
+				$this->episodeName = $matches[1];
+
+				$replace = $matches[2] . DIRECTORY_SEPARATOR . $matches[1];
+
+				$this->target = str_replace( $this->episodeName, $replace, $this->target );
+				$this->command = str_replace( $matches[0], $this->target, $this->command );
+			}
+			else
+			{
+				throw new Exception( "Error extracting files from the command: {$this->command}" );
+			}
+
+			$this->title = $this->episodeName;
+			$this->linkTarget = "/media/aggregateshares/TV Shows/{$this->showName}/";
 		}
 	}
 
@@ -57,16 +93,34 @@ class MKVMergeCommand
 	 */
 	protected function _extractType()
 	{
-		if ( strstr( $this->command, '/complete/Movies/' ) !== false )
+		if ( strpos( $this->command, '/complete/Movies/' ) !== false )
 		{
 			$this->conversionType = 'movie';
 		}
-		elseif ( strstr( $this->command, '/complete/TV/' ) !== false )
+		elseif ( strpos( $this->command, '/complete/TV/' ) !== false )
 		{
 			$this->conversionType = 'tvshow';
 		}
 		else
 			throw new Exception( "Unable to extract the conversion type" );
+	}
+
+	/**
+	 * Returns the command string formatted according to a few settings:
+	 * {@link $appendSymLink} Wether or not to append a symbolic link creation command
+	 * {@link $appendDoneText} Wether or not to append a message saying confirmation's complete
+	 *
+	 * @return string
+	 */
+	public function __toString()
+	{
+		$string = $this->command;
+		if ( $this->appendSymLink === true )
+			$string .= "; ln -s \"{$this->target}\" \"{$this->linkTarget}\"";
+		if ( $this->appendDoneText === true )
+			$string .= "; echo \"Done converting {$this->title}\"";
+
+		return $string;
 	}
 
 	/**
@@ -116,5 +170,9 @@ class MKVMergeCommand
 	 * @var int timestamp
 	 */
 	public $time;
+
+	public $appendSymLink = false;
+
+	public $appendDoneText = false;
 }
 ?>
