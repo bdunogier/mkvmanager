@@ -164,7 +164,10 @@ class MKVMergeCommand
 		}
 		if ( preg_match_all( "#/home/download/downloads/complete/(TV/Sorted|Movies)/([^\/]+)/([^\"]+\.{$extensions})#", $this->command, $matches ) )
 		{
-			$return = $matches[0];
+			foreach( $matches[0] as $match )
+			{
+				$return[] = basename( $match );
+			}
 		}
 
 		return $return;
