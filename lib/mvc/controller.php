@@ -40,7 +40,9 @@ class mmController extends ezcMvcController
 	{
 		// $res = new ezcMvcResult;
 		// $res->variables['test'] = 'test';
-		return new ezcMvcResult;
+		$result = new ezcMvcResult;
+		$result->variables = mmApp::doConvertWinCMD( $_POST['WinCmd'], $_POST['Target'] );
+		return $result;
 	}
 }
 ?>

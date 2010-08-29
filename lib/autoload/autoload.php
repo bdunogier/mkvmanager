@@ -4,6 +4,8 @@ return array(
 	'MKVMergeCommandQueue' => 'mkvmerge/commandqueue.php',
 	'MKVMergeCommandImportWindowsGUI' => 'mkvmerge/commandimportwindowsgui.php',
 
+	'mmApp' => 'app.php',
+
 	'mmMvcConfiguration' => 'mvc/config.php',
 	'mmMvcRouter' => 'mvc/router.php',
 	'mmController' => 'mvc/controller.php',

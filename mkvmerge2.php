@@ -44,10 +44,17 @@ function decodeSize( $bytes )
 	<legend>Status</legend>
 	<?php
 	$db = new SQLite3( "tmp/mergequeue.db" );
-	$array = $db
+	$statusList = $db
 		->query( "SELECT * FROM `commands` WHERE `pid` = 0" )
 		->fetchArray( SQLITE3_ASSOC );
-	echo "<pre>"; var_dump( $array ); echo "</pre>";
+	if ( $statusList === false )
+	{
+		echo "<p>Empty queue</p>";
+	}
+	else
+	{
+		echo "<pre>"; var_dump( $array ); echo "</pre>";
+	}
 	?>
 </frameset>
 
@@ -109,17 +116,28 @@ EOF;
 		}
 
 		// symlink
-		$commandString = $command->command;
-		$commandString .= "; ln -s \"{$command->target}\" \"{$command->linkTarget}\"";
-		$commandString .= "; echo \"Done converting {$command->title}\"";
+		$command->appendSymLink = true;
+		$command->appendMessage = true;
 	} // end if ( isset( $_POST['ConvertWinCmd'] )
 
 	if ( isset( $command ) ):?>
 		<p>
 		Titre: <?php echo $command->title; ?><br />
 		Cible: <?php echo $command->target; ?><br />
+		Sous titres: <ul>
+		<?php foreach( $command->subtitleFiles as $file ) {
+			echo "<li>{$file}</li>";
+		}
+		?>
+		</ul><br />
+		Videos: <ul>
+		<?php foreach( $command->videoFiles as $file ) {
+			echo "<li>{$file}</li>";
+		}
+		?>
+		</ul>
 		</p>
-		<p style="font-family: monospace;"><?php echo $commandString; ?></p>
+		<p style="font-family: monospace;"><?php echo $command; ?></p>
 	<?php endif; ?>
 
 </frameset>

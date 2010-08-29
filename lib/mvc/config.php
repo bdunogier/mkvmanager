@@ -54,8 +54,12 @@ class mmMvcConfiguration implements ezcMvcDispatcherConfiguration
 		switch ( $routeInfo->matchedRoute )
 		{
 			case '/':
+				$view->contentTemplate = 'default.php';
+				break;
+
 			case '/mkvmerge':
 				$view->contentTemplate = 'mkvmerge.php';
+			break;
 		}
 
 		return $view;
@@ -79,10 +83,6 @@ class mmMvcConfiguration implements ezcMvcDispatcherConfiguration
 		ezcMvcResult $result,
 		Exception $response )
 	{
-		echo "<pre>";
-		print_r( $response );
-		echo "</pre>";
-
 		$req = clone $request;
 		$req->uri = '/fatal';
 		$req->variables['exception'] = $response;

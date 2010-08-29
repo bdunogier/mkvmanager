@@ -106,15 +106,12 @@ function decodeSize( $bytes )
 			// parse the command to get the target / sources
 			if ( preg_match( '#/media/storage/[^/]+/Movies/([^/]+)(/\1)?\.(avi|mkv)#', $command, $matches ) )
 			{
-				echo "<pre>";
-				print_r( $matches );
-				echo "</pre>";
 				$title = $matches[1];
 				$target = dirname( $matches[0] );
 				if ( $matches[2] == '' )
 				{
-					$target .= DIRECTORY_SEPARATOR . $title . DIRECTORY_SEPARATOR . $title . '.' . $matches[3];
-					$command = str_replace( $matches[0], $target, $command );
+					$fileTarget .= DIRECTORY_SEPARATOR . $title . DIRECTORY_SEPARATOR . $title . '.' . $matches[3];
+					$command = str_replace( $matches[0], $fileTarget, $command );
 				}
 			}
 			else
@@ -144,23 +141,26 @@ function decodeSize( $bytes )
 				$showName = $matches[1];
 				$episodeName = $matches[2];
 				$title = $episodeName;
-				$linkTarget = "/media/aggregateshares/$type/$showName/";
 			}
 			elseif ( preg_match( '#/media/storage/[^/]+/TV Shows/(([^/]+) \- [0-9]+x[0-9]+ \- .*?)\.(avi|mkv)#', $command, $matches ) )
 			{
 				$target = $matches[0];
 
+				print_r( $matches );
 				$showName = $matches[2];
 				$episodeName = $matches[1];
 				$replace = $matches[2] . DIRECTORY_SEPARATOR . $matches[1];
 
 				$target = str_replace( $episodeName, $replace, $target );
 				$command = str_replace( $matches[0], $target, $command );
+
 			}
 			else
 			{
 				die( "Failed matching the target" );
 			}
+
+			$linkTarget = "/media/aggregateshares/$type/$showName";
 		}
 		/*if (!preg_match_all( '#/home/download/downloads/complete/Movies/[^/]+/[^/]+\.(mkv|avi|srt\ssa)#', $command, $matches ) )
 	   	echo "No matches";*/
@@ -185,8 +185,16 @@ function decodeSize( $bytes )
 			echo "<p><b>Command inserted</p></b>\n";
 		}
 
+		// parse the command to get the subtitles
+		if ( preg_match_all( '#/home/download/downloads/complete/(TV/Sorted|Movies)/([^\/]+)/([^"]+\.srt)#', $command, $matches, PREG_SET_ORDER ) )
+		{
+			echo "<pre>";
+			print_r( $matches );
+			echo "</pre>";
+		}
+
 		// symlink
-		$command .= "; sudo -u media ln -s \"{$target}\" \"$linkTarget\"";
+		$command .= "; ln -s \"{$target}\" \"$linkTarget\"";
 		$command .= "; echo \"Done converting {$title}\"";
 		?>
 		<p>

@@ -21,10 +21,17 @@ while( $command = MKVMergeCommandQueue::getNextCommand() )
 	echo "$sudo {$command->command}\n";
 	echo "[" . date('H:i:s') . "] Conversion finished\n";
 
+	// create the link if conversion was successful
+	if ( $result == 0 )
+	{
+		symlink( $command->target, $command->linkTarget );
+		chown( $command->linkTarget, 'media' );
+	}
+	$status = ( $result !== 0 ) ? -1 : 0;
 
 	$q = $db->createUpdateQuery();
 	$q->update( 'commands' )
-	  ->set( 'status', $q->bindValue( 1 ) )
+	  ->set( 'status', $q->bindValue( $status ) )
 	  ->set( 'message', $q->bindValue( $return ) )
 	  ->where( $q->expr->eq( 'time', $q->bindValue( $command->time ) ) );
 	$sth = $q->prepare();

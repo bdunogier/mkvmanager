@@ -29,26 +29,8 @@ function decodeSize( $bytes )
 <h1>MKV Merger</h1>
 
 <frameset>
-	<legend>Status</legend>
-	<?php
-	/*$db = new SQLite3( "tmp/mergequeue.db" );
-	$statusList = $db
-		->query( "SELECT * FROM `commands` WHERE `pid` = 0" )
-		->fetchArray( SQLITE3_ASSOC );
-	if ( $statusList === false )
-	{
-		echo "<p>Empty queue</p>";
-	}
-	else
-	{
-		echo "<pre>"; var_dump( $array ); echo "</pre>";
-	}*/
-	?>
-</frameset>
-
-<frameset>
 	<legend>Convert windows CMD</legend>
-	<form method="POST" action="<?php echo $_SERVER['PHP_SELF'] ?>">
+	<form method="POST" action="<?php echo str_replace('index.php/', '', $_SERVER['REQUEST_URI'] ); ?>">
 		<p>
 			<textarea name="WinCmd" style="width:100%; height: 200px;"><?php
 			if ( isset( $_POST['WinCmd'] ) )
@@ -85,49 +67,24 @@ function decodeSize( $bytes )
 	</form>
 	<?php
 
-	if ( isset( $_POST['ConvertWinCmd'] ) )
-	{
-		if ( isset( $_POST['Target'] ) && ( $_POST['Target'] == "0") )
-		{
-			die( '<p style="color: red">Target is mandatory</p>' );
-		}
-
-		try {
-			$command = MKVMergeCommandImportWindowsGUI::convert( $_POST['WinCmd'], $_POST['Target'] );
-		} catch ( Exception $e ) {
-			$exceptionMessage = $e->getMessage();
-			$callstack = $e->getTraceAsString();
-			$message = <<<EOF
-<p class="error">An exception has occured in <span class="filename">{$e->getFile()}:{$e->getLine()}</p>
-<p class="error message">{$exceptionMessage}</p>
-<pre class="error dump">{$callstack}</pre>
-EOF;
-			die( $message );
-		}
-
-		// symlink
-		$command->appendSymLink = true;
-		$command->appendMessage = true;
-	} // end if ( isset( $_POST['ConvertWinCmd'] )
-
-	if ( isset( $command ) ):?>
+	if ( isset( $this->command ) ):?>
 		<p>
-		Titre: <?php echo $command->title; ?><br />
-		Cible: <?php echo $command->target; ?><br />
+		Titre: <?php echo $this->command->title; ?><br />
+		Cible: <?php echo $this->command->target; ?><br />
 		Sous titres: <ul>
-		<?php foreach( $command->subtitleFiles as $file ) {
+		<?php foreach( $this->command->subtitleFiles as $file ) {
 			echo "<li>{$file}</li>";
 		}
 		?>
 		</ul><br />
 		Videos: <ul>
-		<?php foreach( $command->videoFiles as $file ) {
+		<?php foreach( $this->command->videoFiles as $file ) {
 			echo "<li>{$file}</li>";
 		}
 		?>
 		</ul>
 		</p>
-		<p style="font-family: monospace;"><?php echo $command; ?></p>
+		<p style="font-family: monospace;"><?php echo $this->command; ?></p>
 	<?php endif; ?>
 
 </frameset>
