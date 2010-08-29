@@ -35,5 +35,12 @@ class mmController extends ezcMvcController
 		echo "HEY";
 		return new ezcMvcResult();
 	}
+
+	public function doMkvMerge()
+	{
+		// $res = new ezcMvcResult;
+		// $res->variables['test'] = 'test';
+		return new ezcMvcResult;
+	}
 }
 ?>

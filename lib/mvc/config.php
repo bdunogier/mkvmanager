@@ -49,7 +49,17 @@ class mmMvcConfiguration implements ezcMvcDispatcherConfiguration
 				}
 			}
 		}
-		return new $viewHandler( $request, $result );
+		$view = new $viewHandler( $request, $result );
+
+		switch ( $routeInfo->matchedRoute )
+		{
+			case '/':
+			case '/mkvmerge':
+				$view->contentTemplate = 'mkvmerge.php';
+		}
+
+		return $view;
+
 	}
 
 	/**
