@@ -17,6 +17,22 @@
 				font-family: Andale Mono, monospace;
 				font-size: 80%;
 			}
+
+			div.drivesList {
+				font-family: Andale Mono, monospace;
+				text-align: center;
+				width: 100%;
+			}
+
+			div.drive {
+				float: left;
+				text-align: center;
+				margin: 10px;
+			}
+
+			div.drive img {
+				display: inline;
+			}
 		</style>
 </head>
 <body>
@@ -32,14 +48,16 @@
 			?></textarea>
 		</p>
 		<p>
-			<select name="Target">
-			<option value="0">pick</option>
-			<?php foreach( $this->targetDisks as $disk )
-			{
-				echo "<option value=\"{$disk->name}\"{$disk->selectedText}>{$disk->name} ({$disk->freespace} libres)</option>\n";
-			}
-			?>
-			</select>
+			<div class="drivesList">
+			<?php foreach( $this->targetDisks as $disk ) : ?>
+				<div class="drive">
+					<div class="name"><?php echo $disk->name ?></div>
+					<a href="#"><img src="/images/icons/harddrive.png" width="64" heigh="64" title="Disk: <?php echo $disk->name ?>"/></a>
+					<div class="freespace"><?php echo $disk->freespace ?></div>
+				</div>
+			<?php endforeach; ?>
+			</div>
+			<p style="clear: both" />
 			<p><input type="checkbox" name="QueueCommand" value="1" id="chkQueueCommand" /><label for="chkQueueCommand">Add to queue</label></p>
 		</p>
 		<p><input type="submit" name="ConvertWinCmd" /></p>
