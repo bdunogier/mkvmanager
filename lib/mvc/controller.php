@@ -30,65 +30,71 @@ class mmController extends ezcMvcController
         return $result;
     }
 
-	public function doTest()
-	{
-		echo "HEY";
-		return new ezcMvcResult();
-	}
+    public function doTest()
+    {
+        echo "HEY";
+        return new ezcMvcResult();
+    }
 
-	public function doMkvMerge()
-	{
-		// $res = new ezcMvcResult;
-		// $res->variables['test'] = 'test';
-		$result = new ezcMvcResult;
-		$result->variables['targetDisks'] = self::diskList();
-		if ( isset( $_POST['WinCmd'] ) )
-			$result->variables = array_merge( $result->variables, mmApp::doConvertWinCMD( $_POST['WinCmd'], $_POST['Target'] ) );
-		return $result;
-	}
+    public function doMkvMerge()
+    {
+        // $res = new ezcMvcResult;
+        // $res->variables['test'] = 'test';
+        $result = new ezcMvcResult;
+        $result->variables['targetDisks'] = self::diskList();
+        if ( isset( $_POST['WinCmd'] ) )
+            $result->variables = array_merge( $result->variables, mmApp::doConvertWinCMD( $_POST['WinCmd'], $_POST['Target'] ) );
+        return $result;
+    }
 
-	/**
-	 * Return the list of available storage drives, including their free space
-	 * @return array( stdClass ) properties: name, freespace, selectedText
-	 *
-	 * @todo Handle seletedText differently
-	 * @todo Move somewhere else
-	 */
-	protected static function diskList()
-	{
-		$dir = opendir( '/media/storage/' );
-		foreach( new DirectoryIterator( '/media/storage/' ) as $disk )
-		{
-			$target = isset( $_POST['Target'] ) ? $_POST['Target'] : false;
-			// var_dump( $disk );
-			if ( $disk->isDot() )
-				continue;
-			$freespace = self::decodeSize( disk_free_space( $disk->getPathname() ) );
-			$diskName = $disk->getFilename();
-			$selectedText = ( $diskName == $target ) ? ' selected="selected"' : '';
-			$disk = new stdClass();
-			$disk->name = $diskName;
-			$disk->freespace = $freespace;
-			$disk->selectedText = $selectedText;
+    /**
+     * Return the list of available storage drives, including their free space
+     * @return array( stdClass ) properties: name, freespace, selectedText
+     *
+     * @todo Handle seletedText differently
+     * @todo Move somewhere else
+     */
+    protected static function diskList()
+    {
+        $dir = opendir( '/media/storage/' );
+        foreach( new DirectoryIterator( '/media/storage/' ) as $disk )
+        {
+            if ( $disk->isDot() )
+                continue;
 
-			$return[] = $disk;
-		}
-		return $return;
-	}
+            $target = isset( $_POST['Target'] ) ? $_POST['Target'] : false;
+            $rawFreeSpace = diskfreespace( $disk->getPathname() );
 
-	/**
-	 * Transforms a numnber of bytes in a readable file size
-	 * @param int $bytes
-	 * @return string
-	 *
-	 * @todo Move somewhere else
-	 */
-	protected static function decodeSize( $bytes )
-	{
-		$types = array( 'B', 'KO', 'MO', 'GO', 'TO' );
-		for( $i = 0; $bytes >= 1024 && $i < ( count( $types ) -1 ); $bytes /= 1024, $i++ );
-		return round( $bytes, 2 ) . " " . $types[$i];
-	}
+            $diskName = $disk->getFilename();
+            $selectedText = ( $diskName == $target ) ? ' selected="selected"' : '';
+
+            $disk = new stdClass();
+            $disk->name = $diskName;
+            $disk->freespace = $freespace = self::decodeSize( $rawFreeSpace );
+            $disk->selectedText = $selectedText;
+
+            $return[$rawFreeSpace / ( 1024 * 1024 ) ] = $disk;
+
+            // print_r( $return );
+        }
+        krsort( $return );
+
+        return $return;
+    }
+
+    /**
+     * Transforms a numnber of bytes in a readable file size
+     * @param int $bytes
+     * @return string
+     *
+     * @todo Move somewhere else
+     */
+    protected static function decodeSize( $bytes )
+    {
+        $types = array( 'B', 'KO', 'MO', 'GO', 'TO' );
+        for( $i = 0; $bytes >= 1024 && $i < ( count( $types ) -1 ); $bytes /= 1024, $i++ );
+        return round( $bytes, 2 ) . " " . $types[$i];
+    }
 
 }
 ?>
