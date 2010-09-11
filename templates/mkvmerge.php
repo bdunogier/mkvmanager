@@ -1,10 +1,4 @@
 <?php
-function decodeSize( $bytes )
-{
-	$types = array( 'B', 'KO', 'MO', 'GO', 'TO' );
-	for( $i = 0; $bytes >= 1024 && $i < ( count( $types ) -1 ); $bytes /= 1024, $i++ );
-	return round( $bytes, 2 ) . " " . $types[$i];
-}
 ?>
 <html>
 <head>
@@ -23,6 +17,22 @@ function decodeSize( $bytes )
 				font-family: Andale Mono, monospace;
 				font-size: 80%;
 			}
+
+			div.drivesList {
+				font-family: Andale Mono, monospace;
+				text-align: center;
+				width: 100%;
+			}
+
+			div.drive {
+				float: left;
+				text-align: center;
+				margin: 10px;
+			}
+
+			div.drive img {
+				display: inline;
+			}
 		</style>
 </head>
 <body>
@@ -40,27 +50,22 @@ function decodeSize( $bytes )
 		<p>
 			<select name="Target">
 			<option value="0">pick</option>
-			<?php
-			// TODO: add smart sort. Best-fit first (that really is eye-candy...)
-			// TODO: stupid, it requires filesize, and we don't have that...
-			// biggest first it is then, excluding disks with less than 4.5 GB free
-			// add a background color to the option based on the remaining space: orange for less than 4.5, white for more
-			// stupid again.
-			// TODO... We actually do, it's the source... but it requires AJAX, or some server side correction
-			$dir = opendir( '/media/storage/' );
-			foreach( new DirectoryIterator( '/media/storage/' ) as $disk )
+			<?php foreach( $this->targetDisks as $disk )
 			{
-				$target = isset( $_POST['Target'] ) ? $_POST['Target'] : false;
-				// var_dump( $disk );
-				if ( $disk->isDot() )
-					continue;
-				$freespace = decodeSize( disk_free_space( $disk->getPathname() ) );
-				$diskName = $disk->getFilename();
-				$selectedText = ( $diskName == $target ) ? ' selected="selected"' : '';
-				echo "<option value=\"{$diskName}\"{$selectedText}>{$diskName} ({$freespace} libres)</option>\n";
+				echo "<option value=\"{$disk->name}\"{$disk->selectedText}>{$disk->name} ({$disk->freespace} libres)</option>\n";
 			}
 			?>
 			</select>
+			<div class="drivesList">
+			<?php foreach( $this->targetDisks as $disk ) : ?>
+				<div class="drive">
+					<div class="name"><?php echo $disk->name ?></div>
+					<a href="#"><img src="/images/icons/harddrive.png" width="64" heigh="64" title="Disk: <?php echo $disk->name ?>"/></a>
+					<div class="freespace"><?php echo $disk->freespace ?></div>
+				</div>
+			<?php endforeach; ?>
+			</div>
+			<p style="clear: both" />
 			<p><input type="checkbox" name="QueueCommand" value="1" id="chkQueueCommand" /><label for="chkQueueCommand">Add to queue</label></p>
 		</p>
 		<p><input type="submit" name="ConvertWinCmd" /></p>
