@@ -3,3 +3,5 @@ TODO List
 
 * Handle subtitle output charset
 * List involved filenames when generating the command
+* Automatic scanner: mkvmerge.txt file in the folder, automatic scan => conversion, sort
+* Result file checker through mkvinfo
