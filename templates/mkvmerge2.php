@@ -1,89 +1,112 @@
-<?php
-?>
 <html>
 <head>
         <title>MKV Merger</title>
         <style type="text/css">
-			body {
-				margin-left: 20%;
-				margin-right: 20%;
-			}
+            body {
+                margin-left: 20%;
+                margin-right: 20%;
+            }
 
-			p.error {
-				color: red;
-			}
+            p.error {
+                color: red;
+            }
 
-			span.filename {
-				font-family: Andale Mono, monospace;
-				font-size: 80%;
-			}
+            div#ConvertedCommand {
+                font-family: Andale Mono, monospace;
+            }
 
-			div.drivesList {
-				font-family: Andale Mono, monospace;
-				text-align: center;
-				width: 100%;
-			}
+            span.filename {
+                font-family: Andale Mono, monospace;
+                font-size: 80%;
+            }
 
-			div.drive {
-				float: left;
-				text-align: center;
-				margin: 10px;
-			}
+            div.drivesList {
+                font-family: Andale Mono, monospace;
+                text-align: center;
+                width: 100%;
+            }
 
-			div.drive img {
-				display: inline;
-			}
-		</style>
+            div.drive {
+                float: left;
+                text-align: center;
+                padding: 10px;
+            }
+
+            div.drive img {
+                display: inline;
+            }
+        </style>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <script type="text/javascript">
+        $(document).ready(function() {
+
+            // On command change
+            $("#FormWinCmd").blur(function() {
+                // Send command to server
+                // Or trigger hard drive selection message ?
+                $.post( "/ajax/mkvmerge", { WinCmd: this.value, Target: "CARROT" },
+                function success( data ) {
+                    $("#ConvertedCommand").innerHtml = data.command.command.command;
+                    console.log( $("div", "#ConvertedCommand") );
+                    console.log( data.command.command.command );
+                }, "json" );
+            });
+
+            // On disk icon click
+            $(".drive").click(function() {
+                $(this).css( "background-color", "green" );
+            });
+
+         });
+         </script>
 </head>
 <body>
 <h1>MKV Merger</h1>
 
+<?php
+$winCmd = isset( $_POST['WinCmd'] ) ? htmlentities( $_POST['WinCmd'] ) : '';
+$formAction = str_replace( 'index.php/', '', $_SERVER['REQUEST_URI'] );
+?>
 <frameset>
-	<legend>Convert windows CMD</legend>
-	<form method="POST" action="<?php echo str_replace('index.php/', '', $_SERVER['REQUEST_URI'] ); ?>">
-		<p>
-			<textarea name="WinCmd" style="width:100%; height: 200px;"><?php
-			if ( isset( $_POST['WinCmd'] ) )
-				echo htmlentities( $_POST['WinCmd']);
-			?></textarea>
-		</p>
-		<p>
-			<div class="drivesList">
-			<?php foreach( $this->targetDisks as $disk ) : ?>
-				<div class="drive">
-					<div class="name"><?php echo $disk->name ?></div>
-					<a href="#"><img src="/images/icons/harddrive.png" width="64" heigh="64" title="Disk: <?php echo $disk->name ?>"/></a>
-					<div class="freespace"><?php echo $disk->freespace ?></div>
-				</div>
-			<?php endforeach; ?>
-			</div>
-			<p style="clear: both" />
-			<p><input type="checkbox" name="QueueCommand" value="1" id="chkQueueCommand" /><label for="chkQueueCommand">Add to queue</label></p>
-		</p>
-		<p><input type="submit" name="ConvertWinCmd" /></p>
-	</form>
-	<?php
+    <legend>Convert windows CMD</legend>
+    <form method="POST" action="<?=$formAction?>">
+        <textarea name="WinCmd" id="FormWinCmd" style="width:100%; height: 200px;"><?=$winCmd?></textarea>
+        <div class="drivesList">
+        <?php foreach( $this->targetDisks as $disk ) : ?>
+            <div class="drive">
+                <div class="name"><?=$disk->name?></div>
+                <img src="/images/icons/harddrive.png" width="64" heigh="64" title="Disk: <?=$disk->name?>"/>
+                <div class="freespace"><?=$disk->freespace?></div>
+            </div>
+        <?php endforeach ?>
+        </div>
+        <div style="clear: both" />
+        <p><input type="checkbox" name="QueueCommand" value="1" id="chkQueueCommand" /><label for="chkQueueCommand">Add to queue</label></p>
+        <p><input type="submit" name="ConvertWinCmd" /></p>
+    </form>
 
-	if ( isset( $this->command ) ):?>
-		<p>
-		Titre: <?php echo $this->command->title; ?><br />
-		Cible: <?php echo $this->command->target; ?><br />
-		Sous titres: <ul>
-		<?php foreach( $this->command->subtitleFiles as $file ) {
-			echo "<li>{$file}</li>";
-		}
-		?>
-		</ul><br />
-		Videos: <ul>
-		<?php foreach( $this->command->videoFiles as $file ) {
-			echo "<li>{$file}</li>";
-		}
-		?>
-		</ul>
-		</p>
-		<p style="font-family: monospace;"><?php echo $this->command; ?></p>
-	<?php endif; ?>
-
+    <div id="ConvertedCommand" ></div>
+    <!--
+    <? if ( isset( $this->command ) ):?>
+        <p>
+        Titre: <?=$this->command->title?><br />
+        Cible: <?=$this->command->target?><br />
+        Sous titres: <ul>
+        <? foreach( $this->command->subtitleFiles as $file ) : ?>
+            <li><?=$file?></li>
+        <? endforeach ?>
+        ?>
+        </ul><br />
+        Videos: <ul>
+        <? foreach( $this->command->videoFiles as $file ) : ?>
+            <li><?=$file?></li>
+        <? endforeach ?>
+        ?>
+        </ul>
+        </p>
+        <p style="font-family: monospace;"><?=$this->command?></p>
+    <? endif ?>
+    -->
 </frameset>
 
 </body>

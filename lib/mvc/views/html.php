@@ -5,7 +5,6 @@ class mmHtmlView extends ezcMvcView
 	{
 		$zones = array();
 		$zones[] = new ezcMvcPhpViewHandler( 'content', '../templates/' . $this->contentTemplate );
-		//$zones[] = new ezcMvcPhpViewHandler( 'page_layout', '../templates/main.php' );
 		return $zones;
 	}
 }

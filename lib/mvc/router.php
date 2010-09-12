@@ -1,15 +1,18 @@
 <?php
 class mmMvcRouter extends ezcMvcRouter
 {
-	public function createRoutes()
-	{
-		return array(
-		    new ezcMvcRailsRoute( '/',          'mmController', 'mkvMerge' ),
-			new ezcMvcRailsRoute( '/test',      'mmController', 'test' ),
-			new ezcMvcRailsRoute( '/fatal',     'mmController', 'fatal' ),
-			new ezcMvcRailsRoute( '/mkvmerge',  'mmController', 'mkvMerge' ),
-			new ezcMvcRailsRoute( '/mkvmerge2', 'mmController', 'mkvMerge' ),
-		);
-	}
+    public function createRoutes()
+    {
+        return array(
+            new ezcMvcRailsRoute( '/',          'mmMkvManagerController', 'mkvMerge' ),
+            new ezcMvcRailsRoute( '/test',      'mmMkvManagerController', 'test' ),
+            new ezcMvcRailsRoute( '/fatal',     'mmMkvManagerController', 'fatal' ),
+            new ezcMvcRailsRoute( '/mkvmerge',  'mmMkvManagerController', 'mkvMerge' ),
+            new ezcMvcRailsRoute( '/mkvmerge2', 'mmMkvManagerController', 'mkvMerge' ),
+
+            new ezcMvcRailsRoute( '/ajax/mkvmerge', 'mmAjaxController', 'mkvMerge' ),
+            new ezcMvcRailsRoute( '/ajax/bestfit',  'mmAjaxController', 'bestFit' ),
+        );
+    }
 }
 ?>
