@@ -46,9 +46,8 @@
                 // Or trigger hard drive selection message ?
                 $.post( "/ajax/mkvmerge", { WinCmd: this.value, Target: "CARROT" },
                 function success( data ) {
-                    $("#ConvertedCommand").innerHtml = data.command.command.command;
-                    console.log( $("div", "#ConvertedCommand") );
-                    console.log( data.command.command.command );
+                    console.log( data.command );
+                    $("div#ConvertedCommand").html( data.command.command.command );
                 }, "json" );
             });
 
@@ -75,39 +74,18 @@ $formAction = str_replace( 'index.php/', '', $_SERVER['REQUEST_URI'] );
         <?php foreach( $this->targetDisks as $disk ) : ?>
             <div class="drive">
                 <div class="name"><?=$disk->name?></div>
-                <img src="/images/icons/harddrive.png" width="64" heigh="64" title="Disk: <?=$disk->name?>"/>
+                <img src="/images/icons/harddrive.png" width="64" heigh="64" title="Disk: <?=$disk->name?>" />
                 <div class="freespace"><?=$disk->freespace?></div>
             </div>
         <?php endforeach ?>
         </div>
-        <div style="clear: both" />
+        <div style="clear: both"></div>
         <p><input type="checkbox" name="QueueCommand" value="1" id="chkQueueCommand" /><label for="chkQueueCommand">Add to queue</label></p>
         <p><input type="submit" name="ConvertWinCmd" /></p>
     </form>
-
-    <div id="ConvertedCommand" ></div>
-    <!--
-    <? if ( isset( $this->command ) ):?>
-        <p>
-        Titre: <?=$this->command->title?><br />
-        Cible: <?=$this->command->target?><br />
-        Sous titres: <ul>
-        <? foreach( $this->command->subtitleFiles as $file ) : ?>
-            <li><?=$file?></li>
-        <? endforeach ?>
-        ?>
-        </ul><br />
-        Videos: <ul>
-        <? foreach( $this->command->videoFiles as $file ) : ?>
-            <li><?=$file?></li>
-        <? endforeach ?>
-        ?>
-        </ul>
-        </p>
-        <p style="font-family: monospace;"><?=$this->command?></p>
-    <? endif ?>
-    -->
 </frameset>
+
+<div id="ConvertedCommand" ></div>
 
 </body>
 
