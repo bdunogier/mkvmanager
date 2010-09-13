@@ -7,7 +7,7 @@ class mmMvcConfiguration implements ezcMvcDispatcherConfiguration
     function createRequestParser()
     {
         $parser = new ezcMvcHttpRequestParser;
-        $parser->prefix = preg_replace( '@/index\.php$@', '', $_SERVER['SCRIPT_NAME'] );
+        $parser->prefix = preg_replace( '@/index\.php$@', '', basename( $_SERVER['SCRIPT_FILENAME'] ) );
         return $parser;
     }
 
@@ -37,7 +37,6 @@ class mmMvcConfiguration implements ezcMvcDispatcherConfiguration
         else
         {
             $view = new mmHtmlView( $request, $result );;
-            echo "Setting template<br />";
             switch ( $routeInfo->matchedRoute )
             {
                 case '/':
