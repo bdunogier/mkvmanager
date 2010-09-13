@@ -27,11 +27,16 @@ class mmMkvManagerDiskHelper
             $disk->freespace = $freespace = self::decodeSize( $rawFreeSpace );
             $disk->selectedText = $selectedText;
 
-            $return[$rawFreeSpace / ( 1024 * 1024 ) ] = $disk;
-
-            // print_r( $return );
+            // @todo This is bullcrap: if two disks have the same freespace, only the last one will be returned
+            // Use a user defined sort method
+            $return[] = $disk;
         }
-        krsort( $return );
+        usort( $return, function( $a, $b ) {
+            if ( $a->freespace == $b->freespace )
+                return 0;
+            else
+                return ( $a->freespace < $b->freespace ? -1 : 1 );
+        });
 
         return $return;
     }
