@@ -29,7 +29,8 @@
             div.drive {
                 float: left;
                 text-align: center;
-                padding: 10px;
+                padding: 5px 10px 5px 10px;
+                margin: 5px;
             }
 
             div.drive img {
@@ -40,21 +41,44 @@
         <script type="text/javascript">
         $(document).ready(function() {
 
+            var SelectedDrive = false;
+            var WinCmd = false;
+
             // On command change
             $("#FormWinCmd").blur(function() {
-                // Send command to server
-                // Or trigger hard drive selection message ?
-                $.post( "/ajax/mkvmerge", { WinCmd: this.value, Target: "CARROT" },
-                function success( data ) {
-                    console.log( data.command );
-                    $("div#ConvertedCommand").html( data.command.command.command );
-                }, "json" );
+                value = $("#FormWinCmd")[0].value;
+                if ( value != '' )
+                    WinCmd = value;
+                convertCommand();
             });
 
             // On disk icon click
             $(".drive").click(function() {
-                $(this).css( "background-color", "green" );
+                // reset all
+                $(".drive").each( function( index ) {
+                    $(this).css( "background-color", "" );
+                });
+
+                // change color for clicked
+                $(this).css( "background-color", "#33cc33" );
+                SelectedDrive = $(this).children('.DriveName')[0].value;
+
+                convertCommand();
             });
+
+            function convertCommand()
+            {
+                if ( SelectedDrive == false || WinCmd == false )
+                    return;
+
+                // Send command to server
+                // Or trigger hard drive selection message ?
+                $.post( "/ajax/mkvmerge", { WinCmd: WinCmd, Target: SelectedDrive },
+                function success( data ) {
+                    console.log( data.command );
+                    $("div#ConvertedCommand").html( data.command.command.command );
+                }, "json" );
+            }
 
          });
          </script>
@@ -76,10 +100,12 @@ $formAction = str_replace( 'index.php/', '', $_SERVER['REQUEST_URI'] );
                 <div class="name"><?=$disk->name?></div>
                 <img src="/images/icons/harddrive.png" width="64" heigh="64" title="Disk: <?=$disk->name?>" />
                 <div class="freespace"><?=$disk->freespace?></div>
+                <input type="hidden" class="DriveName" value="<?=$disk->name?>" />
             </div>
         <?php endforeach ?>
         </div>
         <div style="clear: both"></div>
+        <input id="ConvertTarget" type="hidden" name="Target" value="-1" />
         <p><input type="checkbox" name="QueueCommand" value="1" id="chkQueueCommand" /><label for="chkQueueCommand">Add to queue</label></p>
         <p><input type="submit" name="ConvertWinCmd" /></p>
     </form>
