@@ -21,5 +21,3 @@
 	TEST
 	</body>
 </html>
-<?php
-?>

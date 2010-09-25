@@ -3,6 +3,7 @@ return array(
     'MKVMergeCommand'                 => 'mkvmerge/command.php',
     'MKVMergeCommandQueue'            => 'mkvmerge/commandqueue.php',
     'MKVMergeCommandImportWindowsGUI' => 'mkvmerge/commandimportwindowsgui.php',
+    'MKVMergeSourceFile'              => 'mkvmerge/source_file.php',
 
     'mmApp' => 'app.php',
 

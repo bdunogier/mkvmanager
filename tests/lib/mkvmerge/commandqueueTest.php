@@ -1,7 +1,7 @@
 <?php
 require_once 'PHPUnit/Framework.php';
 
-class lib_mkvmerge_MKVMergeCommandQueueTest extends PHPUnit_Framework_TestCase
+class MKVMergeCommandQueueTest extends PHPUnit_Framework_TestCase
 {
 	public function __construct()
 	{

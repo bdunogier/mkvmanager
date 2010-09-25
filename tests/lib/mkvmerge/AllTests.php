@@ -33,9 +33,9 @@ class lib_mkvmerge_AllTests
         $suite = new PHPUnit_Framework_TestSuite('PHPUnit_Framework');
 
 		// PHPEdit Tests suites -- dot not remove this comment
-		$suite->addTestSuite('lib_mkvmerge_MKVMergeCommandTest');
-		$suite->addTestSuite('lib_mkvmerge_MKVMergeCommandImportWindowsGUITest');
-    	$suite->addTestSuite('lib_mkvmerge_MKVMergeCommandQueueTest');
+		$suite->addTestSuite('MKVMergeCommandTest');
+		$suite->addTestSuite('MKVMergeCommandImportWindowsGUITest');
+    	$suite->addTestSuite('MKVMergeCommandQueueTest');
     	// /PHPEdit Tests suites -- dot not remove this comment
 
         return $suite;

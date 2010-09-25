@@ -50,6 +50,14 @@ class mmMvcConfiguration implements ezcMvcDispatcherConfiguration
                 case '/mkvmerge':
                     $view->contentTemplate = 'mkvmerge.php';
                     break;
+
+                case '/fatal':
+                    $view->contentTemplate = 'fatal.php';
+                    break;
+
+                default:
+                    $view->contentTemplate = 'default.php';
+                break;
             }
         }
 

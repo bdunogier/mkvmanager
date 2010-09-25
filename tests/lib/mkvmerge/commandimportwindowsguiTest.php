@@ -1,5 +1,5 @@
 <?php
-class lib_mkvmerge_MKVMergeCommandImportWindowsGUITest extends PHPUnit_Framework_TestCase
+class MKVMergeCommandImportWindowsGUITest extends PHPUnit_Framework_TestCase
 {
 	public function __construct()
 	{

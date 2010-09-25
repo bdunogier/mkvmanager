@@ -47,8 +47,8 @@
             // On command change
             $("#FormWinCmd").blur(function() {
                 value = $("#FormWinCmd")[0].value;
-                if ( value != '' )
-                    WinCmd = value;
+                if ( value != '' ) WinCmd = value;
+                bestFit();
                 convertCommand();
             });
 
@@ -66,17 +66,53 @@
                 convertCommand();
             });
 
+            function bestFit()
+            {
+                if ( WinCmd == false ) return;
+
+                // Send command to server
+                // Or trigger hard drive selection message ?
+                $.post( "/ajax/bestfit", { WinCmd: WinCmd },
+                function success( data ) {
+                    console.log( data );
+                    disk = data.RecommendedDisk;
+                    if ( disk != "none" )
+                    {
+                        $(".drive").each( function( index )
+                        {
+                            if ( $(this).children('.DriveName')[0].value == disk )
+                                $(this).click();
+                        });
+                    }
+                }, "json" );
+            }
+
             function convertCommand()
             {
-                if ( SelectedDrive == false || WinCmd == false )
-                    return;
+                if ( SelectedDrive == false || WinCmd == false ) return;
 
                 // Send command to server
                 // Or trigger hard drive selection message ?
                 $.post( "/ajax/mkvmerge", { WinCmd: WinCmd, Target: SelectedDrive },
                 function success( data ) {
-                    console.log( data.command );
-                    $("div#ConvertedCommand").html( data.command.command.command );
+                    $("div#ConvertedCommand").html( data.Command );
+                    // $("div#ConvertedFilesSubtitles").html( '<li>' +  );
+                    // $("div#ConvertedCommand").html( data.Command );
+
+                    // Subtitles
+                    html = '<h2>Subtitles:</h2><ul>';
+                    for ( file in data.SubtitleSourceFiles )
+                        html += '<li>' + data.SubtitleSourceFiles[file].basename + '</li>';
+                    html += '</ul>';
+                    $("div#ConversionFilesSubtitles").html( html );
+
+                    // Videos
+                    html = '<h2>Videos:</h2><ul>';
+                    for ( file in data.VideoSourceFiles )
+                        html += '<li>' + data.VideoSourceFiles[file].basename + '</li>';
+                    html += '</ul>';
+                    $("div#ConversionFilesVideos").html( html );
+
                 }, "json" );
             }
 
@@ -112,6 +148,8 @@ $formAction = str_replace( 'index.php/', '', $_SERVER['REQUEST_URI'] );
 </frameset>
 
 <div id="ConvertedCommand" ></div>
+<div id="ConversionFilesSubtitles" ></div>
+<div id="ConversionFilesVideos" ></div>
 
 </body>
 

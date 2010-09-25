@@ -54,5 +54,86 @@ class mmMkvManagerDiskHelper
         for( $i = 0; $bytes >= 1024 && $i < ( count( $types ) -1 ); $bytes /= 1024, $i++ );
         return round( $bytes, 2 ) . " " . $types[$i];
     }
+
+    /**
+     * Returns the best fit, depending on name, chronology and size, for a new
+     * TV episode.
+     *
+     * @param string $episodeName The full episode name: ShowName - SSEXX - Title
+     * @param string $freeSpaceTreshold minimal available space for a disk  to be available
+     *
+     * @todo Make the treshold depend on the episode Index, maybe even based on previous seasons and episode size
+     *
+     * @return array string a disk name (HDEXT-1, ARTHAS...)
+     **/
+    public static function BestTVEpisodeFit( $episodeName )
+    {
+        $return = array();
+        $basePath = '/media/aggregateshares/TV Shows';
+
+        $targetEpisodeInfo = self::parseEpisode( $episodeName );
+        $return['$targetEpisodeInfo'] = $targetEpisodeInfo;
+        $showAggregatePath = "{$basePath}/{$targetEpisodeInfo['show']}";
+        $return['$showAggregatePath'] = $showAggregatePath;
+
+        if ( !file_exists( $showAggregatePath ) )
+        {
+            $return['bestfit'] = 'none';
+        }
+        else
+        {
+            $return['Files'] = array();
+            $iterator = new FilesystemIterator( $showAggregatePath );
+            $iterator->setFlags( FilesystemIterator::KEY_AS_FILENAME | FilesystemIterator::CURRENT_AS_PATHNAME );
+            $maxEpisodeNumber = 0;
+            foreach( $iterator as $file => $path )
+            {
+                $episodeInfo = self::parseEpisode( $file );
+                if ( $episodeInfo === false )
+                    continue;
+
+                $return['Files'][] = $episodeInfo;
+
+                $path = realpath( $path );
+                $absoluteEpisodeNumber = ( $episodeInfo['season'] * 10 ) + $episodeInfo['episode'];
+                if ( $absoluteEpisodeNumber > $maxEpisodeNumber )
+                {
+                    // echo "( {$episodeInfo['season']} * 10 ) + {$episodeInfo['episode']} > $maxEpisodeNumber => $file\n";
+                    $maxEpisodeNumber = $absoluteEpisodeNumber;
+                    $latestEpisodePath = $path;
+                }
+            }
+            $return['LatestEpisode'] = $latestEpisodePath;
+            list( , , , $return['RecommendedDisk'] ) = explode( '/', $latestEpisodePath );
+        }
+
+        return $return;
+    }
+
+    /**
+     * Parses an episode filename, with of without extension
+     *
+     * @todo Add an mmTVShowEpisode class with a parseEpisode static method
+     *
+     * @param string $episode Episode title. Format: <show> - <season>x<episode> - <name>[.<extension>]
+     * @return array An array with these keys: show, season, episode, name, extension (optional)
+     */
+    public static function parseEpisode( $episode )
+    {
+        if ( !preg_match( '/([^\-]+) \- ([0-9]+)x([0-9]+) \- (.*?)(?:\.(avi|mkv))?/', $episode, $matches ) )
+        {
+            return false;
+        }
+        else
+        {
+            return array(
+                'show'      => trim( $matches[1] ),
+                'season'    => (int)$matches[2],
+                'episode'   => (int)$matches[3],
+                'name'      => trim( $matches[4] ),
+                'extension' => isset( $matches[5] ) ? $matches[5] : null
+            );
+        }
+    }
 }
 ?>

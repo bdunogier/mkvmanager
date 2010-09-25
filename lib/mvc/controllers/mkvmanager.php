@@ -38,12 +38,10 @@ class mmMkvManagerController extends ezcMvcController
 
     public function doMkvMerge()
     {
-        // $res = new ezcMvcResult;
-        // $res->variables['test'] = 'test';
         $result = new ezcMvcResult;
         $result->variables['targetDisks'] = mmMkvManagerDiskHelper::diskList();
         if ( isset( $_POST['WinCmd'] ) )
-            $result->variables = array_merge( $result->variables, mmApp::doConvertWinCMD( $_POST['WinCmd'], $_POST['Target'] ) );
+            $result->variables += mmApp::doConvertWinCMD( $_POST['WinCmd'], $_POST['Target'] );
         return $result;
     }
 }

@@ -7,16 +7,17 @@ class mmAjaxController extends ezcMvcController
     public function doMkvMerge()
     {
         $result = new ezcMvcResult;
-        $result->variables['debug'] = print_r( $_POST, true );
 
-        if ( !isset( $_POST['WinCmd'] ) )
-        {
-            $result->variables['error'] = "MissingTarget";
-        }
-        else
-        {
-            $result->variables['command'] = mmApp::doConvertWinCMD( $_POST['WinCmd'], $_POST['Target'] );
-        }
+        $result->variables['targetDisks'] = mmMkvManagerDiskHelper::diskList();
+
+        if ( isset( $_POST['WinCmd'] ) )
+            $winCmd = $_POST['WinCmd'];
+        if ( isset( $_POST['Target'] ) )
+            $targetDisk = $_POST['Target'];
+
+        if ( isset( $winCmd, $targetDisk ) )
+            $result->variables = mmApp::doConvertWinCMD( $winCmd, $targetDisk );
+
         return $result;
     }
 
@@ -25,7 +26,15 @@ class mmAjaxController extends ezcMvcController
      */
     public function doBestFit()
     {
+        $result = new ezcMvcResult;
 
+        if ( isset( $_POST['WinCmd'] ) )
+            $command = $_POST['WinCmd'];
+
+        if ( isset( $command ) )
+            $result->variables = mmApp::doBestFit( $command );
+
+        return $result;
     }
 }
 ?>

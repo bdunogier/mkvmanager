@@ -1,6 +1,6 @@
 <?php
 
-class lib_mkvmerge_MKVMergeCommandTest extends PHPUnit_Framework_TestCase
+class MKVMergeCommandTest extends PHPUnit_Framework_TestCase
 {
 	public function __construct()
 	{
