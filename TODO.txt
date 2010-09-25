@@ -5,3 +5,21 @@ TODO List
 * List involved filenames when generating the command
 * Automatic scanner: mkvmerge.txt file in the folder, automatic scan => conversion, sort
 * Result file checker through mkvinfo
+* Ponderate freespace using colors
+  - grey out disks where the file won't fit
+* missing symlinks scanner + create missing ones
+  start by scanning all drives
+
+* Basic files browser
+
+* TV: auto-detect best location for episode
+  DONE - glob drives for occurences of the show
+  DONE - locate latest season
+  - check available space
+  => a status output could be a good idea
+
+* Generated MKV file check: run mkvinfo and check for output.
+
+* Option to delete source file... somehow, maybe with a console confirmation ?
+  - Also create dummy file (touch FTW!) for the video file
+  - A backup could help until this is complete
