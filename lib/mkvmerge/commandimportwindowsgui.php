@@ -56,7 +56,9 @@ class MKVMergeCommandImportWindowsGUI
 
 	protected static function _convertTargetFolder( &$command, $targetDisk )
 	{
-		$replace = "/media/storage/{$targetDisk}/";
+		if ( $targetDisk === false )
+		    $targetDisk = '<NONE>';
+        $replace = "/media/storage/{$targetDisk}/";
 		$replace .= ( self::_extractType( $command ) == 'movie' ? 'Movies' : 'TV Shows' ) . DIRECTORY_SEPARATOR;
 		$command = str_replace( 'F:/', $replace, $command );
 	}

@@ -66,15 +66,13 @@ class mmMkvManagerDiskHelper
      *
      * @return array string a disk name (HDEXT-1, ARTHAS...)
      **/
-    public static function BestTVEpisodeFit( $episodeName )
+    public static function BestTVEpisodeFit( $episodeName, $targetFilesize )
     {
         $return = array();
         $basePath = '/media/aggregateshares/TV Shows';
 
         $targetEpisodeInfo = self::parseEpisode( $episodeName );
-        $return['$targetEpisodeInfo'] = $targetEpisodeInfo;
         $showAggregatePath = "{$basePath}/{$targetEpisodeInfo['show']}";
-        $return['$showAggregatePath'] = $showAggregatePath;
 
         if ( !file_exists( $showAggregatePath ) )
         {
@@ -82,7 +80,6 @@ class mmMkvManagerDiskHelper
         }
         else
         {
-            $return['Files'] = array();
             $iterator = new FilesystemIterator( $showAggregatePath );
             $iterator->setFlags( FilesystemIterator::KEY_AS_FILENAME | FilesystemIterator::CURRENT_AS_PATHNAME );
             $maxEpisodeNumber = 0;
@@ -92,19 +89,20 @@ class mmMkvManagerDiskHelper
                 if ( $episodeInfo === false )
                     continue;
 
-                $return['Files'][] = $episodeInfo;
-
                 $path = realpath( $path );
-                $absoluteEpisodeNumber = ( $episodeInfo['season'] * 10 ) + $episodeInfo['episode'];
+                // 100 episodes per season really should do it, right ?
+                $absoluteEpisodeNumber = ( $episodeInfo['season'] * 100 ) + $episodeInfo['episode'];
                 if ( $absoluteEpisodeNumber > $maxEpisodeNumber )
                 {
-                    // echo "( {$episodeInfo['season']} * 10 ) + {$episodeInfo['episode']} > $maxEpisodeNumber => $file\n";
                     $maxEpisodeNumber = $absoluteEpisodeNumber;
                     $latestEpisodePath = $path;
                 }
             }
             $return['LatestEpisode'] = $latestEpisodePath;
             list( , , , $return['RecommendedDisk'] ) = explode( '/', $latestEpisodePath );
+            $lastEpisodeDiskFreespace = diskfreespace( $latestEpisodePath );
+
+            $return['RecommendedDiskHasFreeSpace'] = ( $targetFilesize  > $lastEpisodeDiskFreespace ) ? 'false' : 'true';
         }
 
         return $return;

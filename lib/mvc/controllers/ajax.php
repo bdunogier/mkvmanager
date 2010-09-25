@@ -32,7 +32,9 @@ class mmAjaxController extends ezcMvcController
             $command = $_POST['WinCmd'];
 
         if ( isset( $command ) )
+        {
             $result->variables = mmApp::doBestFit( $command );
+        }
 
         return $result;
     }

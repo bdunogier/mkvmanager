@@ -30,11 +30,24 @@
                 float: left;
                 text-align: center;
                 padding: 5px 10px 5px 10px;
-                margin: 5px;
+                margin: 3px;
+                border: 2px solid white;
             }
 
             div.drive img {
                 display: inline;
+            }
+
+            div.drive.recommendedDisk {
+                border: 2px dotted;
+            }
+
+            div.drive.recommendDiskWithSpace {
+                border-color: green;
+            }
+
+            div.drive.recommendDiskWithoutSpace {
+                border-color: red;
             }
         </style>
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
@@ -81,7 +94,22 @@
                         $(".drive").each( function( index )
                         {
                             if ( $(this).children('.DriveName')[0].value == disk )
-                                $(this).click();
+                            {
+                                $(this).addClass( 'RecommendedDisk' );
+                                if ( data.RecommendedDiskHasFreeSpace == 'true' )
+                                    $(this).addClass( 'recommendDiskWithSpace' );
+                                else
+                                    $(this).addClass( 'recommendDiskWithoutSpace' );
+                            }
+                            else
+                            {
+                                if ( $(this).hasClass( 'RecommendedDisk' ) )
+                                    $(this).removeClass( 'RecommendedDisk' );
+                                if ( $(this).hasClass( 'recommendDiskWithSpace' ) )
+                                    $(this).removeClass( 'recommendDiskWithSpace' );
+                                if ( $(this).hasClass( 'recommendDiskWithoutSpace' ) )
+                                    $(this).removeClass( 'recommendDiskWithoutSpace' );
+                            }
                         });
                     }
                 }, "json" );
@@ -96,8 +124,10 @@
                 $.post( "/ajax/mkvmerge", { WinCmd: WinCmd, Target: SelectedDrive },
                 function success( data ) {
                     $("div#ConvertedCommand").html( data.Command );
-                    // $("div#ConvertedFilesSubtitles").html( '<li>' +  );
-                    // $("div#ConvertedCommand").html( data.Command );
+                    console.log( "Setting div:" );
+                    console.log( $("div#ConvertedCommand") );
+                    console.log( "Data:" );
+                    console.log( data.Command );
 
                     // Subtitles
                     html = '<h2>Subtitles:</h2><ul>';
@@ -147,7 +177,7 @@ $formAction = str_replace( 'index.php/', '', $_SERVER['REQUEST_URI'] );
     </form>
 </frameset>
 
-<div id="ConvertedCommand" ></div>
+<div id="ConvertedCommand"></div>
 <div id="ConversionFilesSubtitles" ></div>
 <div id="ConversionFilesVideos" ></div>
 

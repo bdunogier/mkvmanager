@@ -45,10 +45,11 @@ EOF;
     public static function doBestFit( $command )
     {
         $command = MKVMergeCommandImportWindowsGUI::convert( $command, false );
+        $return = array( 'size' => $command->TargetSize );
 
         if ( $command->conversionType === 'tvshow' )
         {
-            $return = mmMkvManagerDiskHelper::BestTVEpisodeFit( $command->title );
+            $return += mmMkvManagerDiskHelper::BestTVEpisodeFit( $command->title, $command->TargetSize );
         }
 
         return $return;

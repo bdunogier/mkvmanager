@@ -11,6 +11,7 @@
  *
  *@property-read array VideoFiles
  *@property-read array SubtitleFiles
+ *@property-read int TargetSize
  */
 class MKVMergeCommand
 {
@@ -155,6 +156,9 @@ class MKVMergeCommand
             case 'SubtitleFiles':
                 return $this->_extractCommandFiles( 'subtitle');
                 break;
+            case 'TargetSize':
+                return $this->_targetSize();
+                break;
             default:
                 throw new ezcBasePropertyNotFoundException( $property );
         } // switch
@@ -193,6 +197,23 @@ class MKVMergeCommand
         }
 
         return $return;
+    }
+
+    protected function _targetSize()
+    {
+        $size = 0;
+
+        foreach( $this->VideoFiles as $videoFile )
+        {
+            $size += sprintf( '%u', filesize( $videoFile ) );
+        }
+
+        foreach( $this->SubtitleFiles as $subtitleFile )
+        {
+            $size += sprintf( '%u', filesize( $subtitleFile ) );
+        }
+
+        return $size;
     }
 
 
