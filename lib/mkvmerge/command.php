@@ -69,7 +69,7 @@ class MKVMergeCommand
                 $this->episodeName = $matches[2];
             }
             // no subfolder
-            elseif ( preg_match( '#/media/storage/[^/]+/TV Shows/(([^/]+) \- [0-9]+x[0-9]+ \- .*?)\.(avi|mkv)#', $this->command, $matches ) )
+            elseif ( preg_match( '#/media/storage/[^/]+/TV Shows/(([^/]+) \- [0-9]+x[0-9\-]+ \- .*?)\.(avi|mkv)#', $this->command, $matches ) )
             {
                 $this->target = $matches[0];
 
@@ -116,15 +116,20 @@ class MKVMergeCommand
      *
      * @return string
      */
-    public function __toString()
+    public function toStruct()
     {
-        $string = $this->command;
-        if ( $this->appendSymLink === true )
-            $string .= "; ln -s \"{$this->target}\" \"{$this->linkTarget}\"";
-        if ( $this->appendDoneText === true )
-            $string .= "; echo \"Done converting {$this->title}\"";
+        $data = array();
+        $data['Command'] = $this->command;
+        $data['SubtitleFiles'] = $this->SubtitleFiles;
+        $data['VideoFiles'] = $this->VideoFiles;
+        $data['TargetSize'] = $this->TargetSize;
 
-        return $string;
+        if ( $this->appendSymLink === true )
+            $data['Command'] .= "; ln -s \"{$this->target}\" \"{$this->linkTarget}\"";
+        if ( $this->appendDoneText === true )
+            $data['Command'] .= "; echo \"Done converting {$this->title}\"";
+
+        return $data;
     }
 
     /**
@@ -192,7 +197,8 @@ class MKVMergeCommand
         {
             foreach( $matches[0] as $match )
             {
-                $return[] = new MKVMergeSourceFile( $match );
+                $item = new MKVMergeSourceFile( $match );
+                $return[] = $item->asArray();
             }
         }
 
@@ -205,12 +211,12 @@ class MKVMergeCommand
 
         foreach( $this->VideoFiles as $videoFile )
         {
-            $size += sprintf( '%u', filesize( $videoFile ) );
+            $size += sprintf( '%u', filesize( $videoFile['path'] ) );
         }
 
         foreach( $this->SubtitleFiles as $subtitleFile )
         {
-            $size += sprintf( '%u', filesize( $subtitleFile ) );
+            $size += sprintf( '%u', filesize( $subtitleFile['path'] ) );
         }
 
         return $size;
