@@ -40,5 +40,12 @@ class mmAjaxController extends ezcMvcController
 
         return $result;
     }
+
+    public function doSearchSubtitles()
+    {
+        $result = new ezcMvcResult;
+        $result->variables = array( 'test' => $this->VideoFile );
+        return $result;
+    }
 }
 ?>

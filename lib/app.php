@@ -62,7 +62,10 @@ EOF;
      */
     public static function doSubtitles()
     {
-        return mmMkvManagerSubtitles::fetchFilesWithoutSubtitles();
+        $result = array();
+        $result['VideoFiles'] = mmMkvManagerSubtitles::fetchFilesWithoutSubtitles();
+
+        return $result;
     }
 }
 ?>
