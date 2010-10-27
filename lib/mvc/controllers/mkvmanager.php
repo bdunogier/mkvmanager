@@ -44,5 +44,16 @@ class mmMkvManagerController extends ezcMvcController
             $result->variables += mmApp::doConvertWinCMD( $_POST['WinCmd'], $_POST['Target'] );
         return $result;
     }
+
+    /**
+    * Controller method for the subtitles route
+    * @return ezcMvcResult
+    */
+    public static function doSubtitles()
+    {
+        $result = new ezcMvcResult;
+        $result->variables += mmApp::doSubtitles();
+        return $result;
+    }
 }
 ?>

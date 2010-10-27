@@ -31,12 +31,13 @@ class mmMkvManagerDiskHelper
             // Use a user defined sort method
             $return[] = $disk;
         }
+
         usort( $return, function( $a, $b ) {
-            if ( $a->freespace == $b->freespace )
-                return 0;
-            else
-                return ( $a->freespace < $b->freespace ? -1 : 1 );
-        });
+    if ( $a->freespace == $b->freespace )
+        return 0;
+    else
+        return ( $a->freespace < $b->freespace ? -1 : 1 );
+    });
 
         return $return;
     }

@@ -123,23 +123,21 @@
                 // Or trigger hard drive selection message ?
                 $.post( "/ajax/mkvmerge", { WinCmd: WinCmd, Target: SelectedDrive },
                 function success( data ) {
-                    $("div#ConvertedCommand").html( data.Command );
-                    console.log( "Setting div:" );
-                    console.log( $("div#ConvertedCommand") );
-                    console.log( "Data:" );
-                    console.log( data.Command );
+                    console.log( data );
+
+                    $("code#ConvertedCommand").html( data.Command );
 
                     // Subtitles
                     html = '<h2>Subtitles:</h2><ul>';
-                    for ( file in data.SubtitleSourceFiles )
-                        html += '<li>' + data.SubtitleSourceFiles[file].basename + '</li>';
+                    for ( file in data.SubtitleFiles )
+                        html += '<li>' + data.SubtitleFiles[file].basename + '</li>';
                     html += '</ul>';
                     $("div#ConversionFilesSubtitles").html( html );
 
                     // Videos
                     html = '<h2>Videos:</h2><ul>';
-                    for ( file in data.VideoSourceFiles )
-                        html += '<li>' + data.VideoSourceFiles[file].basename + '</li>';
+                    for ( file in data.VideoFiles )
+                        html += '<li>' + data.VideoFiles[file].basename + '</li>';
                     html += '</ul>';
                     $("div#ConversionFilesVideos").html( html );
 
@@ -177,7 +175,7 @@ $formAction = str_replace( 'index.php/', '', $_SERVER['REQUEST_URI'] );
     </form>
 </frameset>
 
-<div id="ConvertedCommand"></div>
+<blockquote><code id="ConvertedCommand"></code></blockquote>
 <div id="ConversionFilesSubtitles" ></div>
 <div id="ConversionFilesVideos" ></div>
 

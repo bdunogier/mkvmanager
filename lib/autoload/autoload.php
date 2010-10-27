@@ -19,6 +19,9 @@ return array(
     'mmMvcResultStatusNotFound' => 'mvc/result_status/error_not_found.php',
     'mmMvcResultStatusError'    => 'mvc/result_status/error.php',
 
-    'mmMkvManagerDiskHelper' => 'mkvmanager/disk_helper.php'
+    'mmMkvManagerDiskHelper' => 'mkvmanager/disk_helper.php',
+    'mmMkvManagerSubtitles'  => 'mkvmanager/subtitles.php',
+
+    'UnsortedEpisodesFilter' => 'iterators/unsorted_episodes.php',
 
 )?>

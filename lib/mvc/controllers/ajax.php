@@ -16,7 +16,9 @@ class mmAjaxController extends ezcMvcController
             $targetDisk = $_POST['Target'];
 
         if ( isset( $winCmd, $targetDisk ) )
+        {
             $result->variables = mmApp::doConvertWinCMD( $winCmd, $targetDisk );
+        }
 
         return $result;
     }

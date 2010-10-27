@@ -33,7 +33,7 @@ EOF;
         $command->appendSymLink = true;
         $command->appendMessage = true;
 
-        return $command;
+        return $command->toStruct();
     }
 
     /**
@@ -53,6 +53,16 @@ EOF;
         }
 
         return $return;
+    }
+
+    /**
+     * Disblayes the files requiring subtitles
+     *
+     * @return array
+     */
+    public static function doSubtitles()
+    {
+        return mmMkvManagerSubtitles::fetchFilesWithoutSubtitles();
     }
 }
 ?>

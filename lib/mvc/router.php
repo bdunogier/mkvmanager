@@ -9,6 +9,7 @@ class mmMvcRouter extends ezcMvcRouter
             new ezcMvcRailsRoute( '/fatal',     'mmMkvManagerController', 'fatal' ),
             new ezcMvcRailsRoute( '/mkvmerge',  'mmMkvManagerController', 'mkvMerge' ),
             new ezcMvcRailsRoute( '/mkvmerge2', 'mmMkvManagerController', 'mkvMerge' ),
+            new ezcMvcRailsRoute( '/subtitles', 'mmMkvManagerController', 'subtitles' ),
 
             new ezcMvcRailsRoute( '/ajax/mkvmerge', 'mmAjaxController', 'mkvMerge' ),
             new ezcMvcRailsRoute( '/ajax/bestfit',  'mmAjaxController', 'bestFit' ),
