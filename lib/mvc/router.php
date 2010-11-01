@@ -11,10 +11,15 @@ class mmMvcRouter extends ezcMvcRouter
             new ezcMvcRailsRoute( '/mkvmerge2', 'mmMkvManagerController', 'mkvMerge' ),
             new ezcMvcRailsRoute( '/subtitles', 'mmMkvManagerController', 'subtitles' ),
 
-            new ezcMvcRailsRoute( '/ajax/mkvmerge',                   'mmAjaxController', 'mkvMerge' ),
-            new ezcMvcRailsRoute( '/ajax/bestfit',                    'mmAjaxController', 'bestFit' ),
-            new ezcMvcRailsRoute( '/ajax/searchsubtitles/:VideoFile', 'mmAjaxController', 'searchSubtitles' ),
-        );
+            new ezcMvcRailsRoute( '/ajax/mkvmerge',                            'mmAjaxController', 'mkvMerge' ),
+            new ezcMvcRailsRoute( '/ajax/bestfit',                             'mmAjaxController', 'bestFit' ),
+            new ezcMvcRailsRoute( '/ajax/searchsubtitles/:VideoFile',          'mmAjaxController', 'searchSubtitles' ),
+
+            new ezcMvcRailsRoute( '/ajax/downloadsubtitle/:VideoFile/:SubFileId/:SubType/:ZipFileId',
+                'mmAjaxController', 'downloadSubtitles' ),
+            new ezcMvcRailsRoute( '/ajax/downloadsubtitle/:VideoFile/:SubFileId/:SubType',
+                'mmAjaxController', 'downloadSubtitles' ),
+            );
     }
 }
 ?>

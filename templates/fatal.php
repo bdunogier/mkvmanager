@@ -20,6 +20,6 @@
 	<body>
 
 <h1>An exception has occured</h1>
-<pre><? print_r( $exception ) ?></pre>
+<pre><? print_r( $this->exception ) ?></pre>
 	</body>
 </html>

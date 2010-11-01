@@ -14,7 +14,7 @@ return array(
     'mmAjaxView'         => 'mvc/views/ajax.php',
 
     'mmMkvManagerController' => 'mvc/controllers/mkvmanager.php',
-    'mmAjaxController'       => 'mvc/controllers/ajax.php',
+    'mmAjaxController'       => 'mvc/controllers/ajax2.php',
 
     'mmMvcResultStatusNotFound' => 'mvc/result_status/error_not_found.php',
     'mmMvcResultStatusError'    => 'mvc/result_status/error.php',
@@ -23,5 +23,11 @@ return array(
     'mmMkvManagerSubtitles'  => 'mkvmanager/subtitles.php',
 
     'UnsortedEpisodesFilter' => 'iterators/unsorted_episodes.php',
+
+    'MkvManagerScraper'           => 'mkvmanager/interfaces/scraper.php',
+    'MkvManagerScraperBetaSeries' => 'mkvmanager/scraper_betaseries.php',
+
+    'MkvManagerScraperHTTPException' => 'mkvmanager/exceptions/scraper_http.php',
+    'MkvManagerScraperHTMLException' => 'mkvmanager/exceptions/scraper_html.php',
 
 )?>
