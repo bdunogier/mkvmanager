@@ -69,5 +69,12 @@ class mmMkvManagerController extends ezcMvcController
 
         return $result;
     }
+
+    public function doDiskSpace()
+    {
+        $result = new ezcMvcResult;
+        $result->variables['usage'] = mmApp::doDiskSpace();
+        return $result;
+    }
 }
 ?>

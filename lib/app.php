@@ -67,5 +67,33 @@ EOF;
 
         return $result;
     }
+
+    /**
+     * mmApp::doDiskSpace()
+     *
+     * @return
+     */
+    public static function doDiskSpace()
+    {
+        $return = array();
+        $disks = array();
+        foreach ( mmMkvManagerDiskHelper::diskList() as $disk )
+        {
+            $return[$disk->name] = array();
+            foreach( new DirectoryIterator( $disk->path ) as $subFolder )
+            {
+                if ( $subFolder->isDot() or !$subFolder->isDir() )
+                    continue;
+                $subFolderName = $subFolder->getFilename();
+                $subFolderPath = $subFolder->getPathname();
+                $return[$disk->name][$subFolderName] = 0;
+                foreach( new RecursiveIteratorIterator( new RecursiveDirectoryIterator( $subFolderPath ) ) as $directory )
+                {
+                    $return[$disk->name][$subFolderName] += $directory->getSize();
+                }
+            }
+        }
+        return $return;
+    }
 }
 ?>

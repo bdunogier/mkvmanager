@@ -22,22 +22,23 @@ class mmMkvManagerDiskHelper
             $diskName = $disk->getFilename();
             $selectedText = ( $diskName == $target ) ? ' selected="selected"' : '';
 
-            $disk = new stdClass();
-            $disk->name = $diskName;
-            $disk->freespace = $freespace = self::decodeSize( $rawFreeSpace );
-            $disk->selectedText = $selectedText;
+            $diskInfo = new stdClass();
+            $diskInfo->name = $diskName;
+            $diskInfo->path = $disk->getPathname();
+            $diskInfo->freespace = $freespace = self::decodeSize( $rawFreeSpace );
+            $diskInfo->selectedText = $selectedText;
 
             // @todo This is bullcrap: if two disks have the same freespace, only the last one will be returned
             // Use a user defined sort method
-            $return[] = $disk;
+            $return[] = $diskInfo;
         }
 
         usort( $return, function( $a, $b ) {
-    if ( $a->freespace == $b->freespace )
-        return 0;
-    else
-        return ( $a->freespace < $b->freespace ? -1 : 1 );
-    });
+        if ( $a->freespace == $b->freespace )
+            return 0;
+        else
+            return ( $a->freespace < $b->freespace ? -1 : 1 );
+        });
 
         return $return;
     }

@@ -43,6 +43,7 @@ class mmMvcConfiguration implements ezcMvcDispatcherConfiguration
                 case '/mkvmerge':
                 case '/fatal':
                 case '/subtitles':
+                case '/diskSpace':
                     $view->contentTemplate = "{$routeInfo->matchedRoute}.php";
                     break;
 
