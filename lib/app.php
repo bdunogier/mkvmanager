@@ -63,7 +63,7 @@ EOF;
     public static function doSubtitles()
     {
         $result = array();
-        $result['VideoFiles'] = mmMkvManagerSubtitles::fetchFilesWithoutSubtitles();
+        $result['VideoFiles'] = mmMkvManagerSubtitles::fetchFiles();
 
         return $result;
     }

@@ -4,6 +4,7 @@ return array(
     'MKVMergeCommandQueue'            => 'mkvmerge/commandqueue.php',
     'MKVMergeCommandImportWindowsGUI' => 'mkvmerge/commandimportwindowsgui.php',
     'MKVMergeSourceFile'              => 'mkvmerge/source_file.php',
+    'MKVMergeTVCommandGenerator'      => 'mkvmerge/command_generator.php',
 
     'mmApp' => 'app.php',
 

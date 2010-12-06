@@ -73,6 +73,8 @@ class mmAjaxController extends ezcMvcController
         // zip file: open as temporary
         if ( isset( $this->ZipFileId ) )
         {
+            $ZipFileId = str_replace( '#', '/', $this->ZipFileId );
+
             $temporaryPath = '/tmp/' . md5( $this->VideoFile );
 
             $fp = fopen( $temporaryPath, 'wb' );
@@ -89,7 +91,7 @@ class mmAjaxController extends ezcMvcController
             // open zip file and get requested subtitle
             $zip = new ZipArchive;
             $zip->open( $temporaryPath );
-            $inputStream = $zip->getStream( $this->ZipFileId );
+            $inputStream = $zip->getStream( $ZipFileId );
             $outputStream = fopen( $targetPath, 'wb' );
             stream_copy_to_stream( $inputStream, $outputStream );
             fclose( $inputStream );
@@ -115,6 +117,21 @@ class mmAjaxController extends ezcMvcController
             $result->variables = array( 'status' => 'ok', 'path' => $targetPath );
         }
 
+        return $result;
+    }
+
+    /**
+     * Generates the MKVMerge command for a video file
+     *
+     * @param string $VideoFile
+     * @return ezcMvcResult
+     */
+    public function doGenerateMergeCommand()
+    {
+        $result = new ezcMvcResult;
+        $command = MKVMergeTVCommandGenerator::generate( $this->VideoFile );
+
+        $result->variables['command'] = (string)$command->command;
         return $result;
     }
 }

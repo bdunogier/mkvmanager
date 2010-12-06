@@ -2,11 +2,6 @@
     <head>
     <title>Media manager</title>
     <style type="text/css">
-        body {
-            margin-left: 20%;
-            margin-right: 20%;
-        }
-
         p.error {
             color: red;
         }
@@ -18,16 +13,30 @@
         .hidden {
             display: none;
         }
+
+        /* li { display: inline; } li:not(:last-child):after { content: ", "; } */
+
+        /*demo page css*/
+        body{ font: 62.5% "Trebuchet MS", sans-serif; margin: 50px;}
+        .demoHeaders { margin-top: 2em; }
+        #dialog_link {padding: .4em 1em .4em 20px;text-decoration: none;position: relative;}
+        #dialog_link span.ui-icon {margin: 0 5px 0 0;position: absolute;left: .2em;top: 50%;margin-top: -8px;}
+        ul#icons {margin: 0; padding: 0;}
+        ul#icons li {margin: 2px; position: relative; padding: 4px 0; cursor: pointer; float: left;  list-style: none;}
+        ul#icons span.ui-icon {float: left; margin: 0 4px;}
     </style>
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+    <script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
+    <script type="text/javascript" src="js/jquery-ui-1.8.6.custom.min.js"></script>
+    <link type="text/css" href="css/trontastic/jquery-ui-1.8.6.custom.css" rel="stylesheet" />
     <script type="text/javascript">
     $(document).ready(function() {
 
+        $("#main").accordion({ header: "h3" });
+
         /**
-        * On video file click
         * Fetch subtitles list for episode and shows the confirmation message
         */
-        $(".VideoFile > a").click(function(e) {
+        $(".VideoFile > a.SearchSubtitles").click(function(e) {
             e.preventDefault();
 
             // set waiting text
@@ -43,9 +52,36 @@
                 for ( index in data.data )
                 {
                     item = data.data[index];
+                    // @todo Make this more javascript like, and use a method that automatically
+                    // adds a link to the image file
                     html += '<li><a class="SubtitleDownloadLink" href="' + item.link + '">' + item.name + '</a><div class="SubtitleStatusText hidden"></div></li>';
                 }
                 html += '</ul>';
+                targetDiv.append( html );
+                targetDiv.show();
+
+                statusDiv.html( 'Subtitles fetched successfully' );
+            }, "json" );
+
+            // @todo hide waiting text & set status text: Fetched X subtitles
+        });
+
+        /**
+        * Fetch subtitles list for episode and shows the confirmation message
+        */
+        $(".VideoFile > a.GenerateCommand").click(function(e) {
+            e.preventDefault();
+
+            // set waiting text
+            var statusDiv = $(this).siblings( 'div.VideoStatusText' );
+            statusDiv.html( 'Generating command...' );
+
+            var targetDiv = $(this).siblings('div.CommandPlaceHolder');
+
+            // @todo search for this episode subtitles
+            $.get( $(this).attr('href'), function success( data ) {
+                console.log( $(this) );
+                html = data.command;
                 targetDiv.append( html );
                 targetDiv.show();
 
@@ -76,19 +112,29 @@
     </script>
     </head>
     <body>
-    <h1>Subtitles management</h1>
 
-    <? foreach ( $this->VideoFiles as $file ): ?>
-        <!--
-        Upon a click on the VideoFile li item:
-        - show a 'searching' animated icon
-        - once fetch is complete (AJAX), list the matching files under the list item (within the li tag)
-        - each link will just download the file to the same folder as the episode
-        - the episode is turned green, and disappears after a while
-        -->
-        <li class="VideoFile"><a href="/ajax/searchsubtitles/<?=rawurlencode( $file )?>"><?=$file?></a><div class="VideoStatusText"></div>
-            <div class="SubtitlesPlaceHolder hidden"></div>
-        </li>
-    <?php endforeach ?>
+    <div id="main">
+        <div>
+            <h3><a href="#">Episodes without subtitles</a></h3>
+            <div>
+            <? foreach ( $this->VideoFiles as $file ): ?>
+                <li class="VideoFile"><?=$file?>
+                    <a class="SearchSubtitles" href="/ajax/searchsubtitles/<?=rawurlencode( $file )?>">Fetch subtitles list</a>
+                    &nbsp;|&nbsp;
+                    <a class="GenerateCommand" href="/ajax/generatemergecommand/<?=rawurlencode( $file )?>">Generate merge command</a>
+                    <div class="VideoStatusText"></div>
+                    <div class="SubtitlesPlaceHolder hidden"></div>
+                    <div class="CommandPlaceHolder hidden"></div>
+                </li>
+            <?php endforeach ?>
+
+            </div>
+        </div>
+        <div>
+            <h3><a href="#">Files with subtitles</a></h3>
+            <div>TODO</div>
+        </div>
+    </div>
+
     </body>
 </html>

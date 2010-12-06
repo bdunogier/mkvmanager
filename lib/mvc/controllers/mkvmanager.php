@@ -8,21 +8,6 @@ class mmMkvManagerController extends ezcMvcController
         return $res;
     }
 
-    /**
-     * Returns the lines list, with links to further details about each
-     * @return ezcMvcResult
-     */
-    public function doLignes()
-    {
-        $result = new ezcMvcResult;
-
-        $scrapperLignes = new tclScraperLignes();
-        $result->variables['lignes'] = $scrapperLignes->get();
-        $result->variables['tcl-url'] = $scrapperLigne->url;
-
-        return $result;
-    }
-
     public function doFatal()
     {
         $result = new ezcMvcResult;
@@ -53,6 +38,35 @@ class mmMkvManagerController extends ezcMvcController
     {
         $result = new ezcMvcResult;
         $result->variables += mmApp::doSubtitles();
+        return $result;
+    }
+
+    /**
+     * tvshow/image callback. Displays one of the show's image files, as found in
+     * the Sorted folder
+     *
+     *@param string $image Image filename (fanart.jpg, folder.jpg...)
+     *
+     * @todo Catch the result by a) logging b) throwing a 404
+     *@return ezcMvcResult
+     */
+    public function doTVShowImage()
+    {
+        $result = new ezcMvcResult;
+
+        if ( $this->image == '' )
+            throw new ezcBaseValueException( 'image', $this->image );
+
+        $file = "/home/download/downloads/complete/TV/Sorted/" . str_replace( ':', '/', $this->image );
+        // @todo Throw a dedicated extension
+        if ( !file_exists( $file ) )
+            throw new ezcBaseValueException( 'image', $file );
+
+        $finfo = new finfo( FILEINFO_MIME );
+        header( "Content-Type: " . $finfo->file( $file ) );
+        readfile( $file );
+        exit;
+
         return $result;
     }
 }

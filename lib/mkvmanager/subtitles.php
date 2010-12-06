@@ -46,6 +46,40 @@ class mmMkvManagerSubtitles
 
         return $list;
     }
+
+    public static function fetchFiles()
+    {
+        $list = array();
+
+        try {
+            try {
+                //foreach( new UnsortedEpisodesFilter( $iterator ) as $file )
+                foreach( glob( "/home/download/downloads/complete/TV/Sorted/*/*.{mkv,avi}", GLOB_BRACE ) as $file )
+                {
+                    if ( sprintf( "%u", filesize( $file ) ) < ( 25 * 1024 * 1024 ) )
+                    {
+                        continue;
+                    }
+                    $fileInfo = pathinfo( $file );
+                    $basePath = "{$fileInfo['dirname']}/{$fileInfo['filename']}";
+                    $subtitlesFiles = array( "$basePath.srt", "$basePath.ass" );
+                    $list[] = basename( $file );
+                }
+            }
+            catch( Exception $e )
+            {
+                echo "An exception has occured:\n";
+                print_r( $e );
+                return false;
+            }
+        }
+        catch( Exception $e )
+        {
+            echo "An exception has occured: " . $e->getMessage() . "<br />";
+        }
+
+        return $list;
+    }
 }
 
 ?>

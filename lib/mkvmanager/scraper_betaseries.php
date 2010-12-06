@@ -83,8 +83,16 @@ class MkvManagerScraperBetaSeries extends MkvManagerScraper
                     for( $i = 0; $i < $zip->numFiles; $i++ )
                     {
                         $name = (string)$zip->getNameIndex( $i );
+
+                        // filtering, EXTREMELY ROOT !
+                        if ( $name == 'null' or
+                           ( preg_match( '#((VO/)|(en\.srt)|(\.en\.ass)|(\.txt$))#i', $name ) ) )
+                        {
+                            continue;
+                        }
+
                         $subType = substr( $name, strrpos( $name, '.' ) + 1 );
-                        $ret[] = array( 'name' => $name, 'link' => "{$subtitleLink}/{$subType}/" . urlencode( $name ) );
+                        $ret[] = array( 'name' => $name, 'link' => "{$subtitleLink}/{$subType}/" . urlencode( str_replace( '/', '#', $name ) ) );
                     }
                 }
                 // remove temporary file

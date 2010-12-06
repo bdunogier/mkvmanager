@@ -8,9 +8,11 @@ class mmMvcRouter extends ezcMvcRouter
             new ezcMvcRailsRoute( '/test',      'mmMkvManagerController', 'test' ),
             new ezcMvcRailsRoute( '/fatal',     'mmMkvManagerController', 'fatal' ),
             new ezcMvcRailsRoute( '/mkvmerge',  'mmMkvManagerController', 'mkvMerge' ),
-            new ezcMvcRailsRoute( '/mkvmerge2', 'mmMkvManagerController', 'mkvMerge' ),
-            new ezcMvcRailsRoute( '/subtitles', 'mmMkvManagerController', 'subtitles' ),
+            new ezcMvcRailsRoute( '/mkvmerge2',           'mmMkvManagerController', 'mkvMerge' ),
+            new ezcMvcRailsRoute( '/subtitles',           'mmMkvManagerController', 'subtitles' ),
+            new ezcMvcRailsRoute( '/tvshow/image/:image', 'mmMkvManagerController', 'TVShowImage' ),
 
+            // AJAX callbacks
             new ezcMvcRailsRoute( '/ajax/mkvmerge',                            'mmAjaxController', 'mkvMerge' ),
             new ezcMvcRailsRoute( '/ajax/bestfit',                             'mmAjaxController', 'bestFit' ),
             new ezcMvcRailsRoute( '/ajax/searchsubtitles/:VideoFile',          'mmAjaxController', 'searchSubtitles' ),
@@ -19,7 +21,9 @@ class mmMvcRouter extends ezcMvcRouter
                 'mmAjaxController', 'downloadSubtitles' ),
             new ezcMvcRailsRoute( '/ajax/downloadsubtitle/:VideoFile/:SubFileId/:SubType',
                 'mmAjaxController', 'downloadSubtitles' ),
-            );
+            new ezcMvcRailsRoute( '/ajax/generatemergecommand/:VideoFile',
+                'mmAjaxController', 'generateMergeCommand' ),
+        );
     }
 }
 ?>
