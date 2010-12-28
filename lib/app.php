@@ -67,5 +67,37 @@ EOF;
 
         return $result;
     }
+
+    /**
+     * Lists movies that have no NFO files
+     *
+     * @return array
+     */
+    public static function doMoviesWithoutNFO()
+    {
+        // callback that strips down a movie file path to the movie's path
+        $callback = function( &$value, $key ) {
+            $value = substr( $value, 0, strrpos( $value, '/', 5 ) );
+        };
+
+        // list of movie files, extensions stripped
+        $moviesFiles = glob( '/media/aggregateshares/Movies/*/*.{mkv,avi}', GLOB_BRACE );
+        array_walk( $moviesFiles, $callback );
+
+        // list of NFO files, extensions stripped
+        $moviesNFOs  = glob( '/media/aggregateshares/Movies/*/*.nfo' );
+        array_walk( $moviesNFOs, $callback );
+
+        // the diff of both arrays gives us movies without NFOS (and NFOs without movies, but that's unlikely)
+        $movies = array_diff( $moviesFiles, $moviesNFOs );
+
+        // Transform the list to titles only
+        array_walk( $movies, function( &$value, $key ){
+            $parts = explode( '/', $value );
+            $value = $parts[4];
+        });
+
+        return compact( 'movies' );
+    }
 }
 ?>

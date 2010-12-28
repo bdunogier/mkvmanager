@@ -3,9 +3,7 @@ class mmMkvManagerController extends ezcMvcController
 {
     public function doDefault()
     {
-        $res = new ezcMvcResult;
-        $res->variables['test'] = 'test';
-        return $res;
+        return new ezcMvcResult;
     }
 
     public function doFatal()
@@ -67,6 +65,16 @@ class mmMkvManagerController extends ezcMvcController
         readfile( $file );
         exit;
 
+        return $result;
+    }
+
+    /**
+     * Lists movies with no NFO files
+     */
+    public function doMoviesWithoutNFO()
+    {
+        $result = new ezcMvcResult();
+        $result->variables += mmApp::doMoviesWithoutNFO();
         return $result;
     }
 }

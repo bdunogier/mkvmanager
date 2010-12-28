@@ -1,27 +1,3 @@
-<?php
-?>
-<html>
-<head>
-        <title>MKV Merger</title>
-        <style type="text/css">
-            body {
-                margin-left: 20%;
-                margin-right: 20%;
-            }
-
-            p.error {
-                color: red;
-            }
-
-            span.filename {
-                font-family: Andale Mono, monospace;
-                font-size: 80%;
-            }
-        </style>
-</head>
-<body>
-<h1>MKV Merger</h1>
-
 <frameset>
     <legend>Convert windows CMD</legend>
     <form method="POST" action="<?php echo str_replace('index.php/', '', $_SERVER['REQUEST_URI'] ); ?>">
@@ -67,6 +43,3 @@
     <?php endif; ?>
 
 </frameset>
-
-</body>
-

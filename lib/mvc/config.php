@@ -39,22 +39,16 @@ class mmMvcConfiguration implements ezcMvcDispatcherConfiguration
             $view = new mmHtmlView( $request, $result );;
             switch ( $routeInfo->matchedRoute )
             {
-                case '/mkvmerge2':
-                case '/mkvmerge':
-                case '/fatal':
-                case '/subtitles':
-                case '/movies-without-nfos':
+                default:
                     if ( file_exists("../templates/{$routeInfo->matchedRoute}.php" ) )
                     {
                         $view->contentTemplate = "{$routeInfo->matchedRoute}.php";
-                        break;
                     }
-
-                case '/':
-                default:
-                    $view->contentTemplate = 'default.php';
-                    $result->variables['__request'] = $request;
-                break;
+                    else
+                    {
+                        $view->contentTemplate = 'default.php';
+                        $result->variables['__request'] = $request;
+                    }
             }
         }
 
