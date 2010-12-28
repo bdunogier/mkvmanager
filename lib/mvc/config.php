@@ -43,12 +43,17 @@ class mmMvcConfiguration implements ezcMvcDispatcherConfiguration
                 case '/mkvmerge':
                 case '/fatal':
                 case '/subtitles':
-                    $view->contentTemplate = "{$routeInfo->matchedRoute}.php";
-                    break;
+                case '/movies-without-nfos':
+                    if ( file_exists("../templates/{$routeInfo->matchedRoute}.php" ) )
+                    {
+                        $view->contentTemplate = "{$routeInfo->matchedRoute}.php";
+                        break;
+                    }
 
                 case '/':
                 default:
                     $view->contentTemplate = 'default.php';
+                    $result->variables['__request'] = $request;
                 break;
             }
         }
