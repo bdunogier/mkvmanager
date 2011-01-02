@@ -1,6 +1,6 @@
 <?php
-$root = dirname( __FILE__ );
-ini_set( 'include_path', "/usr/share/php/ezc:$root" );
+define( 'ROOT', dirname( __FILE__ ) );
+ini_set( 'include_path', "/usr/share/php/ezc:" . ROOT );
 
 require 'Base/ezc_bootstrap.php';
 
@@ -9,7 +9,36 @@ ezcBase::setOptions( $options );
 
 // Add the class repository containing our application's classes. We store
 // those in the /lib directory and the classes have the "tcl" prefix.
-ezcBase::addClassRepository( "$root/lib", "$root/lib/autoload", 'mm' );
+ezcBase::addClassRepository( ROOT . "/lib", ROOT . "/lib/autoload", 'mm' );
+
+class mmLazyDatabaseConfiguration implements ezcBaseConfigurationInitializer
+{
+    public static function configureObject( $instance )
+    {
+        return ezcDbFactory::create( 'sqlite://' . __DIR__ . '/tmp/mkvmanager.db' );
+    }
+}
+
+ezcBaseInit::setCallback(
+    'ezcInitDatabaseInstance',
+    'mmLazyDatabaseConfiguration'
+);
+
+class mmLazyPersistentSessionConfiguration implements ezcBaseConfigurationInitializer
+{
+    public static function configureObject( $instance )
+    {
+        return new ezcPersistentSession(
+            ezcDbInstance::get(),
+            new ezcPersistentCodeManager( ROOT . "/lib/po/" )
+        );
+    }
+}
+
+ezcBaseInit::setCallback(
+    'ezcInitPersistentSessionInstance',
+    'mmLazyPersistentSessionConfiguration'
+);
 
 /*class customLazyCacheConfiguration implements ezcBaseConfigurationInitializer
 {
