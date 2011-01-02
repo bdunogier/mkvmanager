@@ -39,6 +39,7 @@ class MKVMergeCommand
             // parse the command to get the target / sources
             if ( preg_match( '#/media/storage/[^/]+/Movies/([^/]+)(/\1)?\.(avi|mkv)#', $this->command, $matches ) )
             {
+                $this->targetPath = $matches[0];
                 $this->title = $matches[1];
                 $this->target = dirname( $matches[0] );
 
@@ -207,16 +208,16 @@ class MKVMergeCommand
 
     protected function _targetSize()
     {
-        $size = 0;
+        $size = (double)0;
 
         foreach( $this->VideoFiles as $videoFile )
         {
-            $size += sprintf( '%u', filesize( $videoFile['path'] ) );
+            $size += $videoFile['size'];
         }
 
         foreach( $this->SubtitleFiles as $subtitleFile )
         {
-            $size += sprintf( '%u', filesize( $subtitleFile['path'] ) );
+            $size += $subtitleFile['path'];
         }
 
         return $size;
@@ -274,5 +275,7 @@ class MKVMergeCommand
     public $appendSymLink = false;
 
     public $appendDoneText = false;
+
+    public $targetPath = '';
 }
 ?>

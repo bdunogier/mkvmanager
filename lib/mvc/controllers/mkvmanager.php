@@ -43,10 +43,10 @@ class mmMkvManagerController extends ezcMvcController
      * tvshow/image callback. Displays one of the show's image files, as found in
      * the Sorted folder
      *
-     *@param string $image Image filename (fanart.jpg, folder.jpg...)
+     * @param string $image Image filename (fanart.jpg, folder.jpg...)
      *
      * @todo Catch the result by a) logging b) throwing a 404
-     *@return ezcMvcResult
+     * @return ezcMvcResult
      */
     public function doTVShowImage()
     {

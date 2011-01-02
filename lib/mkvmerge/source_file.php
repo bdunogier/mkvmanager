@@ -13,5 +13,25 @@ class MKVMergeSourceFile extends splFileInfo
             'size'     => $this->getSize(),
         );
     }
+
+    /**
+     * Override for the getSize function to support big (>4GB) files
+     */
+    public function getSize()
+    {
+        $out = $return_value = false;
+
+        $ret = exec( 'du -bs "' . $this->getPathname() . '"', $out, $return_value );
+
+        if ( $return_value == 0 )
+        {
+            list( $size, $file ) = explode( "\t", $ret );
+            return (double)$size;
+        }
+        else
+        {
+            throw new Exception( "Error getting file size: " . print_r( $out, true ) );
+        }
+    }
 }
 ?>

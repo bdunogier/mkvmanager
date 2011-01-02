@@ -6,6 +6,8 @@ return array(
     'MKVMergeSourceFile'              => 'mkvmerge/source_file.php',
     'MKVMergeTVCommandGenerator'      => 'mkvmerge/command_generator.php',
 
+    'mmMergeOperation' => 'mkvmerge/merge_operation.php',
+
     'mmApp' => 'app.php',
 
     'mmMvcConfiguration' => 'mvc/config.php',
@@ -15,7 +17,7 @@ return array(
     'mmAjaxView'         => 'mvc/views/ajax.php',
 
     'mmMkvManagerController' => 'mvc/controllers/mkvmanager.php',
-    'mmAjaxController'       => 'mvc/controllers/ajax2.php',
+    'mmAjaxController'       => 'mvc/controllers/ajax.php',
 
     'mmMvcResultStatusNotFound' => 'mvc/result_status/error_not_found.php',
     'mmMvcResultStatusError'    => 'mvc/result_status/error.php',

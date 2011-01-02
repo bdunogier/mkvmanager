@@ -69,6 +69,28 @@ EOF;
     }
 
     /**
+     * Generates a merge operation status report
+     *
+     * @param string $mergeId The merge operation's id
+     * @return mmMergeStatusReport
+     */
+    public static function doMergeStatus( $mergeHash )
+    {
+        $operation = mmMergeOperation::fetchByHash( $mergeHash );
+        if ( !($operation instanceof mmMergeOperation ) )
+        {
+            $return['status'] = 'ko';
+            $return['message'] = 'not_found';
+        }
+        else
+        {
+            $return['status'] = 'ok';
+            $return['progress'] = $operation->progress();
+        }
+        return $return;
+    }
+
+    /**
      * Lists movies that have no NFO files
      *
      * @return array
