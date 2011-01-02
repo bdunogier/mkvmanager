@@ -1,9 +1,4 @@
 <style type="text/css">
-    body {
-        margin-left: 20%;
-        margin-right: 20%;
-    }
-
     p.error {
         color: red;
     }
@@ -20,7 +15,6 @@
     div.drivesList {
         font-family: Andale Mono, monospace;
         text-align: center;
-        width: 100%;
     }
 
     div.drive {
@@ -120,9 +114,8 @@ $(document).ready(function() {
         // Or trigger hard drive selection message ?
         $.post( "/ajax/mkvmerge", { WinCmd: WinCmd, Target: SelectedDrive },
         function success( data ) {
-            console.log( data );
-
             $("code#ConvertedCommand").html( data.Command );
+            $("#FrmHiddenMergeCommand").val( data.Command );
 
             // Subtitles
             html = '<h2>Subtitles:</h2><ul>';
@@ -148,11 +141,11 @@ $(document).ready(function() {
 
 <?php
 $winCmd = isset( $_POST['WinCmd'] ) ? htmlentities( $_POST['WinCmd'] ) : '';
-$formAction = str_replace( 'index.php/', '', $_SERVER['REQUEST_URI'] );
 ?>
 <frameset>
     <legend>Convert windows CMD</legend>
-    <form method="POST" action="<?=$formAction?>">
+    <form id="FrmQueueCommand" method="POST" action="/ajax/queue-command">
+        <input type="hidden" name="MergeCommand" id="FrmHiddenMergeCommand" />
         <textarea name="WinCmd" id="FormWinCmd" style="width:100%; height: 200px;"><?=$winCmd?></textarea>
         <div class="drivesList">
         <?php foreach( $this->targetDisks as $disk ) : ?>

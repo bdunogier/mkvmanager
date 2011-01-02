@@ -2,7 +2,6 @@
     /* li { display: inline; } li:not(:last-child):after { content: ", "; } */
 
     /*demo page css*/
-    body{ font: 62.5% "Trebuchet MS", sans-serif; margin: 50px;}
     .demoHeaders { margin-top: 2em; }
     #dialog_link {padding: .4em 1em .4em 20px;text-decoration: none;position: relative;}
     #dialog_link span.ui-icon {margin: 0 5px 0 0;position: absolute;left: .2em;top: 50%;margin-top: -8px;}
