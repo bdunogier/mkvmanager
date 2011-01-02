@@ -48,6 +48,10 @@ $(document).ready(function() {
     var SelectedDrive = false;
     var WinCmd = false;
 
+    // Add converted merge to the queue
+    $("#BtnQueueOperation).click(function(){
+    });
+
     // On command change
     $("#FormWinCmd").blur(function() {
         value = $("#FormWinCmd")[0].value;
@@ -142,28 +146,22 @@ $(document).ready(function() {
 <?php
 $winCmd = isset( $_POST['WinCmd'] ) ? htmlentities( $_POST['WinCmd'] ) : '';
 ?>
-<frameset>
-    <legend>Convert windows CMD</legend>
-    <form id="FrmQueueCommand" method="POST" action="/ajax/queue-command">
-        <input type="hidden" name="MergeCommand" id="FrmHiddenMergeCommand" />
-        <textarea name="WinCmd" id="FormWinCmd" style="width:100%; height: 200px;"><?=$winCmd?></textarea>
-        <div class="drivesList">
-        <?php foreach( $this->targetDisks as $disk ) : ?>
-            <div class="drive">
-                <div class="name"><?=$disk->name?></div>
-                <img src="/images/icons/harddrive.png" width="64" heigh="64" title="Disk: <?=$disk->name?>" />
-                <div class="freespace"><?=$disk->freespace?></div>
-                <input type="hidden" class="DriveName" value="<?=$disk->name?>" />
-            </div>
-        <?php endforeach ?>
-        </div>
-        <div style="clear: both"></div>
-        <input id="ConvertTarget" type="hidden" name="Target" value="-1" />
-        <p><input type="checkbox" name="QueueCommand" value="1" id="chkQueueCommand" /><label for="chkQueueCommand">Add to queue</label></p>
-        <p><input type="submit" name="ConvertWinCmd" /></p>
-    </form>
-</frameset>
+
+<textarea name="WinCmd" id="FormWinCmd" style="width:100%; height: 200px;"><?=$winCmd?></textarea>
+<div class="drivesList">
+<?php foreach( $this->targetDisks as $disk ) : ?>
+    <div class="drive">
+        <div class="name"><?=$disk->name?></div>
+        <img src="/images/icons/harddrive.png" width="64" heigh="64" title="Disk: <?=$disk->name?>" />
+        <div class="freespace"><?=$disk->freespace?></div>
+        <input type="hidden" class="DriveName" value="<?=$disk->name?>" />
+    </div>
+<?php endforeach ?>
+</div>
+<div style="clear: both"></div>
+<input id="ConvertTarget" type="hidden" name="Target" value="-1" />
 
 <blockquote><code id="ConvertedCommand"></code></blockquote>
 <div id="ConversionFilesSubtitles" ></div>
 <div id="ConversionFilesVideos" ></div>
+<div id="ActionBar"><input type="button" id="BtnQueueOperation" value="Queue merge operation" /></div>

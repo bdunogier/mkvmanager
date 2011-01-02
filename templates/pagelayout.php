@@ -14,9 +14,53 @@
         height: 100%;
     }
 
-    #content {
-        float: left;
+    /* BEGIN centered menu */
+    #centeredmenu {
+       float:left;
+       width:100%;
+       background:#fff;
+       border-bottom:4px solid #000;
+       overflow:hidden;
+       position:relative;
     }
+    #centeredmenu ul {
+       clear:left;
+       float:left;
+       list-style:none;
+       margin:0;
+       padding:0;
+       position:relative;
+       left:50%;
+       text-align:center;
+    }
+    #centeredmenu ul li {
+       display:block;
+       float:left;
+       list-style:none;
+       margin:0;
+       padding:0;
+       position:relative;
+       right:50%;
+    }
+    #centeredmenu ul li a {
+       display:block;
+       margin:0 0 0 1px;
+       padding:3px 10px;
+       background:#ddd;
+       color:#000;
+       text-decoration:none;
+       line-height:1.3em;
+    }
+    #centeredmenu ul li a:hover {
+       background:#369;
+       color:#fff;
+    }
+    #centeredmenu ul li a.active,
+    #centeredmenu ul li a.active:hover {
+       color:#fff;
+       background:#000;
+       font-weight:bold;
+    }    /* END centered menu */
 
     p.error {
         color: red;
@@ -28,67 +72,21 @@
     }
 
     #content {
-        margin-left: 250px;
-        padding: 10px 10px;
-    }
-
-    /* menu */
-    #menu {
-        width: 200px;
-        border-style: solid solid none solid;
-        border-color: #94AA74;
-        border-size: 1px;
-        border-width: 1px;
-        margin: 10px;
-        float:left;
-        overflow: auto;
-    }
-    #menu ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    }
-    #menu li a {
-    height: 32px;
-    voice-family: "\"}\"";
-    voice-family: inherit;
-    height: 24px;
-    text-decoration: none;
-    }
-
-    /* N'oubliez pas de renseigner l'adresse des images que vous avez téléchargé */
-    #menu li a:link, #menu li a:visited {
-    color: #5E7830;
-    display: block;
-    background: url(images/menu1.gif);
-    padding: 8px 0 0 10px;
-    }
-
-    #menu li a:hover {
-    color: #26370A;
-    background: url(images/menu1.gif) 0 -32px;
-    padding: 8px 0 0 10px;
-    }
-
-    #menu li a:active {
-    color: #26370A;
-    background: url(images/menu1.gif) 0 -64px;
-    padding: 8px 0 0 10px;
+        padding: 40px;
     }
     </style>
     </head>
     <body>
-    <div id="container">
-        <div id="menu">
-          <ul>
-            <li><a href="/mkvmerge2">MKV Merger</a></li>
-            <li><a href="/subtitles">Subtitles</a></li>
-            <li><a href="/movies-without-nfo">Movies without NFO</a></li>
-          </ul>
-        </div>
-        <div id="content">
-        <?=$this->content?>
-        </div>
+    <div id="centeredmenu">
+      <ul>
+        <li><a href="/mkvmerge">MKV Merger</a></li>
+        <li><a href="/subtitles">Subtitles</a></li>
+        <li><a href="/movies-without-nfo">Movies without NFO</a></li>
+      </ul>
+    </div>
+
+    <div id="content">
+    <?=$this->content?>
     </div>
     </body>
 </html>
