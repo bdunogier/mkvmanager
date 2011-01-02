@@ -1,5 +1,5 @@
 <?php
-include 'autoload.php';
+include 'config.php';
 
 // check if media target folder is writeable
 $storageDir = '/media/aggregateshares/';
@@ -10,32 +10,27 @@ if ( !is_writeable( $storageDir ) )
 }
 
 $sudo = "sudo -u media";
-while( $command = MKVMergeCommandQueue::getNextCommand() )
+while( $operation = mmMergeOperation::next() )
 {
-	$result = '';
+    $result = '';
 	$return = '';
 
-	// @todo Extract target, sources etc using the same code than mkvmerge.php
-	echo "[" . date('H:i:s') . "] Starting conversion of {$command->conversionType} '{$command->title}'\n";
-	exec( "$sudo {$command->command}", $result, $return );
-	echo "$sudo {$command->command}\n";
+    // mark operation as running
+    $operation->status = mmMergeOperation::STATUS_RUNNING;
+    $operation->startTime = time();
+    ezcPersistentSessionInstance::get()->update( $operation );
+
+    $commandObject = $operation->commandObject;
+    echo "[" . date('H:i:s') . "] Starting conversion of {$commandObject->conversionType} '{$commandObject->title}'\n";
+    exec( $operation->command, $result, $return );
 	echo "[" . date('H:i:s') . "] Conversion finished\n";
 
-	// create the link if conversion was successful
-	if ( $result == 0 )
-	{
-		symlink( $command->target, $command->linkTarget );
-		chown( $command->linkTarget, 'media' );
-	}
 	$status = ( $result !== 0 ) ? -1 : 0;
 
-	$q = $db->createUpdateQuery();
-	$q->update( 'commands' )
-	  ->set( 'status', $q->bindValue( $status ) )
-	  ->set( 'message', $q->bindValue( $return ) )
-	  ->where( $q->expr->eq( 'time', $q->bindValue( $command->time ) ) );
-	$sth = $q->prepare();
-	$sth->execute();
+	$operation->status = ( $status == 0 ) ? mmMergeOperation::STATUS_DONE : mmMergeOperation::STATUS_ERROR;
+    $operation->message = $result;
+    $operation->endTime = time();
+    ezcPersistentSessionInstance::get()->update( $operation );
 
 	unset( $result, $return );
 }
