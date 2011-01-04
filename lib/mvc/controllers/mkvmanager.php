@@ -22,6 +22,7 @@ class mmMkvManagerController extends ezcMvcController
     public function doMkvMerge()
     {
         $result = new ezcMvcResult;
+        $result->variables['page_title'] = "MKV Merge command manager :: MKV Manager";
         $result->variables['targetDisks'] = mmMkvManagerDiskHelper::diskList();
         if ( isset( $_POST['WinCmd'] ) )
             $result->variables += mmApp::doConvertWinCMD( $_POST['WinCmd'], $_POST['Target'] );
@@ -35,6 +36,7 @@ class mmMkvManagerController extends ezcMvcController
     public static function doSubtitles()
     {
         $result = new ezcMvcResult;
+        $result->variables['page_title'] = "Subtitles manager :: MKV Manager";
         $result->variables += mmApp::doSubtitles();
         return $result;
     }
@@ -74,6 +76,7 @@ class mmMkvManagerController extends ezcMvcController
     public function doMoviesWithoutNFO()
     {
         $result = new ezcMvcResult();
+        $result->variables['page_title'] = "Missing NFOs tracker     :: MKV Manager";
         $result->variables += mmApp::doMoviesWithoutNFO();
         return $result;
     }

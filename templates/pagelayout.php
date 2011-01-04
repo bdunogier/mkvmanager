@@ -1,6 +1,6 @@
 <html>
     <head>
-    <title>[[title]]</title>
+    <title><?=$this->page_title?></title>
     <style type="text/css">
     html {
         padding: 0;
