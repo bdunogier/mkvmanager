@@ -161,6 +161,7 @@ class mmAjaxController extends ezcMvcController
         } catch( Exception $e ) {
             $result->variables['result'] = 'ko';
             $result->variables['message'] = $e->getMessage();
+            $result->variables['d'] = $_POST['MergeCommand'];
             return $result;
         }
 

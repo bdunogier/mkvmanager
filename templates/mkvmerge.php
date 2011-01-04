@@ -47,9 +47,17 @@ $(document).ready(function() {
 
     var SelectedDrive = false;
     var WinCmd = false;
+    var ConvertedCmd = false;
 
     // Add converted merge to the queue
-    $("#BtnQueueOperation).click(function(){
+    $("#BtnQueueOperation").click( function() {
+        console.log( "click handler" );
+        $.post( "/ajax/queue-command", { MergeCommand: ConvertedCmd },
+        function success( data ) {
+            console.log( data );
+            console.log( "/ajax/queue-command :: response :: ", data );
+            // $("#BtnQueueOperation").val( "Done. Status: " . data.status );
+        }, "json" );
     });
 
     // On command change
@@ -82,7 +90,6 @@ $(document).ready(function() {
         // Or trigger hard drive selection message ?
         $.post( "/ajax/bestfit", { WinCmd: WinCmd },
         function success( data ) {
-            console.log( data );
             disk = data.RecommendedDisk;
             if ( disk != "none" )
             {
@@ -118,8 +125,9 @@ $(document).ready(function() {
         // Or trigger hard drive selection message ?
         $.post( "/ajax/mkvmerge", { WinCmd: WinCmd, Target: SelectedDrive },
         function success( data ) {
-            $("code#ConvertedCommand").html( data.Command );
-            $("#FrmHiddenMergeCommand").val( data.Command );
+            ConvertedCmd = data.Command;
+            $("code#ConvertedCommand").html( ConvertedCmd );
+            $("#FrmHiddenMergeCommand").val( ConvertedCmd );
 
             // Subtitles
             html = '<h2>Subtitles:</h2><ul>';
@@ -162,6 +170,6 @@ $winCmd = isset( $_POST['WinCmd'] ) ? htmlentities( $_POST['WinCmd'] ) : '';
 <input id="ConvertTarget" type="hidden" name="Target" value="-1" />
 
 <blockquote><code id="ConvertedCommand"></code></blockquote>
+<div id="ActionBar"><input type="button" id="BtnQueueOperation" value="Queue merge operation" /></div>
 <div id="ConversionFilesSubtitles" ></div>
 <div id="ConversionFilesVideos" ></div>
-<div id="ActionBar"><input type="button" id="BtnQueueOperation" value="Queue merge operation" /></div>
