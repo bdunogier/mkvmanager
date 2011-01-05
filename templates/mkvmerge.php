@@ -56,7 +56,7 @@ $(document).ready(function() {
         function success( data ) {
             console.log( data );
             console.log( "/ajax/queue-command :: response :: ", data );
-            // $("#BtnQueueOperation").val( "Done. Status: " . data.status );
+            $("#BtnQueueOperation").val( "Done. Status: " + data.status );
         }, "json" );
     });
 
