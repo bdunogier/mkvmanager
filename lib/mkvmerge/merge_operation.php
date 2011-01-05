@@ -113,6 +113,7 @@ class mmMergeOperation
         $mergeOperation->pid = 0;
         $mergeOperation->status = mmMergeOperation::STATUS_PENDING;
         $mergeOperation->command = $command;
+        echo "Targetpath: {$commandObject->targetPath}\n";
         $mergeOperation->targetFile = $commandObject->targetPath;
         $mergeOperation->targetFileSize = $commandObject->TargetSize;
 
@@ -133,6 +134,7 @@ class mmMergeOperation
      */
     public function progress()
     {
+        var_dump( $this->targetFile );
         $currentTargetSize = mmMkvManagerDiskHelper::bigFileSize( $this->targetFile );
         return round( $currentTargetSize / $this->targetFileSize * 100 );
     }

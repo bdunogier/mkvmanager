@@ -168,6 +168,7 @@ class mmAjaxController extends ezcMvcController
         $result->variables['status'] = 'ok';
         $result->variables['operation_hash'] = $mergeOperation->hash;
         $result->variables['target_size'] = $mergeOperation->targetFileSize;
+        $result->variables['target_file'] = $mergeOperation->targetFile;
         $result->variables['command'] = $command;
 
         return $result;
