@@ -64,7 +64,7 @@ class MKVMergeCommand
             // TV Show subfolder
             if ( preg_match( '#/media/storage/[^/]+/TV Shows/([^/]+)/([^/]+)\.(avi|mkv)#', $this->command, $matches ) )
             {
-                $this->target = $matches[0];
+                $this->target = $this->targetPath = $matches[0];
 
                 $this->showName = $matches[1];
                 $this->episodeName = $matches[2];
