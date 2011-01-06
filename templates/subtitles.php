@@ -31,20 +31,34 @@ $(document).ready(function() {
 
         // @todo search for this episode subtitles
         $.get( $(this).attr('href'), function success( data ) {
-            console.log( $(this) );
-            html = '<ul>';
-            for ( index in data.data )
+            if ( data.status == 'ok' )
             {
-                item = data.data[index];
-                // @todo Make this more javascript like, and use a method that automatically
-                // adds a link to the image file
-                html += '<li><a class="SubtitleDownloadLink" href="' + item.link + '">' + item.name + '</a><div class="SubtitleStatusText hidden"></div></li>';
-            }
-            html += '</ul>';
-            targetDiv.append( html );
-            targetDiv.show();
+                html = '<ul>';
+                for ( index in data.subtitles )
+                {
+                    item = data.data[index];
+                    // @todo Make this more javascript like, and use a method that automatically
+                    // adds a link to the image file
+                    html += '<li><a class="SubtitleDownloadLink" href="' + item.link + '">' + item.name + '</a><div class="SubtitleStatusText hidden"></div></li>';
+                }
+                html += '</ul>';
+                targetDiv.append( html );
+                targetDiv.show();
 
-            statusDiv.html( 'Subtitles fetched successfully' );
+                statusDiv.html( 'Subtitles fetched successfully' );
+            }
+            else if ( data.status == 'ko' )
+            {
+                console.log('ko');
+                if ( data.message == 'nosubtitles' )
+                {
+                    statusDiv.html( 'No subtitles available for this episode' );
+                }
+                else
+                {
+                    statusDiv.html( 'Unknown error: ' + data.message );
+                }
+            }
         }, "json" );
 
         // @todo hide waiting text & set status text: Fetched X subtitles
@@ -64,7 +78,6 @@ $(document).ready(function() {
 
         // @todo search for this episode subtitles
         $.get( $(this).attr('href'), function success( data ) {
-            console.log( $(this) );
             html = data.command;
             targetDiv.append( html );
             targetDiv.show();

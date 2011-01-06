@@ -47,8 +47,16 @@ class mmAjaxController extends ezcMvcController
 
         // brief test
         $scraper = new MkvManagerScraperBetaSeries( $this->VideoFile );
-        $data = $scraper->get();
-        $result->variables['data'] = $data;
+        $subtitles = $scraper->get();
+        if ( $subtitles === false )
+        {
+            $variables = array( 'status' => 'ko', 'message' => 'nosubtitles' );
+        }
+        else
+        {
+            $variables = array( 'status' => 'ok', 'subtitles' => $subtitles );
+        }
+        $result->variables = $variables;
         return $result;
     }
 

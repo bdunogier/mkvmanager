@@ -48,6 +48,13 @@ class MkvManagerScraperBetaSeries extends MkvManagerScraper
 
         $ret = array();
         list( $xp ) = $doc->xpath( '//div[@id="'.$episodeId.'"]' );
+
+        // no subtitles for this file
+        if ( count( $xp->div->ul[0]->children() ) === 0 )
+        {
+            return false;
+        }
+
         foreach( $xp->div->ul->li as $li )
         {
             $item = $li[0]->children();
