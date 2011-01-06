@@ -36,7 +36,7 @@ $(document).ready(function() {
                 html = '<ul>';
                 for ( index in data.subtitles )
                 {
-                    item = data.data[index];
+                    item = data.subtitles[index];
                     // @todo Make this more javascript like, and use a method that automatically
                     // adds a link to the image file
                     html += '<li><a class="SubtitleDownloadLink" href="' + item.link + '">' + item.name + '</a><div class="SubtitleStatusText hidden"></div></li>';
