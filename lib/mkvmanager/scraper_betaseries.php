@@ -50,9 +50,7 @@ class MkvManagerScraperBetaSeries extends MkvManagerScraper
 
         // no subtitles for this file
         if ( count( $xp->div->ul[0]->children() ) === 0 )
-        {
             return false;
-        }
 
         foreach( $xp->div->ul->li as $li )
         {
@@ -111,6 +109,10 @@ class MkvManagerScraperBetaSeries extends MkvManagerScraper
                 $ret[] = array( 'link' => "{$subtitleLink}/{$subType}", 'name' => $subtitleName );
             }
         }
+
+        // no subtitles for this file
+        if ( count( $xp->div->ul[0]->children() ) === 0 )
+            return false;
 
         return $ret;
     }
