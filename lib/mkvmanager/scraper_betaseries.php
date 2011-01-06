@@ -44,7 +44,6 @@ class MkvManagerScraperBetaSeries extends MkvManagerScraper
         }
 
         $episodeId = sprintf( 'planning_srtS%02dE%02d', $this->searchSeason, $this->searchEpisode );
-        //$episodeId = sprintf( '%sS%02de%02d', $this->searchShowCode, $this->searchSeason, $this->searchEpisode );
 
         $ret = array();
         list( $xp ) = $doc->xpath( '//div[@id="'.$episodeId.'"]' );

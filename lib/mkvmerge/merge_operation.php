@@ -113,7 +113,6 @@ class mmMergeOperation
         $mergeOperation->pid = 0;
         $mergeOperation->status = mmMergeOperation::STATUS_PENDING;
         $mergeOperation->command = $command;
-        echo "Targetpath: {$commandObject->targetPath}\n";
         $mergeOperation->targetFile = $commandObject->targetPath;
         $mergeOperation->targetFileSize = $commandObject->TargetSize;
 

@@ -76,8 +76,17 @@ class mmMvcConfiguration implements ezcMvcDispatcherConfiguration
         Exception $response )
     {
         $req = clone $request;
-        $req->uri = '/fatal';
-        $req->variables['exception'] = $response;
+
+        if ( substr( $request->uri, 0, 5 ) == '/ajax' )
+        {
+            $req->variables = array(
+                'status' => 'ko',
+                'message' => $response->getMessage(),
+                'exception' => print_r( $response, true ) );
+            $req->uri = '/ajax/fatal';
+        }
+        else
+            $req->uri = '/fatal';
 
         $result->status = new mmMvcResultStatusNotFound();
 
@@ -86,6 +95,10 @@ class mmMvcConfiguration implements ezcMvcDispatcherConfiguration
 
     function runResultFilters( ezcMvcRoutingInformation $routeInfo, ezcMvcRequest $request, ezcMvcResult $result )
     {
+        if ( $request->uri == '/fatal' )
+        {
+            $result->status = 500;
+        }
     }
 
     /**

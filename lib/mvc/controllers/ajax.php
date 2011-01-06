@@ -23,6 +23,13 @@ class mmAjaxController extends ezcMvcController
         return $result;
     }
 
+    public function doFatal()
+    {
+        $result = new ezcMvcResult;
+        $result->variables = $this->request->variables;
+        return $result;
+    }
+
     /**
      * Based on a windows command, returns the disk where the target file fits best
      */
