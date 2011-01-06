@@ -77,8 +77,18 @@ class mmMkvManagerController extends ezcMvcController
     public function doMoviesWithoutNFO()
     {
         $result = new ezcMvcResult();
-        $result->variables['page_title'] = "Missing NFOs tracker     :: MKV Manager";
+        $result->variables['page_title'] = "Missing NFOs tracker :: MKV Manager";
         $result->variables += mmApp::doMoviesWithoutNFO();
+        return $result;
+    }
+
+    /**
+     * Shows the merge queue items
+     */
+    public function doMergeQueue()
+    {
+        $result = new ezcMvcResult();
+        $result->variables['page_title'] = 'Merge queue status :: MKV Manager';
         return $result;
     }
 }

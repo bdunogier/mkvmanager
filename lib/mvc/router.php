@@ -15,6 +15,7 @@ class mmMvcRouter extends ezcMvcRouter
             new ezcMvcRailsRoute( '/subtitles',           'mmMkvManagerController', 'subtitles' ),
             new ezcMvcRailsRoute( '/tvshow/image/:image', 'mmMkvManagerController', 'TVShowImage' ),
             new ezcMvcRailsRoute( '/movies-without-nfo',  'mmMkvManagerController', 'MoviesWithoutNFO' ),
+            new ezcMvcRailsRoute( '/merge-queue',         'mmMkvManagerController', 'mergeQueue' ),
 
             // AJAX callbacks
             new ezcMvcRailsRoute( '/ajax/fatal',                               'mmAjaxController', 'fatal' ),
@@ -23,6 +24,7 @@ class mmMvcRouter extends ezcMvcRouter
             new ezcMvcRailsRoute( '/ajax/searchsubtitles/:VideoFile',          'mmAjaxController', 'searchSubtitles' ),
             new ezcMvcRailsRoute( '/ajax/merge-status/:mergeHash',             'mmAjaxController', 'mergeStatus' ),
             new ezcMvcRailsRoute( '/ajax/queue-command',                       'mmAjaxController', 'queueCommand' ),
+            new ezcMvcRailsRoute( '/ajax/merge-queue-status',                  'mmAjaxController', 'mergeQueueStatus' ),
 
             new ezcMvcRailsRoute( '/ajax/downloadsubtitle/:VideoFile/:SubFileId/:SubType/:ZipFileId',
                 'mmAjaxController', 'downloadSubtitles' ),

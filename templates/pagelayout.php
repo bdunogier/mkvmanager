@@ -82,6 +82,7 @@
         <li><a href="/mkvmerge">MKV Merger</a></li>
         <li><a href="/subtitles">Subtitles</a></li>
         <li><a href="/movies-without-nfo">Movies without NFO</a></li>
+        <li><a href="/merge-queue">Merge queue status</a></li>
       </ul>
     </div>
 
