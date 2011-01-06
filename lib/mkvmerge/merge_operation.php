@@ -135,8 +135,12 @@ class mmMergeOperation
      */
     public function progress()
     {
-        var_dump( $this->targetFile );
-        $currentTargetSize = mmMkvManagerDiskHelper::bigFileSize( $this->targetFile );
+        try {
+            $currentTargetSize = mmMkvManagerDiskHelper::bigFileSize( $this->targetFile );
+        } catch( ezcBaseFileNotFoundException $e ) {
+            return 0;
+        }
+
         return round( $currentTargetSize / $this->targetFileSize * 100 );
     }
 
