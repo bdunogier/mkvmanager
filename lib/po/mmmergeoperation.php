@@ -9,6 +9,11 @@ $def->idProperty->propertyName = 'hash';
 $def->idProperty->propertyType = ezcPersistentObjectProperty::PHP_TYPE_STRING;
 $def->idProperty->generator = new ezcPersistentGeneratorDefinition( 'ezcPersistentManualGenerator' );
 
+$def->properties['createTime'] = new ezcPersistentObjectProperty;
+$def->properties['createTime']->columnName = 'create_time';
+$def->properties['createTime']->propertyName = 'createTime';
+$def->properties['createTime']->propertyType = ezcPersistentObjectProperty::PHP_TYPE_INT;
+
 $def->properties['startTime'] = new ezcPersistentObjectProperty;
 $def->properties['startTime']->columnName = 'start_time';
 $def->properties['startTime']->propertyName = 'startTime';

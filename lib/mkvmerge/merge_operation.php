@@ -18,6 +18,7 @@ class mmMergeOperation
 {
     public $hash = null;
     public $startTime = null;
+    public $createTime = null;
     public $endTime = null;
     public $command = null;
     public $targetFile = null;
@@ -30,6 +31,7 @@ class mmMergeOperation
     {
         $result = array();
         $result['hash'] = $this->hash;
+        $result['createTime'] = $this->createTime;
         $result['startTime'] = $this->startTime;
         $result['endTime'] = $this->endTime;
         $result['command'] = $this->command;
@@ -109,7 +111,7 @@ class mmMergeOperation
 
         $mergeOperation = new mmMergeOperation();
         $mergeOperation->hash = $hash;
-        $mergeOperation->startTime = time();
+        $mergeOperation->createTime = time();
         $mergeOperation->pid = 0;
         $mergeOperation->status = mmMergeOperation::STATUS_PENDING;
         $mergeOperation->command = $command;
