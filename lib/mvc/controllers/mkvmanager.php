@@ -10,6 +10,7 @@ class mmMkvManagerController extends ezcMvcController
     {
         $result = new ezcMvcResult;
         $result->variables['exception'] = $this->request->variables['exception'];
+        $result->variables['page_title'] = "An error has occured";
         return $result;
     }
 
