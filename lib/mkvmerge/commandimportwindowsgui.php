@@ -23,11 +23,11 @@ class MKVMergeCommandImportWindowsGUI
     {
         $command = $windowsCommand;
 
-        self::_checkSubtitlesCharset( $command );
         self::_convertExecutable( $command );
         self::_convertSlashes( $command );
         self::_convertSourceFolder( $command );
         self::_convertTargetFolder( $command, $targetDisk );
+        self::_checkSubtitlesCharset( $command );
 
         return new MKVMergeCommand( $command );
     }
@@ -64,7 +64,12 @@ class MKVMergeCommandImportWindowsGUI
                 */
                 if ( !$charsetFound )
                 {
-                    $command = str_replace( "\"$subFileName\"", "\"--sub-charset\" \"0:ISO-8859-1\" \"$subFileName\"", $command );
+                    $finfo = new finfo( FILEINFO_MIME_ENCODING );
+                    $encoding = strtoupper( $finfo->file( $subFileName ) );
+                    // assume iso by default
+                    if ( $encoding == 'unknown-8bits' )
+                        $encoding = "ISO-8859-1";
+                    $command = str_replace( "\"{$subFileName}\"", "\"--sub-charset\" \"0:{$encoding}\" \"{$subFileName}\"", $command );
                 }
             }
         }
