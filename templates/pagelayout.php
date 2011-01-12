@@ -74,7 +74,50 @@
     #content {
         padding: 40px;
     }
+
+    #statuspanel {
+    background:orange none repeat scroll 0 0;
+    border-top:1px solid black;
+    bottom:0px;
+    padding:5px;
+    position:fixed;
+    width:100%;
+    z-index:100;
+}
     </style>
+
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+    <script type="text/javascript">
+    var processing = false;
+    function updateStatus()
+    {
+        if ( processing == true ) return;
+        processing = true;
+        $.get(
+            '/ajax/merge-active-status',
+            function success( r ) {
+                var timeout;
+                if ( r.message != 'no-operation')
+                {
+                    $("#statuspanel").html( '<progress max="100" value="' + r.progress + '" style="width: 90%"/> ' + r.file );
+                    timeout = 50;
+                }
+                else
+                {
+                    timeout = 1000;
+                }
+                processing = false;
+                setTimeout( 'updateStatus()', timeout );
+            }, 'json' );
+    }
+    $(document).ready(function() {
+        updateStatus();
+    });
+    this.getSidebar = function()
+    {
+        return 'test';
+    }
+    </script>
     </head>
     <body>
     <div id="centeredmenu">
@@ -89,5 +132,6 @@
     <div id="content">
     <?=$this->content?>
     </div>
+    <div id='statuspanel'></div>
     </body>
 </html>

@@ -86,6 +86,7 @@ EOF;
         {
             $return['status'] = 'ok';
             $return['progress'] = $operation->progress();
+            $return['file'] = $operation->commandObject->title;
         }
         return $return;
     }

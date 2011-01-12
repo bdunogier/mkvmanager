@@ -164,6 +164,34 @@ class mmAjaxController extends ezcMvcController
     }
 
     /**
+     * Shows a merge operation status:
+     * - progress %
+     *
+     * @param string $mergeId The merge operation's id
+     */
+    public function doMergeActiveStatus()
+    {
+        $result = new ezcMvcResult();
+
+        $session = ezcPersistentSessionInstance::get();
+        $q = $session->createFindQuery( 'mmMergeOperation' );
+        $q->where( $q->expr->in( 'status', mmMergeOperation::STATUS_RUNNING ) )
+          ->limit( 1 );
+        $operations = $session->find( $q, 'mmMergeOperation' );
+        if ( count( $operations ) == 0 )
+        {
+            $result->variables = array( 'result' => 'ok', 'message' => 'no-operation' );
+        }
+        else
+        {
+            $operation = array_pop( $operations );
+            $result->variables += mmApp::doMergeStatus( $operation->hash );
+        }
+
+        return $result;
+    }
+
+    /**
      * Adds a command to the operation queue
      */
     public function doQueueCommand()
