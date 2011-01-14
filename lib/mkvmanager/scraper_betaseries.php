@@ -88,12 +88,9 @@ class MkvManagerScraperBetaSeries extends MkvManagerScraper
                     {
                         $name = (string)$zip->getNameIndex( $i );
 
-                        // filtering, EXTREMELY ROOT !
-                        if ( $name == 'null' or
-                           ( preg_match( '#((VO/)|(en\.srt)|(\.en\.ass)|(\.txt$))#i', $name ) ) )
-                        {
+                        if ( !$this->accepted( $name ) )
                             continue;
-                        }
+
 
                         $subType = substr( $name, strrpos( $name, '.' ) + 1 );
                         $ret[] = array( 'name' => $name, 'link' => "{$subtitleLink}/{$subType}/" . urlencode( str_replace( '/', '#', $name ) ) );
@@ -104,6 +101,9 @@ class MkvManagerScraperBetaSeries extends MkvManagerScraper
             }
             else
             {
+                if ( !$this->accepted( $subtitleName ) )
+                    continue;
+
                 // add sub  type (srt, ass)
                 $subType = substr( $subtitleName, strrpos( $subtitleName, '.' ) + 1 );
                 $ret[] = array( 'link' => "{$subtitleLink}/{$subType}", 'name' => $subtitleName );
@@ -114,7 +114,52 @@ class MkvManagerScraperBetaSeries extends MkvManagerScraper
         if ( !count( $ret ) )
             return false;
 
+        $this->filterList( $ret );
+
         return $ret;
+    }
+
+    /**
+     * Filters out unwanted subtitles based on similar files & priorities
+     * - TAG over NoTaG
+     * - ASS over SRT
+     * - duplicates ? unsure... depends on version & origin
+     *
+     * @param array $list
+     * @return void
+     */
+    private function filterList( &$list )
+    {
+        $assFiles = $srtFiles = array();
+        $filesIndex = array();
+
+        foreach( $list as $idx => $file )
+        {
+            $parts = pathinfo( $file['name'] );
+            $filesIndex[$parts['basename']][] = $idx;
+            if ( $parts['extension'] == 'srt' )
+                $srtFiles[] = $parts['filename'];
+            elseif ( $parts['extension'] == 'ass' )
+                $assFiles[] = $parts['filename'];
+        }
+        foreach( array_intersect( $assFiles, $srtFiles ) as $duplicateFile )
+        {
+            $srtFile = "{$duplicateFile}.srt";
+            foreach( $filesIndex[$srtFile] as $idx )
+                unset( $list[$idx] );
+        }
+    }
+
+    /**
+     * Filters subtitle files: no english, no .txt
+     *
+     * @param string $file
+     * @return bool true if accepted, false otherwise
+     */
+    private function accepted( $file )
+    {
+        return !( $file == 'null' or
+            ( preg_match( '#((\.VO-)|(VO/)|(en\.srt)|(\.en\.ass)|(\.txt$))#i', $file ) ) );
     }
 
     private $searchShowCode;
