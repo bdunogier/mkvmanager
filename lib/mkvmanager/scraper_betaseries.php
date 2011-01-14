@@ -111,7 +111,7 @@ class MkvManagerScraperBetaSeries extends MkvManagerScraper
         }
 
         // no subtitles for this file
-        if ( count( $xp->div->ul[0]->children() ) === 0 )
+        if ( !count( $ret ) )
             return false;
 
         return $ret;
