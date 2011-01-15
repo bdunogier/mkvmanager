@@ -89,6 +89,7 @@ class mmMkvManagerController extends ezcMvcController
     {
         $result = new ezcMvcResult();
         $result->variables['page_title'] = 'Merge queue status :: MKV Manager';
+        $result->variables['items'] = $this->items;
         return $result;
     }
 }

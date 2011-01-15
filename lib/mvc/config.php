@@ -36,13 +36,19 @@ class mmMvcConfiguration implements ezcMvcDispatcherConfiguration
         }
         else
         {
-            $view = new mmHtmlView( $request, $result );;
-            switch ( $routeInfo->matchedRoute )
+            // the part of the route used for the template path of course doesn't include parameters
+            $view = new mmHtmlView( $request, $result );
+            error_log( print_r( $routeInfo , true ));
+            if ( strpos( $routeInfo->matchedRoute, ':' ) !== false )
+                $realRoute = trim( substr( $routeInfo->matchedRoute, 0, strpos( $routeInfo->matchedRoute, ':' ) ), '/' );
+            else
+                $realRoute = $routeInfo->matchedRoute;
+            switch ( $realRoute )
             {
                 default:
-                    if ( file_exists("../templates/{$routeInfo->matchedRoute}.php" ) )
+                    if ( file_exists("../templates/{$realRoute}.php" ) )
                     {
-                        $view->contentTemplate = "{$routeInfo->matchedRoute}.php";
+                        $view->contentTemplate = "{$realRoute}.php";
                     }
                     else
                     {
