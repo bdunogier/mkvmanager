@@ -217,14 +217,14 @@ class mmAjaxController extends ezcMvcController
         return $result;
     }
 
-    public function doMergeQueueStatus()
+    public function doMergeQueue()
     {
 
         $result = new ezcMvcResult();
 
         $session = ezcPersistentSessionInstance::get();
         $q = $session->createFindQuery( 'mmMergeOperation' );
-        $q->where( $q->expr->in( 'status', mmMergeOperation::STATUS_PENDING, mmMergeOperation::STATUS_RUNNING ) )
+        $q->where( $q->expr->in( 'status', array( mmMergeOperation::STATUS_PENDING, mmMergeOperation::STATUS_RUNNING ) ) )
           ->orderBy( 'create_time', 'asc' );
         $operations = $session->find( $q, 'mmMergeOperation' );
         $result->variables['operations'] = $operations;

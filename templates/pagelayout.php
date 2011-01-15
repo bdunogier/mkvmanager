@@ -16,9 +16,6 @@
             '/ajax/merge-active-status',
             function success( r ) {
                 var timeout;
-                r.message = '';
-                r.progress = '50';
-                r.file = 'Test';
                 if ( r.message != 'no-operation')
                 {
                     $("#statuspanel").html(
