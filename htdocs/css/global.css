@@ -9,6 +9,7 @@ body {
     width: 100%;
     height: 100%;
     font-family: Verdana;
+    font-size: 80%;
 }
 
 /* BEGIN centered menu */
@@ -95,3 +96,11 @@ span.filename {
     top: 7px;
     z-index: 30;
 }
+
+table {
+    width: 90%;
+    font-size: 90%;
+}
+
+table tr:nth-child(even) { background: #ccc }
+table tr:nth-child(odd) { background: #eee }
