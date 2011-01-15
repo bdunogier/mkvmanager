@@ -144,6 +144,23 @@ class mmMergeOperation
         return round( $currentTargetSize / $this->targetFileSize * 100 );
     }
 
+    /**
+     * Returns the objects as a struct
+     *
+     * @return ezcBaseStruct
+     */
+    public function asStruct()
+    {
+        $struct = new stdClass();
+        foreach( $this as $property => $value )
+        {
+            $struct->$property = $value;
+        }
+        $struct->progress = $this->progress();
+        $struct->targetFileName = basename( $this->targetFile );
+        return $struct;
+    }
+
     const STATUS_PENDING = 3;
     const STATUS_RUNNING = 2;
     const STATUS_ERROR = 1;

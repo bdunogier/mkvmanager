@@ -104,3 +104,7 @@ table {
 
 table tr:nth-child(even) { background: #ccc }
 table tr:nth-child(odd) { background: #eee }
+
+table td {
+    padding: 2px;
+}

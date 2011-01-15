@@ -240,7 +240,8 @@ class mmAjaxController extends ezcMvcController
         $result->variables['operations'] = $operations;
 
         $htmlTable = '';
-        foreach( $operations as $operation )
+        $operationStructs = array();
+        foreach( $operations as $hash => $operation )
         {
             $htmlTable .=
                 "<tr class=\"status\">" .
@@ -250,8 +251,10 @@ class mmAjaxController extends ezcMvcController
                 "<td>{$operation->endTime}</td>".
                 "<td><progress id=\"progressBar\" value=\"".$operation->progress()."\" max=\"100\"></progress><span class=\"percent\">".$operation->progress()."%</span></td>".
                 "</tr>";
+            $operationStructs[$hash] = $operation->asStruct();
         }
         $result->variables['html_table'] = $htmlTable;
+        $result->variables['operations'] = $operationStructs;
         return $result;
     }
 }
