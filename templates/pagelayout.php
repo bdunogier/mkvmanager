@@ -7,11 +7,15 @@
 
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
     <script type="text/javascript">
-    var processing = false;
-    function updateStatus()
+    var mm = {};
+    mm.statusBar = {};
+    mm.statusBar.processing = false;
+    mm.statusBar.updateStatus = function updateStatus()
     {
-        if ( processing == true ) return;
-        processing = true;
+        if ( mm.statusBar.processing == true ) {
+            return
+        }
+        mm.statusBar.processing = true;
         $.get(
             '/ajax/merge-active-status',
             function success( r ) {
@@ -28,17 +32,14 @@
                     $("#statuspanel").html( 'Idle' );
                     timeout = 1000;
                 }
-                processing = false;
-                setTimeout( 'updateStatus()', timeout );
+                mm.statusBar.processing = false;
+                setTimeout( 'mm.statusBar.updateStatus()', timeout );
             }, 'json' );
-    }
+    };
+
     $(document).ready(function() {
-        updateStatus();
+        mm.statusBar.updateStatus();
     });
-    this.getSidebar = function()
-    {
-        return 'test';
-    }
     </script>
     </head>
     <body>
