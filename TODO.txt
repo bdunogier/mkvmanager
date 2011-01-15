@@ -16,6 +16,9 @@ List
 * Highlight active module in the menu
 * Re-queue operation in queue-archive
 * Abort operation on status modules (including status bar)
+* queue modules: load the first version with AJAX, and only perform updates:
+  - short delay: progress ONLY update for the active operation
+  - every 10 seconds: new items + delete done ones if applicable
 
 Done
 ====
