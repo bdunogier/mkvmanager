@@ -2,6 +2,7 @@
 </style>
 
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+<script type="text/javascript" src="/js/date.format.js"></script>
 
 <script type="text/javascript">
 mm.mergeQueue = {};
@@ -38,12 +39,14 @@ mm.mergeQueue.updateTable = function updateTable()
                         progressText = 'N/A';
                     }
 
+                    var createTime = new Date( operation.createTime*1000 );
+                    var endTime = new Date( operation.endTime*1000 );
                     htmlTable +=
                         "<tr>" +
                         "<td>"+operation.hash+"</td>" +
                         "<td>"+operation.targetFileName+"</td>" +
-                        "<td>"+operation.createTime+"</td>" +
-                        "<td>"+operation.endTime+"</td>" +
+                        "<td>"+createTime.format('dd/mm hh:MM')+"</td>" +
+                        "<td>"+endTime.format('dd/mm hh:MM')+"</td>" +
                         "<td>"+progressText+"</td>" +
                         "</tr>";
                 }
