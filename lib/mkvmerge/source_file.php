@@ -6,12 +6,19 @@ class MKVMergeSourceFile extends splFileInfo
      */
     public function asArray()
     {
-        return array(
+        $return = array(
             'path'     => $this->getPath(),
             'pathname' => $this->getPathname(),
             'basename' => $this->getBasename(),
-            'size'     => $this->getSize(),
         );
+
+        // file that doesn't exist
+        try {
+            $return['size'] = $this->getSize();
+        } catch( Exception $e ) {
+            $return['size'] = -1;
+        }
+        return $return;
     }
 
     /**
