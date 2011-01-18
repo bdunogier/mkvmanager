@@ -257,5 +257,54 @@ class mmAjaxController extends ezcMvcController
         $result->variables['operations'] = $operationStructs;
         return $result;
     }
+
+    public function doSourcefileArchive()
+    {
+        $result = new ezcMvcResult();
+
+        $hash = $this->hash;
+
+        if ( $queueItem = mmMergeOperation::fetchByHash( $hash ) )
+        {
+            $command = $queueItem->commandObject;
+            $files = array_merge( $command->VideoFiles, $command->SubtitleFiles );
+            foreach( $files as $file )
+            {
+                $extension = pathinfo( $file['pathname'], PATHINFO_EXTENSION );
+                if ( $extension == 'mkv' or $extension == 'avi'
+                     && filesize( $path['pathname'] ) == 0 )
+                {
+                    $result->variables['status'] = 'ko';
+                    $result->variables['message'] = 'already_archived';
+                    return $result;
+                }
+                if ( !file_exists( $file['pathname'] ) )
+                {
+                    $nonExistingFiles[] = $file;
+                }
+                else
+                {
+                    if ( !isset( $dummyFile ) )
+                        $dummyFile = $file['pathname'];
+                    $removed[] = $file['pathname'];
+                    unlink( $file['pathname'] );
+                }
+            }
+            touch( $dummyFile );
+
+            if ( isset( $nonExistingFiles ) )
+                $result->variables['messages'] = 'Some files were not found, see [not_found_files]';
+            $result->variables['status'] = 'ok';
+            $result->variables['removed_files'] = $removed;
+            $result->variables['not_found_files'] = $nonExistingFiles;
+        }
+        else
+        {
+            // @todo Handle with exception
+            $result->variables['status'] = 'ko';
+            $result->variables['message'] = "No operation with hash $hash";
+        }
+        return $result;
+    }
 }
 ?>
