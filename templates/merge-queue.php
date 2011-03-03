@@ -1,16 +1,21 @@
 <style type="text/css">
+button {
+    font-size: 75%;
+}
 </style>
 
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
 <script type="text/javascript" src="/js/date.format.js"></script>
 
-<script type="text/javascript">
+<?php /*<script type="text/javascript">
 mm.mergeQueue = {};
 // 1 = html, 2 = objects list
 mm.mergeQueue.mode = 2;
 mm.mergeQueue.processing = false;
 mm.mergeQueue.updateTable = function updateTable()
 {
+    var status_working = 2;
+
     if ( mm.mergeQueue.processing == true ) return;
     mm.mergeQueue.processing = true;
     $.get(
@@ -28,7 +33,7 @@ mm.mergeQueue.updateTable = function updateTable()
                     operation =  r.operations[hash];
 
                     var progressText = '';
-                    if ( operation.status == 'pending' )
+                    if ( operation.status == status_working )
                     {
                         progressText =
                             '<progress id="progressBar" value="' + operation.progress + '" max="100" />' +
@@ -62,7 +67,20 @@ $(document).ready(function() {
     mm.mergeQueue.updateTable();
 });
  </script>
-
+*/?>
+<script type="text/javascript">
+$(document).ready( function() {
+    $(".btnOperationArchive").click( function() {
+        button = $(this);
+        var hash = button.parent().parent().find('td:first').html();
+        console.log( hash );
+        var url = '/ajax/sourcefiles/archive/' + hash;
+        $.get( url, function success( r ) {
+            console.log( r );
+        });
+    });
+});
+</script>
 <h1>Merge queue status</h1>
 
 <table title="Merge queue status" id="MergeQueueStatus">
@@ -73,8 +91,28 @@ $(document).ready(function() {
         <th>Created</th>
         <th>End time</th>
         <th>Progress</th>
+        <th>Action !</th>
     </tr>
     </thead>
     <tbody>
+    <?php foreach( $this->operations as $operation ): ?>
+        <tr>
+            <td><?=$operation->hash?></td>
+            <td><?=$operation->targetFileName?></td>
+            <td><?=strftime( '%d/%m, %H:%I:%S', $operation->createTime )?></td>
+            <td><?=strftime( '%d/%m, %H:%I:%S', $operation->endTime )?></td>
+            <?php if ( $operation->status == mmMergeOperation::STATUS_RUNNING ): ?>
+                <td><progress value="<?=$operation->progress?>" max="100" /></td>
+            <?php else: ?>
+                <td>N/A</td>
+            <?php endif ?>
+
+            <?php if ( $operation->sourceFileExists ): ?>
+                <td><input type="button" class="btnOperationArchive" value="archive" /></td>
+            <?php else: ?>
+                <td>N/A</td>
+            <?php endif ?>
+        </tr>
+    <? endforeach ?>
     </tbody>
 </table>

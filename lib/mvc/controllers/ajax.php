@@ -261,42 +261,68 @@ class mmAjaxController extends ezcMvcController
     public function doSourcefileArchive()
     {
         $result = new ezcMvcResult();
-
+        $nonExistingFiles = array();
         $hash = $this->hash;
 
         if ( $queueItem = mmMergeOperation::fetchByHash( $hash ) )
         {
+            $status = 'ok';
+            $message = '';
+            $removed = array();
             $command = $queueItem->commandObject;
-            $files = array_merge( $command->VideoFiles, $command->SubtitleFiles );
-            foreach( $files as $file )
+            if ( $command->conversionType == 'tvshow' )
             {
-                $extension = pathinfo( $file['pathname'], PATHINFO_EXTENSION );
-                if ( $extension == 'mkv' or $extension == 'avi'
-                     && filesize( $path['pathname'] ) == 0 )
+                $files = array_merge( $command->VideoFiles, $command->SubtitleFiles );
+                foreach( $files as $file )
                 {
-                    $result->variables['status'] = 'ko';
-                    $result->variables['message'] = 'already_archived';
-                    return $result;
+                    error_log( "Trying {$file['pathname']}" );
+                    $extension = pathinfo( $file['pathname'], PATHINFO_EXTENSION );
+                    error_log( "Filesize: " . filesize( $file['pathname'] ) );
+                    if ( ( $extension == 'mkv' or $extension == 'avi' ) &&
+                        file_exists( $file['pathname']) &&
+                        filesize( $file['pathname'] ) == 0 )
+                    {
+                        $result->variables['status'] = 'ko';
+                        $result->variables['message'] = 'already_archived';
+                        return $result;
+                    }
+                    if ( !file_exists( $file['pathname'] ) )
+                    {
+                        $nonExistingFiles[] = $file;
+                    }
+                    else
+                    {
+                        if ( !isset( $dummyFile ) )
+                            $dummyFile = $file['pathname'];
+                        $removed[] = $file['pathname'];
+                        unlink( $file['pathname'] );
+                    }
                 }
-                if ( !file_exists( $file['pathname'] ) )
+                touch( $dummyFile );
+            }
+            else
+            {
+                $mainFile = $command->VideoFiles[0]['pathname'];
+                if ( file_exists( $mainFile ) )
                 {
-                    $nonExistingFiles[] = $file;
-                }
-                else
-                {
-                    if ( !isset( $dummyFile ) )
-                        $dummyFile = $file['pathname'];
-                    $removed[] = $file['pathname'];
-                    unlink( $file['pathname'] );
+                    $directory = dirname( $mainFile );
+                    $files[] = glob( "$directory/*" );
+                    try {
+                        ezcBaseFile::removeRecursive( $directory );
+                        $removed = $files;
+                    } catch( ezcBaseFilePermissionException $e ) {
+                        $status = 'ko';
+                        $message = $e->getMessage();
+                    }
                 }
             }
-            touch( $dummyFile );
 
-            if ( isset( $nonExistingFiles ) )
+            if ( !empty( $nonExistingFiles ) )
                 $result->variables['messages'] = 'Some files were not found, see [not_found_files]';
-            $result->variables['status'] = 'ok';
+            $result->variables['status'] = $status;
             $result->variables['removed_files'] = $removed;
             $result->variables['not_found_files'] = $nonExistingFiles;
+            $result->variables['message'] = $message;
         }
         else
         {
