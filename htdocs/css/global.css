@@ -60,7 +60,7 @@ body {
    font-weight:bold;
 }    /* END centered menu */
 
-p.error {
+.error {
     color: red;
 }
 

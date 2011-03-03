@@ -275,9 +275,7 @@ class mmAjaxController extends ezcMvcController
                 $files = array_merge( $command->VideoFiles, $command->SubtitleFiles );
                 foreach( $files as $file )
                 {
-                    error_log( "Trying {$file['pathname']}" );
                     $extension = pathinfo( $file['pathname'], PATHINFO_EXTENSION );
-                    error_log( "Filesize: " . filesize( $file['pathname'] ) );
                     if ( ( $extension == 'mkv' or $extension == 'avi' ) &&
                         file_exists( $file['pathname']) &&
                         filesize( $file['pathname'] ) == 0 )
@@ -319,6 +317,11 @@ class mmAjaxController extends ezcMvcController
 
             if ( !empty( $nonExistingFiles ) )
                 $result->variables['messages'] = 'Some files were not found, see [not_found_files]';
+            if ( $status === 'ok' )
+            {
+                $queueItem->status = mmMergeOperation::STATUS_ARCHIVED;
+                ezcPersistentSessionInstance::get()->update( $queueItem );
+            }
             $result->variables['status'] = $status;
             $result->variables['removed_files'] = $removed;
             $result->variables['not_found_files'] = $nonExistingFiles;
@@ -330,6 +333,34 @@ class mmAjaxController extends ezcMvcController
             $result->variables['status'] = 'ko';
             $result->variables['message'] = "No operation with hash $hash";
         }
+        return $result;
+    }
+
+    public function doTestSourcefileArchive()
+    {
+        $result = new ezcMvcResult();
+        $nonExistingFiles = array();
+        $hash = $this->hash;
+
+        // OK
+        $status = 'ok';
+        $message = '';
+        $removed = array();
+
+        // KO: already archived
+        $status = 'ko';
+        $message = 'already_archived';
+
+        // KO: permission denied
+        $status = 'ko';
+        $message = 'Error: permission denied';
+
+        if ( !empty( $nonExistingFiles ) )
+            $result->variables['messages'] = 'Some files were not found, see [not_found_files]';
+        $result->variables['status'] = $status;
+        $result->variables['removed_files'] = $removed;
+        $result->variables['not_found_files'] = $nonExistingFiles;
+        $result->variables['message'] = $message;
         return $result;
     }
 }

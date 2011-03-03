@@ -51,11 +51,8 @@ $(document).ready(function() {
 
     // Add converted merge to the queue
     $("#BtnQueueOperation").click( function() {
-        console.log( "click handler" );
         $.post( "/ajax/queue-command", { MergeCommand: ConvertedCmd },
         function success( data ) {
-            console.log( data );
-            console.log( "/ajax/queue-command :: response :: ", data );
             $("#BtnQueueOperation").val( "Done. Status: " + data.status );
         }, "json" );
     });

@@ -73,16 +73,35 @@ $(document).ready( function() {
     $(".btnOperationArchive").click( function() {
         button = $(this);
         var hash = button.parent().parent().find('td:first').html();
-        console.log( hash );
         var url = '/ajax/sourcefiles/archive/' + hash;
         $.get( url, function success( r ) {
-            console.log( r );
-        });
+            console.log('r: ', r);
+            console.log( 'r.status: ', r.status );
+            if ( r.status == 'ok' )
+            {
+                button.parent().html('N/A');
+            }
+            else
+            {
+                if ( r.message == 'already_archived' )
+                {
+                    button.val( 'Already archived' );
+                    button.attr( 'disabled', 'true' );
+                }
+                else
+                {
+                    button.parent().html('<span class="error">'+r.message+'</span>');
+                }
+            }
+        }, "json" );
     });
 });
 </script>
 <h1>Merge queue status</h1>
 
+<? if ( !count( $this->operations )  ): ?>
+<p>Empty list</p>
+<? else: ?>
 <table title="Merge queue status" id="MergeQueueStatus">
     <thead>
     <tr>
@@ -95,7 +114,17 @@ $(document).ready( function() {
     </tr>
     </thead>
     <tbody>
-    <?php foreach( $this->operations as $operation ): ?>
+        <!-- TEST
+        <tr>
+            <td>a57192815d00443ab95c5e7c00fc271e8446bd74</td>
+            <td>The Big Bang Theory - 4x10 - The Alien Parasite Hypothesis.mkv</td>
+            <td>06/01, 23:11:25</td>
+            <td>07/01, 11:11:28</td>
+            <td>N/A</td>
+            <td><input type="button" class="btnOperationArchive" value="archive" /></td>
+        </tr>
+        END TEST -->
+        <?php foreach( $this->operations as $operation ): ?>
         <tr>
             <td><?=$operation->hash?></td>
             <td><?=$operation->targetFileName?></td>
@@ -113,6 +142,7 @@ $(document).ready( function() {
                 <td>N/A</td>
             <?php endif ?>
         </tr>
-    <? endforeach ?>
+        <? endforeach ?>
     </tbody>
 </table>
+<?endif?>

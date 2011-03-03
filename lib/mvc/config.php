@@ -32,13 +32,12 @@ class mmMvcConfiguration implements ezcMvcDispatcherConfiguration
     {
         if ( $routeInfo->controllerClass == "mmAjaxController" )
         {
-            $view = new mmAjaxView( $request, $result );;
+            $view = new mmAjaxView( $request, $result );
         }
         else
         {
             // the part of the route used for the template path of course doesn't include parameters
             $view = new mmHtmlView( $request, $result );
-            error_log( print_r( $routeInfo , true ));
             if ( strpos( $routeInfo->matchedRoute, ':' ) !== false )
                 $realRoute = trim( substr( $routeInfo->matchedRoute, 0, strpos( $routeInfo->matchedRoute, ':' ) ), '/' );
             else
