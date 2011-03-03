@@ -99,9 +99,10 @@ EOF;
     public static function doMoviesWithoutNFO()
     {
         // callback that strips down a movie file path to the movie's path
+
         $callback = function( &$value, $key ) {
-            $value = substr( $value, 0, strrpos( $value, '/', 5 ) );
-        };
+    $value = substr( $value, 0, strrpos( $value, '/', 5 ) );
+};
 
         // list of movie files, extensions stripped
         $moviesFiles = glob( '/media/aggregateshares/Movies/*/*.{mkv,avi}', GLOB_BRACE );
