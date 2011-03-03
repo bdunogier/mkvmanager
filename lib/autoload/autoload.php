@@ -33,4 +33,8 @@ return array(
     'MkvManagerScraperHTTPException' => 'mkvmanager/exceptions/scraper_http.php',
     'MkvManagerScraperHTMLException' => 'mkvmanager/exceptions/scraper_html.php',
 
+    'TVEpisodeFile' => 'mkvmanager/tv_episode_file.php',
+    'TVShow' => 'mkvmanager/tv_show.php',
+    'TVShowFolder' => 'mkvmanager/tv_show_folder.php',
+
 )?>

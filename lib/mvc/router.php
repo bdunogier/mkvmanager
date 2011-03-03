@@ -16,6 +16,7 @@ class mmMvcRouter extends ezcMvcRouter
             new ezcMvcRailsRoute( '/tvshow/image/:image', 'mmMkvManagerController', 'TVShowImage' ),
             new ezcMvcRailsRoute( '/movies-without-nfo',  'mmMkvManagerController', 'MoviesWithoutNFO' ),
             new ezcMvcRailsRoute( '/merge-queue/:items',  'mmMkvManagerController', 'mergeQueue' ),
+            new ezcMvcRailsRoute( '/tvdashboard',         'mmMkvManagerController', 'TVDashboard' ),
 
             // AJAX callbacks
             new ezcMvcRailsRoute( '/ajax/fatal',                               'mmAjaxController', 'fatal' ),

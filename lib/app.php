@@ -123,5 +123,30 @@ EOF;
 
         return compact( 'movies' );
     }
+
+    /**
+     * mmApp::doTVDashboard()
+     *
+     * @return array
+     */
+    public static function doTVDashboard()
+    {
+        $shows = array();
+        $byDate = array();
+        foreach( mmMkvManagerSubtitles::fetchFilesWithoutSubtitles() as $file )
+        {
+            $episode = new TVEpisodeFile( $file );
+            $show = new TVShowFolder( $file, '/home/download/downloads/complete/TV/Sorted' );
+            if (!isset( $queueFiles[$episode->showName] ) )
+                $queueFiles[$episode->showName] = array();
+            $shows[$episode->showName][] = $episode;
+            $filemtime = filemtime( "/home/download/downloads/complete/TV/Sorted/{$episode->showName}/{$file}" );
+            $byDate[$filemtime] = $episode;
+        }
+        krsort( $byDate );
+        $latest = array_slice( $byDate, 0, 3 );
+
+        return array( 'shows' => $shows, 'latest' => $latest );
+    }
 }
 ?>
