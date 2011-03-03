@@ -20,7 +20,7 @@ class MkvManagerScraperBetaSeries extends MkvManagerScraper
             if ( !preg_match( '/^(.*) - ([0-9]+)x([0-9]+)/', $searchCriteria, $matches ) )
                 throw new Exception( "Unable to use search criteria $searchCriteria" );
             $this->searchShow = $matches[1];
-            $this->searchShowCode = strtolower( str_replace( array( ' ', '(', ')', '\'' ), '', $matches[1] ) );
+            $this->searchShowCode = strtolower( str_replace( array( ' ', '(', ')', '\'', '.' ), '', $matches[1] ) );
 
             // aliases
             if ( isset( $this->aliases[$this->searchShowCode] ) )
@@ -173,6 +173,7 @@ class MkvManagerScraperBetaSeries extends MkvManagerScraper
         'thebigbangtheory' => 'bigbangtheory',
         'theitcrowd' => 'itcrowd',
         'thesimpsons' => 'simpsons',
+        'mrsunshine2011' => 'mrsunshine',
     );
 }
 ?>
