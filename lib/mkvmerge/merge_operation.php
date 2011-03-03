@@ -12,7 +12,7 @@
 * status INTEGER,
 * message TEXT );
 *
-* @property-read MKVMergeCommand $commandObject
+* @property-read MKVMergeCommand commandObject
 **/
 class mmMergeOperation
 {
@@ -161,6 +161,30 @@ class mmMergeOperation
         return $struct;
     }
 
+    /**
+     * Checks if any of the source files still exist
+     *
+     * @return bool
+     */
+    public function sourceFilesExist()
+    {
+        $return = false;
+
+        $command = $this->commandObject;
+        $files = array_merge( $command->VideoFiles, $command->SubtitleFiles );
+        foreach( $files as $file )
+        {
+            if ( file_exists( $file['pathname'] ) && filesize( $file['pathname'] ) > 0 )
+            {
+                error_log( $file['pathname'] );
+                $return = true;
+                break;
+            }
+        }
+        return $return;
+    }
+
+    const STATUS_ARCHIVED = 4;
     const STATUS_PENDING = 3;
     const STATUS_RUNNING = 2;
     const STATUS_ERROR = 1;

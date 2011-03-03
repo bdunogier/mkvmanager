@@ -90,6 +90,59 @@ class mmMkvManagerController extends ezcMvcController
         $result = new ezcMvcResult();
         $result->variables['page_title'] = 'Merge queue status :: MKV Manager';
         $result->variables['items'] = $this->items;
+
+        switch( $this->items )
+        {
+            case 'active':
+                $statuses = array( mmMergeOperation::STATUS_PENDING, mmMergeOperation::STATUS_RUNNING );
+                break;
+            case 'archive':
+                $statuses = array( mmMergeOperation::STATUS_ARCHIVED );
+                break;
+            case 'done':
+                $statuses = array( mmMergeOperation::STATUS_DONE );
+                break;
+            case 'error':
+                $statuses = array( mmMergeOperation::STATUS_ERROR );
+                break;
+            default:
+                throw new ezcBaseFileNotFoundException( $this->items );
+        }
+        $session = ezcPersistentSessionInstance::get();
+        $q = $session->createFindQuery( 'mmMergeOperation' );
+        $q->where( $q->expr->in( 'status', $statuses ) )
+          ->orderBy( 'create_time', 'asc' );
+        $operations = $session->find( $q, 'mmMergeOperation' );
+        $result->variables['operations'] = $operations;
+
+        $htmlTable = '';
+        $operationStructs = array();
+        foreach( $operations as $hash => $operation )
+        {
+            $htmlTable .=
+                "<tr class=\"status\">" .
+                "<td>{$operation->hash}</td>".
+                "<td>".basename( $operation->targetFile )."</td>".
+                "<td>{$operation->createTime}</td>".
+                "<td>{$operation->endTime}</td>".
+                "<td><progress id=\"progressBar\" value=\"".$operation->progress()."\" max=\"100\"></progress><span class=\"percent\">".$operation->progress()."%</span></td>".
+                "</tr>";
+            $operationStructs[$hash] = $operation->asStruct();
+        }
+        $result->variables['html_table'] = $htmlTable;
+        $result->variables['operations'] = $operationStructs;
+
+        return $result;
+    }
+
+    /**
+     * TV Shows dashboard
+     */
+    public function doTVDashBoard()
+    {
+        $result = new ezcMvcResult;
+        $result->variables['page_title'] = "TV Dashboard :: MKV Manager";
+        $result->variables += mmApp::doTVDashboard();
         return $result;
     }
 }
