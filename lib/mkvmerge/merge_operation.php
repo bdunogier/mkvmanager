@@ -158,6 +158,7 @@ class mmMergeOperation
         }
         $struct->progress = $this->progress();
         $struct->targetFileName = basename( $this->targetFile );
+        $struct->sourceFileExists = $this->sourceFilesExist();
         return $struct;
     }
 
