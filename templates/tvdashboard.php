@@ -8,6 +8,10 @@ a:active {
     color: black;
 }
 
+h1 {
+    text-align: center;
+}
+
 ul.commaList {
     list-style-type: none; margin: 0; padding: 0;
 }
@@ -30,25 +34,46 @@ ul.commaList a {
 ul.commaList a:hover {
     text-decoration: underline;
 }
-/* END LATEST ADDITIONS */
+
+div#containerLatestAdditions {
+    width: 30%;
+    float: left;
+}
+div#containerShowListingSummary {
+    padding-left: 50px;
+    width: 60%;
+    float: left;
+}
 
 /* SHOW LISTING */
-div.showContainer img {
+div.listingItem {
+    width: 32%;
+    margin: 5px;
     float: left;
     border: 1px solid black;
 }
-div.showDetails {
-    margin-left: 125px;
+
+div.showContainer {
+    padding: 8px;
+    height: 130px;
+    background-color: #eee;
 }
 
-.showContainer {
-    padding: 10px;
-    height: 150px;
-    background-color: #eee;
+div.showDetails {
+    margin-left: 100px;
+}
+
+div.showContainer img {
+    float: left;
+    border: 0px solid black;
+}
+
+.showDetails h3 {
+    margin-top: 0px;
 }
 /* END SHOW LISTING */
 
-#listingWrapper br {
+br {
     clear: both;
 }
 </style>
@@ -59,48 +84,47 @@ div.showDetails {
 $(document).ready(function() {
 }
 </script>
-<h1>TV Dashboard</h1>
 
+<div id="containerLatestAdditions">
 <h2>Latest additions</h2>
 <ul id="latestAdditions" class="commaList">
     <?foreach( $this->latest as $latest):?>
     <li><strong><a href="#<?=anchorLink($latest->showName)?>"><?=$latest->showName?></a></strong> S<?=$latest->seasonNumber?>E<?=$latest->episodeNumber?></li>
     <?endforeach;?>
 </ul>
+</div>
 
+<div id="containerShowListingSummary">
 <h2>Items requiring attention</h2>
 <ul id="showListingSummary" class="commaList">
     <?foreach( $this->shows as $showName => $episodeFiles ):?>
     <li><a href="#<?=anchorLink($showName)?>"><?=$showName?></a> (<?=count($episodeFiles)?>)</li>
     <?endforeach;?>
 </ul>
-<br />
-<div id="outterWrapper">
-    <div id="listingwrapper">
-    <? foreach( $this->shows as $showName => $episodeFiles ): ?>
-        <a name="<?=anchorLink($showName)?>"></a>
-        <div class="listingItem">
-        <div class="showContainer">
-            <img src="/tvshow/image/<?=$showName?>:folder.jpg" height="150" />
-            <div class="showDetails">
-                <h3><?=$showName?></h3>
-                <ul>
-                <? $displayed = 0; ?>
-                <? foreach( $episodeFiles as $episodeFile ): ?>
-                    <li>Episode <?=$episodeFile->seasonNumber?>x<?=$episodeFile->episodeNumber?>: <?=$episodeFile->episodeName?></li>
-                    <? if ( ++$displayed == 3 && count( $episodeFiles ) > 3 ):
-                       $others = count( $episodeFiles ) - $displayed; ?>
-                    <li>... and <?=$others?> more</li>
-                    <? break; endif; ?>
-                <? endforeach ?>
-                </ul>
-            </div>
-        </div>
-        </div>
-        <br />
-    <? endforeach ?>
-    </div>
 </div>
+
+<br />
+<? foreach( $this->shows as $showName => $episodeFiles ): ?>
+    <a name="<?=anchorLink($showName)?>"></a>
+    <div class="listingItem">
+    <div class="showContainer">
+        <img src="/tvshow/image/<?=$showName?>:folder.jpg" height="130" />
+        <div class="showDetails">
+            <h3><?=$showName?></h3>
+            <ul>
+            <? $displayed = 0; ?>
+            <? foreach( $episodeFiles as $episodeFile ): ?>
+                <li>Episode <?=$episodeFile->seasonNumber?>x<?=$episodeFile->episodeNumber?>: <?=$episodeFile->episodeName?></li>
+                <? if ( ++$displayed == 3 && count( $episodeFiles ) > 3 ):
+                   $others = count( $episodeFiles ) - $displayed; ?>
+                <li>... and <?=$others?> more</li>
+                <? break; endif; ?>
+            <? endforeach ?>
+            </ul>
+        </div>
+    </div>
+    </div>
+<? endforeach ?>
 
 <?php
 function anchorLink( $showName )
