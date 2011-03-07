@@ -102,7 +102,7 @@ while( true )
     exec( "{$operation->command} 2>&1 >/dev/null", $result, $return );
 	$out->write( "Done" );
 
-	$status = ( $result !== 0 ) ? -1 : 0;
+	$status = ( $return !== 0 ) ? -1 : 0;
 
 	$operation->status = ( $status == 0 ) ? mmMergeOperation::STATUS_DONE : mmMergeOperation::STATUS_ERROR;
     $operation->message = implode( "\n", $result );
