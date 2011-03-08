@@ -43,7 +43,7 @@ class MkvManagerScraperBetaSeries extends MkvManagerScraper
             throw $e;
         }
 
-        $episodeId = sprintf( 'planning_srtS%02dE%02d', $this->searchSeason, $this->searchEpisode );
+        $episodeId = sprintf( 'srt%sS%02dE%02d', $this->searchShowCode, $this->searchSeason, $this->searchEpisode );
 
         $ret = array();
         list( $xp ) = $doc->xpath( '//div[@id="'.$episodeId.'"]' );
@@ -166,7 +166,7 @@ class MkvManagerScraperBetaSeries extends MkvManagerScraper
     private $searchSeason;
     private $searchEpisode;
 
-    protected $baseURL = 'http://www.betaseries.com/ajax/planning_serie.php';
+    protected $baseURL = 'http://www.betaseries.com/ajax/episodes/season.php';
 
     private $aliases = array(
         'howimetyourmother' => 'himym',
