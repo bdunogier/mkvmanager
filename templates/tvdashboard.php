@@ -76,13 +76,86 @@ div.showContainer img {
 br {
     clear: both;
 }
+#SubtitlesOverlay {
+    display: none;
+    background-color: white;
+    width: 600px;
+    height: 600px;
+    border: 2px solid black;
+    border-radius: 10px;
+    padding: 5px;
+    overflow: auto;
+}
+
+ul.listEpisodes {
+  list-style-type: none;
+  padding: 0;
+  margin-left: 0;
+}
+ul.listEpisodes li {
+  background-repeat: no-repeat;
+  padding-left: 18px;
+}
+ul.listEpisodes li.nosubtitle {
+  background-image: url('images/icons/redcross_16x16.png');
+}
+ul.listEpisodes li.subtitle {
+  background-image: url('images/icons/subtitles_16x16.png');
+}
 </style>
 
-<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
-<script type="text/javascript" src="js/jquery-ui-1.8.6.custom.min.js"></script>
+<script type="text/javascript" src="/js/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="/js/jquery.bpopup-0.4.1.min.js"></script>
 <script type="text/javascript">
 $(document).ready(function() {
-}
+    $(".episode").bind('click', function(e) {
+        e.preventDefault();
+
+        var episodeName = $(this).parent().text();
+
+        // popup the overlay
+        $("#SubtitlesOverlay").bPopup({opacity:'0.5'});
+
+        var targetDiv = $("#SubtitlesOverlay");
+
+        // set waiting text
+        targetDiv.html( '<h3>' + episodeName + '</h3>' );
+        targetDiv.append('<p>Fetching subtitles...</p>');
+
+        // @todo search for this episode subtitles
+        $.get( $(this).attr('href'), function success( data ) {
+            if ( data.status == 'ok' )
+            {
+                html = '<ul>';
+                for ( index in data.subtitles )
+                {
+                    item = data.subtitles[index];
+                    // @todo Make this more javascript like, and use a method that automatically
+                    // adds a link to the image file
+                    html += '<li><a class="SubtitleDownloadLink" href="' + item.link + '">' + item.name + '</a><div class="SubtitleStatusText hidden"></div></li>';
+                }
+                html += '</ul>';
+                targetDiv.append( html );
+                targetDiv.show();
+            }
+            else if ( data.status == 'ko' )
+            {
+                console.log('ko');
+                if ( data.message == 'nosubtitles' )
+                {
+                    targetDiv.html( 'No subtitles available for this episode' );
+                }
+                else
+                {
+                    targetDiv.html( 'Unknown error: ' + data.message );
+                }
+            }
+        }, "json" );
+
+
+        return false;
+    });
+});
 </script>
 
 <div id="containerLatestAdditions">
@@ -126,6 +199,7 @@ $(document).ready(function() {
     </div>
 <? endforeach ?>
 
+<div id="SubtitlesOverlay">Subtitles go here</div>
 <?php
 function anchorLink( $showName )
 {

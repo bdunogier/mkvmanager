@@ -5,7 +5,8 @@
     @import url(/css/global.css);
     </style>
 
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+    <script type="text/javascript" src="/js/jquery-1.4.2.min.js"></script>
+    <script type="text/javascript" src="/js/jquery.bpopup-0.4.1.min.js"></script>
     <script type="text/javascript">
     var mm = {};
     mm.statusBar = {};

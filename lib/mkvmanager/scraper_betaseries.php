@@ -137,6 +137,11 @@ class MkvManagerScraperBetaSeries extends MkvManagerScraper
         {
             $parts = pathinfo( $file['name'] );
             $filesIndex[$parts['basename']][] = $idx;
+            if ( !isset( $parts['extension'] ) )
+            {
+                unset( $list[$idx] );
+                continue;
+            }
             if ( $parts['extension'] == 'srt' )
                 $srtFiles[] = $parts['filename'];
             elseif ( $parts['extension'] == 'ass' )
