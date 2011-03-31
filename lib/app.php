@@ -133,7 +133,7 @@ EOF;
     {
         $shows = array();
         $byDate = array();
-        foreach( mmMkvManagerSubtitles::fetchFilesWithoutSubtitles() as $file )
+        foreach( mmMkvManagerSubtitles::fetchFiles() as $file )
         {
             $episode = new TVEpisodeFile( $file );
             $show = new TVShowFolder( $file, '/home/download/downloads/complete/TV/Sorted' );

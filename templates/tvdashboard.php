@@ -111,10 +111,10 @@ $(document).ready(function() {
         <img src="/tvshow/image/<?=$showName?>:folder.jpg" height="130" />
         <div class="showDetails">
             <h3><?=$showName?></h3>
-            <ul>
+            <ul class="listEpisodes">
             <? $displayed = 0; ?>
             <? foreach( $episodeFiles as $episodeFile ): ?>
-                <li>Episode <?=$episodeFile->seasonNumber?>x<?=$episodeFile->episodeNumber?>: <?=$episodeFile->episodeName?></li>
+                <li class="<?=($episodeFile->hasSubtitleFile ? 'subtitle' : 'nosubtitle' )?>">Epicampfiresode <a class="episode" href="/ajax/searchsubtitles/<?=rawurlencode( $episodeFile->filename )?>"><?=$episodeFile->seasonNumber?>x<?=$episodeFile->episodeNumber?>: <?=$episodeFile->episodeName?></a></li>
                 <? if ( ++$displayed == 3 && count( $episodeFiles ) > 3 ):
                    $others = count( $episodeFiles ) - $displayed; ?>
                 <li>... and <?=$others?> more</li>
