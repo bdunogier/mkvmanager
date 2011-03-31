@@ -10,15 +10,23 @@ List
   start by scanning all drives
 * Generated MKV file check: run mkvinfo and check for output.
 * Option to delete source file:
-  - queue-archive module
-  - show if source files still exist
-  - archive/delete option if it does
+  - queue-archive module - DONE
+  - show if source files still exist - QUESTIONABLE
+  - archive/delete option if it does - PARTIALLY DONE
 * Highlight active module in the menu
 * Re-queue operation in queue-archive
 * Abort operation on status modules (including status bar)
 * queue modules: load the first version with AJAX, and only perform updates:
   - short delay: progress ONLY update for the active operation
   - every 10 seconds: new items + delete done ones if applicable
+* TV Dashboard: download subtitle, handle with AJAX
+  Hide the file for while subtitle was downloaded ? Assign a specific style for
+  episodes with downloaded subtitle ?
+  => li icon with-subtitles / without-subtitles
+     => http://ubuntu.allmyapps.com/apps/install-gnome-subtitles-gnome-subtitles
+* Subtitles: store when a subtitle doesn't exist, and check in the background
+* Subtitles: Sickbeard connection, check the episode's release name, and use it
+  to refine the subtitles list
 
 Done
 ====
