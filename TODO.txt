@@ -22,6 +22,8 @@ List
 * Subtitles: store when a subtitle doesn't exist, and check in the background
 * Subtitles: Sickbeard connection, check the episode's release name, and use it
   to refine the subtitles list
+* Add an extra overlay when a subtitle is being downloaded
+* Add an animation when the popup closes upon successful download
 
 Done
 ====
