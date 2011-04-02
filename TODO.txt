@@ -19,11 +19,6 @@ List
 * queue modules: load the first version with AJAX, and only perform updates:
   - short delay: progress ONLY update for the active operation
   - every 10 seconds: new items + delete done ones if applicable
-* TV Dashboard: download subtitle, handle with AJAX
-  Hide the file for while subtitle was downloaded ? Assign a specific style for
-  episodes with downloaded subtitle ?
-  => li icon with-subtitles / without-subtitles
-     => http://ubuntu.allmyapps.com/apps/install-gnome-subtitles-gnome-subtitles
 * Subtitles: store when a subtitle doesn't exist, and check in the background
 * Subtitles: Sickbeard connection, check the episode's release name, and use it
   to refine the subtitles list
@@ -31,13 +26,16 @@ List
 Done
 ====
 * TV: auto-detect best location for episode
-  - DONE / glob drives for occurences of the show
-  - DONE / locate latest season
-  - DONE / check available space
-* DONE Handle subtitle output charset
-* DONE List involved filenames when generating the command
-* DONE Make best fit a visual recommendation, even if the disk ain't large enough
-  DONE Maybe a dashed border ?
+  - glob drives for occurences of the show
+  - locate latest season
+  - check available space
+* Handle subtitle output charset
+* List involved filenames when generating the command
+* Make best fit a visual recommendation, even if the disk ain't large enough
+* TV Dashboard: download subtitle, handle with AJAX
+  Hide the file for while subtitle was downloaded ? Assign a specific style for
+  episodes with downloaded subtitle ?
+  => li icon with-subtitles / without-subtitles
 
 Abandonned
 ==========

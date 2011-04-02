@@ -107,14 +107,19 @@ ul.listEpisodes li.subtitle {
 <script type="text/javascript" src="/js/jquery-1.4.2.min.js"></script>
 <script type="text/javascript" src="/js/jquery.bpopup-0.4.1.min.js"></script>
 <script type="text/javascript">
+// li item we are editing
+currentEpisode = false;
+bPopup = false;
+
 $(document).ready(function() {
     $(".episode").bind('click', function(e) {
         e.preventDefault();
 
         var episodeName = $(this).parent().text();
+        currentEpisode = $(this).parent();
 
         // popup the overlay
-        $("#SubtitlesOverlay").bPopup({opacity:'0.5'});
+        bPopup = $("#SubtitlesOverlay").bPopup({opacity:'0.5'});
 
         var targetDiv = $("#SubtitlesOverlay");
 
@@ -140,7 +145,6 @@ $(document).ready(function() {
             }
             else if ( data.status == 'ko' )
             {
-                console.log('ko');
                 if ( data.message == 'nosubtitles' )
                 {
                     targetDiv.html( 'No subtitles available for this episode' );
@@ -154,6 +158,24 @@ $(document).ready(function() {
 
 
         return false;
+    });
+
+    $(".SubtitleDownloadLink").live( 'click', function(e) {
+        e.preventDefault();
+        var statusDiv = $(this).siblings( 'div.SubtitleStatusText' );
+
+        statusDiv.html( 'Downloading file...' );
+
+         // Start subtitle download
+         $.get( $(this).attr('href'), function success( data ) {
+            if ( currentEpisode.hasClass( 'nosubtitle' ) )
+            {
+                bPopup.close();
+                bPopup = false;
+                currentEpisode.removeClass( 'nosubtitle' );
+                currentEpisode.addClass( 'subtitle' );
+            }
+        }, "json" );
     });
 });
 </script>
@@ -187,7 +209,10 @@ $(document).ready(function() {
             <ul class="listEpisodes">
             <? $displayed = 0; ?>
             <? foreach( $episodeFiles as $episodeFile ): ?>
-                <li class="<?=($episodeFile->hasSubtitleFile ? 'subtitle' : 'nosubtitle' )?>">Epicampfiresode <a class="episode" href="/ajax/searchsubtitles/<?=rawurlencode( $episodeFile->filename )?>"><?=$episodeFile->seasonNumber?>x<?=$episodeFile->episodeNumber?>: <?=$episodeFile->episodeName?></a></li>
+                <li id="li<?=ucfirst( anchorLink( $episodeFile->filename ) )?>"class="<?=($episodeFile->hasSubtitleFile ? 'subtitle' : 'nosubtitle' )?>">
+                    Episode <a class="episode" href="/ajax/searchsubtitles/<?=rawurlencode( $episodeFile->filename )?>">
+                        <?=$episodeFile->seasonNumber?>x<?=$episodeFile->episodeNumber?>: <?=$episodeFile->episodeName?></a>
+                </li>
                 <? if ( ++$displayed == 3 && count( $episodeFiles ) > 3 ):
                    $others = count( $episodeFiles ) - $displayed; ?>
                 <li>... and <?=$others?> more</li>
