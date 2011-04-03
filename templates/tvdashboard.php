@@ -87,12 +87,12 @@ br {
     overflow: auto;
 }
 
-ul.listEpisodes {
+ul.icon {
   list-style-type: none;
   padding: 0;
   margin-left: 0;
 }
-ul.listEpisodes li {
+ul.icon li {
   background-repeat: no-repeat;
   padding-left: 18px;
 }
@@ -101,6 +101,10 @@ ul.listEpisodes li.nosubtitle {
 }
 ul.listEpisodes li.subtitle {
   background-image: url('images/icons/subtitles_16x16.png');
+}
+/* list item with loading animation - needs ul.icon class */
+ul.icon li.loading {
+  background-image: url('images/icons/loading_16x16.gif');
 }
 </style>
 
@@ -126,23 +130,51 @@ $(document).ready(function() {
 
         // set waiting text
         targetDiv.html( '<h3>' + episodeName + '</h3>' );
-        targetDiv.append( '<h5>Release: ' + releaseName + '</h5>' );
+        targetDiv.append( '<h4>' + releaseName + '</h4>' );
         targetDiv.append('<p>Fetching subtitles...</p>');
 
         // @todo search for this episode subtitles
         $.get( $(this).attr('href'), function success( data ) {
             if ( data.status == 'ok' )
             {
-                html = '<ul>';
+
+                // @todo refactor this, it is ridiculous :)
+                html = '<h5>Valid subtitles</h5>';
+                html += '<ul class="icon">';
                 for ( index in data.subtitles )
                 {
-                    item = data.subtitles[index];
                     // @todo Make this more javascript like, and use a method that automatically
                     // adds a link to the image file
-                    html += '<li><a class="SubtitleDownloadLink" href="' + item.link + '">'
-                         + item.name
-                         + '</a>'
-                         + ' (' + item.priority + ')<div class="SubtitleStatusText hidden"></div></li>';
+                    item = data.subtitles[index];
+
+                    // @todo: only hide bad priorities, with option to toggle
+                    if ( item.priority >= 0 )
+                    {
+                        html += '<li><a class="SubtitleDownloadLink" href="' + item.link + '">';
+                        html += item.name;
+                        html += ' (' + item.priority + ')';
+                        html += '</a>';
+                        // html += <div class="SubtitleStatusText hidden"></div></li>';
+                    }
+                }
+                html += '</ul>';
+                html += '<h5>Invalid subtitles</h5>';
+                html += '<ul class="icon">';
+                for ( index in data.subtitles )
+                {
+                    // @todo Make this more javascript like, and use a method that automatically
+                    // adds a link to the image file
+                    item = data.subtitles[index];
+
+                    // @todo: only hide bad priorities, with option to toggle
+                    if ( item.priority < 0 )
+                    {
+                        html += '<li><a class="SubtitleDownloadLink" href="' + item.link + '">';
+                        html += item.name;
+                        html += ' (' + item.priority + ')';
+                        html += '</a>';
+                        // html += <div class="SubtitleStatusText hidden"></div></li>';
+                    }
                 }
                 html += '</ul>';
                 targetDiv.append( html );
@@ -167,9 +199,7 @@ $(document).ready(function() {
 
     $(".SubtitleDownloadLink").live( 'click', function(e) {
         e.preventDefault();
-        var statusDiv = $(this).siblings( 'div.SubtitleStatusText' );
-
-        statusDiv.html( 'Downloading file...' );
+        $(this).parent().addClass( 'loading' );
 
          // Start subtitle download
          $.get( $(this).attr('href'), function success( data ) {
@@ -211,7 +241,7 @@ $(document).ready(function() {
         <img src="/tvshow/image/<?=$showName?>:folder.jpg" height="130" />
         <div class="showDetails">
             <h3><?=$showName?></h3>
-            <ul class="listEpisodes">
+            <ul class="icon listEpisodes">
             <? $displayed = 0; ?>
             <? foreach( $episodeFiles as $episodeFile ): ?>
                 <li id="li<?=ucfirst( anchorLink( $episodeFile->filename ) )?>"class="<?=($episodeFile->hasSubtitleFile ? 'subtitle' : 'nosubtitle' )?>">

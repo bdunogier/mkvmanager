@@ -92,16 +92,44 @@ class MkvManagerScraperBetaSeries extends MkvManagerScraper
                     {
                         $name = (string)$zip->getNameIndex( $i );
 
-                        if ( !$this->accepted( $name ) )
-                            continue;
+                        /*if ( !$this->accepted( $name ) )
+                            continue;*/
 
 
                         $subType = substr( $name, strrpos( $name, '.' ) + 1 );
+
+                        /**
+                         * Priorities:
+                         * - english = -10
+                         * - group = 5
+                         * - bad group = -5 (should always get negative prio)
+                         * - ass = 3
+                         * - notag = -1
+                         * - tag = 1
+                         */
                         $priority = 0;
+                        if ( preg_match( '#((\.VO-)|(VO/)|(en\.srt)|(\.en\.ass)|(\.txt$))#i', $name ) )
+                            $priority -= 10;
                         if ( $this->release->matchesSubtitle( $name ) )
                         {
-                            $priority++;
+                            $priority += 5;
                         }
+                        else
+                        {
+                            $priority -= 5;
+                        }
+                        if ( $subType == 'ass' )
+                        {
+                            $priority += 3;
+                            if ( strstr( strtolower( $name ), '.tag' ) )
+                                $priority++;
+                            if ( strstr( strtolower( $name ), '.notag' ) )
+                                $priority--;
+                        }
+                        elseif ( strstr( strtolower( $name ), '.tag' ) )
+                            $priority++;
+                        if ( strstr( strtolower( $name ), '.notag' ) )
+                            $priority--;
                         $ret[] = array( 'name' => $name, 'link' => "{$subtitleLink}/{$subType}/" . urlencode( str_replace( '/', '#', $name ) ), 'priority' => $priority );
                     }
                 }

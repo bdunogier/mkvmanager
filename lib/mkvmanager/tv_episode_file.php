@@ -30,7 +30,6 @@ class TVEpisodeFile
         {
             case 'hasSubtitleFile':
                 $basedirAndFile = "/home/download/downloads/complete/TV/Sorted/{$this->showName}/{$this->fullname}";
-                error_log( "file_exists( $basedirAndFile.srt ) || file_exists( $basedirAndFile.ass )" );
                 return ( file_exists( "$basedirAndFile.srt" ) || file_exists( "$basedirAndFile.ass" ) );
                 break;
 
