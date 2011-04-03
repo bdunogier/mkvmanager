@@ -15,7 +15,15 @@ class mmLazyDatabaseConfiguration implements ezcBaseConfigurationInitializer
 {
     public static function configureObject( $instance )
     {
-        return ezcDbFactory::create( 'sqlite://' . __DIR__ . '/tmp/mkvmanager.db' );
+        switch ( $instance )
+        {
+            case false:
+                return ezcDbFactory::create( 'sqlite://' . __DIR__ . '/tmp/mkvmanager.db' );
+                break;
+            case 'sickbeard':
+                return ezcDbFactory::create( 'sqlite:///home/download/sickbeard/common/sickbeard.db' );
+                break;
+        }
     }
 }
 

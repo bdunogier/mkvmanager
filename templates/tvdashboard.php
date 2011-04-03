@@ -116,6 +116,7 @@ $(document).ready(function() {
         e.preventDefault();
 
         var episodeName = $(this).parent().text();
+        var releaseName = $(this).attr( 'title' );
         currentEpisode = $(this).parent();
 
         // popup the overlay
@@ -125,6 +126,7 @@ $(document).ready(function() {
 
         // set waiting text
         targetDiv.html( '<h3>' + episodeName + '</h3>' );
+        targetDiv.append( '<h5>Release: ' + releaseName + '</h5>' );
         targetDiv.append('<p>Fetching subtitles...</p>');
 
         // @todo search for this episode subtitles
@@ -210,7 +212,7 @@ $(document).ready(function() {
             <? $displayed = 0; ?>
             <? foreach( $episodeFiles as $episodeFile ): ?>
                 <li id="li<?=ucfirst( anchorLink( $episodeFile->filename ) )?>"class="<?=($episodeFile->hasSubtitleFile ? 'subtitle' : 'nosubtitle' )?>">
-                    Episode <a class="episode" href="/ajax/searchsubtitles/<?=rawurlencode( $episodeFile->filename )?>">
+                    Episode <a class="episode" title="<?=htmlentities( $episodeFile->downloadedFile )?>" href="/ajax/searchsubtitles/<?=rawurlencode( $episodeFile->filename )?>">
                         <?=$episodeFile->seasonNumber?>x<?=$episodeFile->episodeNumber?>: <?=$episodeFile->episodeName?></a>
                 </li>
                 <? if ( ++$displayed == 3 && count( $episodeFiles ) > 3 ):

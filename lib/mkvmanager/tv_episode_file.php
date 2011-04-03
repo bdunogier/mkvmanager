@@ -5,7 +5,8 @@
  * @version $Id$
  * @copyright 2011
  *
- * @property-read hasSubtitleFile
+ * @property-read bool hasSubtitleFile
+ * @property-read string downloadedFile filename of the originally downloaded file (release)
  */
 class TVEpisodeFile
 {
@@ -28,6 +29,38 @@ class TVEpisodeFile
                 error_log( "file_exists( $basedirAndFile.srt ) || file_exists( $basedirAndFile.ass )" );
                 return ( file_exists( "$basedirAndFile.srt" ) || file_exists( "$basedirAndFile.ass" ) );
                 break;
+
+            case 'downloadedFile':
+                $db = ezcDbInstance::get( 'sickbeard' );
+
+                // show ID
+                $q = $db->createSelectQuery();
+                $q->select( 'tvdb_id' )
+                  ->from( 'tv_shows' )
+                  ->where( $q->expr->eq( 'show_name', $q->bindValue( $this->showName ) ) );
+
+                /**
+                 * @var PDOStatement
+                 */
+                $stmt = $q->prepare();
+                $stmt->execute();
+                $showId = $stmt->fetchColumn();
+
+                // downloaded file name
+                $q = $db->createSelectQuery();
+                $e = $q->expr;
+                $q->select( 'resource' )
+                  ->from( 'history' )
+                  ->where( $e->lAnd(
+                      $e->eq( 'action', $q->bindValue( 404 ) ),
+                      $e->eq( 'showid', $q->bindValue( $showId) ),
+                      $e->eq( 'season', $q->bindValue( $this->seasonNumber) ),
+                      $e->eq( 'episode', $q->bindValue( $this->episodeNumber ) )
+                  ) );
+                $stmt = $q->prepare();
+                $stmt->execute();
+                return basename( $downloadedFile = $stmt->fetchColumn() );
+
 
             default:
                 throw new ezcBasePropertyNotFoundException( $property );
