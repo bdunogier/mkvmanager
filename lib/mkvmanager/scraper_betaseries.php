@@ -2,17 +2,18 @@
 class MkvManagerScraperBetaSeries extends MkvManagerScraper
 {
     /**
-     * Constructor
+     * Constructs a new betaseries.com scraper
      *
      * @param string $searchCriteria
      *        One of:
      *        - TV Show filename (<series> - <season>x<episode>...)
      *        - BetaSeries ID: theitcrowd, southpark...
+     * @param string $release The release filename
      *
      * @todo Improve criteria to a named struct so that the scraper behaviour can
      *       be changed depending on the info we have
      */
-    public function __construct( $searchCriteria )
+    public function __construct( $searchCriteria, $release )
     {
         // space: we have a human readable series name
         if ( strpos( $searchCriteria, ' ' ) !== false )
@@ -32,6 +33,9 @@ class MkvManagerScraperBetaSeries extends MkvManagerScraper
 
             $this->params['url'] = $this->searchShowCode;
             $this->params['saison'] = $this->searchSeason;
+
+            if ( $release )
+                $this->release = new TVEpisodeDownloadedFile( $release );
         }
     }
 
@@ -93,7 +97,12 @@ class MkvManagerScraperBetaSeries extends MkvManagerScraper
 
 
                         $subType = substr( $name, strrpos( $name, '.' ) + 1 );
-                        $ret[] = array( 'name' => $name, 'link' => "{$subtitleLink}/{$subType}/" . urlencode( str_replace( '/', '#', $name ) ) );
+                        $priority = 0;
+                        if ( $this->release->matchesSubtitle( $name ) )
+                        {
+                            $priority++;
+                        }
+                        $ret[] = array( 'name' => $name, 'link' => "{$subtitleLink}/{$subType}/" . urlencode( str_replace( '/', '#', $name ) ), 'priority' => $priority );
                     }
                 }
                 // remove temporary file
@@ -170,6 +179,12 @@ class MkvManagerScraperBetaSeries extends MkvManagerScraper
     private $searchShowCode;
     private $searchSeason;
     private $searchEpisode;
+
+    /**
+     * The downloaded file
+     * @param TVEpisodeDownloadedFile
+     */
+    private $release;
 
     protected $baseURL = 'http://www.betaseries.com/ajax/episodes/season.php';
 

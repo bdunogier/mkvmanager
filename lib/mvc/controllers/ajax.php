@@ -52,8 +52,8 @@ class mmAjaxController extends ezcMvcController
     {
         $result = new ezcMvcResult;
 
-        // brief test
-        $scraper = new MkvManagerScraperBetaSeries( $this->VideoFile );
+        $release = isset( $this->release ) ? $this->release : null;
+        $scraper = new MkvManagerScraperBetaSeries( $this->VideoFile, $release );
         $subtitles = $scraper->get();
         if ( $subtitles === false )
         {
@@ -71,7 +71,8 @@ class mmAjaxController extends ezcMvcController
     {
         $result = new ezcMvcResult;
 
-        $fileUrl = 'http://www.betaseries.com/srt/' . $this->SubFileId;
+        $fileUrl = "http://www.betaseries.com/srt/{$this->SubFileId}";
+        error_log( $fileUrl );
 
         // subtitle save path
         $targetPath = '/home/download/downloads/complete/TV/Sorted/';

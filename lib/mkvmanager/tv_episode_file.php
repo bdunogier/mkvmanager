@@ -6,7 +6,7 @@
  * @copyright 2011
  *
  * @property-read bool hasSubtitleFile
- * @property-read string downloadedFile filename of the originally downloaded file (release)
+ * @property-read TVEpisodeDownloadedFile downloadedFile filename of the originally downloaded file (release)
  */
 class TVEpisodeFile
 {
@@ -63,7 +63,7 @@ class TVEpisodeFile
                   ) );
                 $stmt = $q->prepare();
                 $stmt->execute();
-                return basename( $downloadedFile = $stmt->fetchColumn() );
+                return new TVEpisodeDownloadedFile( basename( $downloadedFile = $stmt->fetchColumn() ) );
 
 
             default:

@@ -23,6 +23,7 @@ class mmMvcRouter extends ezcMvcRouter
             new ezcMvcRailsRoute( '/ajax/mkvmerge',                            'mmAjaxController', 'mkvMerge' ),
             new ezcMvcRailsRoute( '/ajax/bestfit',                             'mmAjaxController', 'bestFit' ),
             new ezcMvcRailsRoute( '/ajax/searchsubtitles/:VideoFile',          'mmAjaxController', 'searchSubtitles' ),
+            new ezcMvcRailsRoute( '/ajax/searchsubtitles/:VideoFile/:release', 'mmAjaxController', 'searchSubtitles' ),
             new ezcMvcRailsRoute( '/ajax/merge-status/:mergeHash',             'mmAjaxController', 'mergeStatus' ),
             new ezcMvcRailsRoute( '/ajax/merge-active-status',                 'mmAjaxController', 'mergeActiveStatus' ),
             new ezcMvcRailsRoute( '/ajax/queue-command',                       'mmAjaxController', 'queueCommand' ),

@@ -139,7 +139,10 @@ $(document).ready(function() {
                     item = data.subtitles[index];
                     // @todo Make this more javascript like, and use a method that automatically
                     // adds a link to the image file
-                    html += '<li><a class="SubtitleDownloadLink" href="' + item.link + '">' + item.name + '</a><div class="SubtitleStatusText hidden"></div></li>';
+                    html += '<li><a class="SubtitleDownloadLink" href="' + item.link + '">'
+                         + item.name
+                         + '</a>'
+                         + ' (' + item.priority + ')<div class="SubtitleStatusText hidden"></div></li>';
                 }
                 html += '</ul>';
                 targetDiv.append( html );
@@ -212,7 +215,9 @@ $(document).ready(function() {
             <? $displayed = 0; ?>
             <? foreach( $episodeFiles as $episodeFile ): ?>
                 <li id="li<?=ucfirst( anchorLink( $episodeFile->filename ) )?>"class="<?=($episodeFile->hasSubtitleFile ? 'subtitle' : 'nosubtitle' )?>">
-                    Episode <a class="episode" title="Downloaded release: <?=htmlentities( $episodeFile->downloadedFile )?>" href="/ajax/searchsubtitles/<?=rawurlencode( $episodeFile->filename )?>">
+                    Episode <a class="episode"
+                        title="Downloaded release: <?=htmlentities( (string)$episodeFile->downloadedFile )?> (<?=$episodeFile->downloadedFile->releaseGroup?>)"
+                        href="/ajax/searchsubtitles/<?=rawurlencode( $episodeFile->filename )?>/<?=rawurlencode( $episodeFile->downloadedFile )?>">
                         <?=$episodeFile->seasonNumber?>x<?=$episodeFile->episodeNumber?>: <?=$episodeFile->episodeName?></a>
                 </li>
                 <? if ( ++$displayed == 3 && count( $episodeFiles ) > 3 ):
