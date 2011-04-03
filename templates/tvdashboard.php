@@ -212,7 +212,7 @@ $(document).ready(function() {
             <? $displayed = 0; ?>
             <? foreach( $episodeFiles as $episodeFile ): ?>
                 <li id="li<?=ucfirst( anchorLink( $episodeFile->filename ) )?>"class="<?=($episodeFile->hasSubtitleFile ? 'subtitle' : 'nosubtitle' )?>">
-                    Episode <a class="episode" title="<?=htmlentities( $episodeFile->downloadedFile )?>" href="/ajax/searchsubtitles/<?=rawurlencode( $episodeFile->filename )?>">
+                    Episode <a class="episode" title="Downloaded release: <?=htmlentities( $episodeFile->downloadedFile )?>" href="/ajax/searchsubtitles/<?=rawurlencode( $episodeFile->filename )?>">
                         <?=$episodeFile->seasonNumber?>x<?=$episodeFile->episodeNumber?>: <?=$episodeFile->episodeName?></a>
                 </li>
                 <? if ( ++$displayed == 3 && count( $episodeFiles ) > 3 ):
