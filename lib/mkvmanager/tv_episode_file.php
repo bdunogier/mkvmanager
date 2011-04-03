@@ -10,6 +10,10 @@
  */
 class TVEpisodeFile
 {
+    /**
+     * Constructs a TVEpisodeFile based on the filename $filename
+     * @param string $filename
+     */
     public function __construct( $filename )
     {
         $pathinfo = pathinfo( $filename );
@@ -67,23 +71,45 @@ class TVEpisodeFile
         }
     }
 
+    /**
+     * TV Show name
+     * @var string
+     */
     public $showName;
 
+    /**
+     * Season number
+     * @var integer
+     */
     public $seasonNumber;
 
+    /**
+     * Episode number
+     * @var integer
+     */
     public $episodeNumber;
 
+    /**
+     * Episode name/title
+     * @var string
+     */
     public $episodeName;
 
+    /**
+     * File extension (mkv, avi)
+     * @var string
+     */
     public $extension;
 
     /**
      * Filename, extension included
+     * @var string
      */
     public $filename;
 
     /**
      * Full episode name: <ShowName> - <SeasonNr>x<EpisodeNr> - <EpisodeName> without extension
+     * @var string
      */
     public $fullname;
 }
