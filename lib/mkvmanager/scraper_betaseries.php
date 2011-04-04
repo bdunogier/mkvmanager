@@ -63,6 +63,9 @@ class MkvManagerScraperBetaSeries extends MkvManagerScraper
             $url = (string)$item[0]['href'];
             list( ,,,,$subtitleId ) = explode( '/', $url );
             $subtitleName = (string)$item[0];
+
+            // class="<originSite> off/on"
+            list( $originSite ) = explode( ' ', (string)$li['class'] );
             $subtitleLink = "/ajax/downloadsubtitle/" . rawurlencode( $this->fileName ) . "/{$subtitleId}";
 
             // if the file is a zip, we need to download it and read its contents
@@ -94,39 +97,11 @@ class MkvManagerScraperBetaSeries extends MkvManagerScraper
 
                         $subType = substr( $name, strrpos( $name, '.' ) + 1 );
 
-                        /**
-                         * Priorities:
-                         * - english = -10
-                         * - group = 5
-                         * - bad group = -5 (should always get negative prio)
-                         * - ass = 3
-                         * - notag = -1
-                         * - tag = 1
-                         */
-                        $priority = 0;
-
-                        // english subs
-                        if ( preg_match( '#((\.VO-)|(VO/)|(en\.srt)|(\.en\.ass)|(\.txt$))#i', $name ) )
-                            $priority -= 10;
-
-                        // release
-                        $priority += $this->release->matchesSubtitle( $name ) ? 5 :  -5;
-
-                        // type + tag/notag
-                        if ( $subType == 'ass' )
-                        {
-                            $priority += 3;
-                            if ( strstr( strtolower( $name ), '.tag' ) )
-                                $priority++;
-                            if ( strstr( strtolower( $name ), '.notag' ) )
-                                $priority--;
-                        }
-                        elseif ( strstr( strtolower( $name ), '.tag' ) )
-                            $priority++;
-                        if ( strstr( strtolower( $name ), '.notag' ) )
-                            $priority--;
-
-                        $ret[] = array( 'name' => $name, 'link' => "{$subtitleLink}/{$subType}/" . urlencode( str_replace( '/', '#', $name ) ), 'priority' => $priority );
+                        $ret[] = array(
+                            'name' => $name,
+                            'link' => "{$subtitleLink}/{$subType}/" . urlencode( str_replace( '/', '#', $name ) ),
+                            'priority' => $this->computeSubtitlePriority( $name, $originSite ),
+                            'originSite' => $originSite  );
                     }
                 }
                 // remove temporary file
@@ -134,12 +109,13 @@ class MkvManagerScraperBetaSeries extends MkvManagerScraper
             }
             else
             {
-                if ( !$this->accepted( $subtitleName ) )
-                    continue;
-
                 // add sub  type (srt, ass)
                 $subType = substr( $subtitleName, strrpos( $subtitleName, '.' ) + 1 );
-                $ret[] = array( 'link' => "{$subtitleLink}/{$subType}", 'name' => $subtitleName );
+                $ret[] = array(
+                    'link' => "{$subtitleLink}/{$subType}",
+                    'name' => $subtitleName,
+                    'priority' => $this->computeSubtitlePriority( $subtitleName, $originSite ),
+                    'originSite' => $originSite );
             }
         }
 
@@ -149,7 +125,73 @@ class MkvManagerScraperBetaSeries extends MkvManagerScraper
 
         $this->filterList( $ret );
 
+        // reverse sort by priority
+        usort( $ret, function( $a, $b ) {
+            if ( $a['priority'] == $b['priority'] ) return 0;
+            return ( $a['priority'] < $b['priority'] ) ? 1 : -1;
+        } );
+
         return $ret;
+    }
+
+    /**
+     * Computes the priority for the subtitle file $subtitleName and origin website $originSite
+     *
+     * Criterias:
+     * - language:
+     *   - english = -10
+     * - release group:
+     *   - match = 7
+     *   - no match = -7 (should always get negative prio)
+     * - type:
+     *   - ass = +3
+     * - tag/notag:
+     *   - tag = +1
+     *   - notag = -1
+     * - origin site:
+     *   - soustitres: +1
+     *   - usub: 0
+     *   - addic7ed: -1
+     *   - tvsubtitles: -2
+     *
+     * @param string $subtitleName
+     * @param string $originSite tvsubtitles, usub, addic7ed, soustitres
+     * @return integer
+     */
+    private function computeSubtitlePriority( $subtitleName, $originSite )
+    {
+        $priority = 0;
+
+        // english subs
+        if ( preg_match( '#((\.VO-)|(VO/)|(en\.srt)|(\.en\.ass)|(\.txt$))#i', $subtitleName ) )
+            $priority -= 10;
+
+        // release
+        $priority += $this->release->matchesSubtitle( $subtitleName ) ? 7 :  -7;
+
+        // type + tag/notag
+        if ( substr( $subtitleName, strrpos( $subtitleName, '.' ) + 1 ) == 'ass' )
+        {
+            $priority += 3;
+            if ( strstr( strtolower( $subtitleName ), '.tag' ) )
+                $priority++;
+            if ( strstr( strtolower( $subtitleName ), '.notag' ) )
+                $priority--;
+        }
+        elseif ( strstr( strtolower( $subtitleName ), '.tag' ) )
+            $priority++;
+        if ( strstr( strtolower( $subtitleName ), '.notag' ) )
+            $priority--;
+
+        // origin site
+        switch ( $originSite )
+        {
+            case 'soustitres':  $priority += 2; break;
+            case 'addic7ed':    $priority -= 1; break;
+            case 'tvsubtitles': $priority -= 2; break;
+        }
+
+        return $priority;
     }
 
     /**

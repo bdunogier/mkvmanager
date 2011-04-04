@@ -150,9 +150,8 @@ $(document).ready(function() {
                     // @todo: only hide bad priorities, with option to toggle
                     if ( item.priority >= 0 )
                     {
-                        html += '<li><a class="SubtitleDownloadLink" href="' + item.link + '">';
+                        html += '<li><a title="S:' + item.originSite + ', P:' + item.priority + '" class="SubtitleDownloadLink" href="' + item.link + '">';
                         html += item.name;
-                        html += ' (' + item.priority + ')';
                         html += '</a>';
                         // html += <div class="SubtitleStatusText hidden"></div></li>';
                     }
