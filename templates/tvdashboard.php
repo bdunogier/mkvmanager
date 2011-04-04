@@ -131,13 +131,13 @@ $(document).ready(function() {
         // set waiting text
         targetDiv.html( '<h3>' + episodeName + '</h3>' );
         targetDiv.append( '<h4>' + releaseName + '</h4>' );
-        targetDiv.append('<p>Fetching subtitles...</p>');
+        targetDiv.append('<p id="tmpFetchingSubtitles">Fetching subtitles...</p>');
 
         // @todo search for this episode subtitles
         $.get( $(this).attr('href'), function success( data ) {
             if ( data.status == 'ok' )
             {
-
+                $('#tmpFetchingSubtitles').remove();
                 // @todo refactor this, it is ridiculous :)
                 html = '<h5>Valid subtitles</h5>';
                 html += '<ul class="icon">';
