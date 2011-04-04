@@ -20,9 +20,6 @@ List
   - short delay: progress ONLY update for the active operation
   - every 10 seconds: new items + delete done ones if applicable
 * Subtitles: store when a subtitle doesn't exist, and check in the background
-* Subtitles: Sickbeard connection, check the episode's release name, and use it
-  to refine the subtitles list
-* Add an extra overlay while a subtitle is being downloaded
 * Add an animation when the popup closes upon successful download
 
 Done
@@ -38,6 +35,10 @@ Done
   Hide the file for while subtitle was downloaded ? Assign a specific style for
   episodes with downloaded subtitle ?
   => li icon with-subtitles / without-subtitles
+* Add an extra overlay while a subtitle is being downloaded
+  => done with the list icon
+* Subtitles: Sickbeard connection, check the episode's release name, and use it
+  to refine the subtitles list
 
 Abandonned
 ==========
