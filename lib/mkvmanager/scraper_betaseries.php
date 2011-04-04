@@ -108,16 +108,15 @@ class MkvManagerScraperBetaSeries extends MkvManagerScraper
                          * - tag = 1
                          */
                         $priority = 0;
+
+                        // english subs
                         if ( preg_match( '#((\.VO-)|(VO/)|(en\.srt)|(\.en\.ass)|(\.txt$))#i', $name ) )
                             $priority -= 10;
-                        if ( $this->release->matchesSubtitle( $name ) )
-                        {
-                            $priority += 5;
-                        }
-                        else
-                        {
-                            $priority -= 5;
-                        }
+
+                        // release
+                        $priority += $this->release->matchesSubtitle( $name ) ? 5 :  -5;
+
+                        // type + tag/notag
                         if ( $subType == 'ass' )
                         {
                             $priority += 3;
@@ -130,6 +129,7 @@ class MkvManagerScraperBetaSeries extends MkvManagerScraper
                             $priority++;
                         if ( strstr( strtolower( $name ), '.notag' ) )
                             $priority--;
+
                         $ret[] = array( 'name' => $name, 'link' => "{$subtitleLink}/{$subType}/" . urlencode( str_replace( '/', '#', $name ) ), 'priority' => $priority );
                     }
                 }
