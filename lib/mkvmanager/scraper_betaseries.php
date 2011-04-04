@@ -92,10 +92,6 @@ class MkvManagerScraperBetaSeries extends MkvManagerScraper
                     {
                         $name = (string)$zip->getNameIndex( $i );
 
-                        /*if ( !$this->accepted( $name ) )
-                            continue;*/
-
-
                         $subType = substr( $name, strrpos( $name, '.' ) + 1 );
 
                         /**
@@ -190,18 +186,6 @@ class MkvManagerScraperBetaSeries extends MkvManagerScraper
             foreach( $filesIndex[$srtFile] as $idx )
                 unset( $list[$idx] );
         }
-    }
-
-    /**
-     * Filters subtitle files: no english, no .txt
-     *
-     * @param string $file
-     * @return bool true if accepted, false otherwise
-     */
-    private function accepted( $file )
-    {
-        return !( $file == 'null' or
-            ( preg_match( '#((\.VO-)|(VO/)|(en\.srt)|(\.en\.ass)|(\.txt$))#i', $file ) ) );
     }
 
     private $searchShowCode;
