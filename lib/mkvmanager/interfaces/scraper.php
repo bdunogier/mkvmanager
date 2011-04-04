@@ -35,14 +35,14 @@ abstract class MkvManagerScraper
         }
 
         try {
-            //$cache = ezcCacheManager::getCache( 'scrapers' );
+            $cache = ezcCacheManager::getCache( 'scrapers' );
         } catch( Exception $e ) {
             throw $e;
         }
         $cacheId = md5( $this->requestUrl );
 
-        //if ( ( $this->responseBody = $cache->restore( $cacheId ) ) === false )
-        //{
+        if ( !( $this->responseBody = $cache->restore( $cacheId ) ) )
+        {
             set_error_handler( array( $this, 'phpFileGetContentsErrorHandler' ) );
             $this->responseBody = @file_get_contents( $this->requestUrl, 0, stream_context_create( array(
                 'http' => array( 'timeout' => 5 )
@@ -53,8 +53,12 @@ abstract class MkvManagerScraper
 
             if( $this->HTTPStatus(  ) != self::HTTP_OK )
                 throw new MkvManagerScraperHTTPException( $this->requestUrl, $this->responseHeaders );
-            //$cache->store( $cacheId, $this->responseBody );
-        //}
+            $cache->store( $cacheId, $this->responseBody );
+        }
+        else
+        {
+            error_log( 'restored from cache' );
+        }
         $doc = new DOMDocument();
         $doc->strictErrorChecking = FALSE;
         if ( @$doc->loadHTML( $this->responseBody ) === false )

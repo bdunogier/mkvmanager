@@ -48,16 +48,16 @@ ezcBaseInit::setCallback(
     'mmLazyPersistentSessionConfiguration'
 );
 
-/*class customLazyCacheConfiguration implements ezcBaseConfigurationInitializer
+class customLazyCacheConfiguration implements ezcBaseConfigurationInitializer
 {
 	public static function configureObject( $id )
 	{
-		$options = array( 'ttl' => 1800 );
+		$options = array( 'ttl' => 300 );
 
 		switch ( $id )
 		{
 			case 'scrapers':
-				ezcCacheManager::createCache( 'scrapers', '../cache/scrapers', 'ezcCacheStorageFilePlain', $options );
+				ezcCacheManager::createCache( 'scrapers', ROOT . '/tmp/cache/scrapers', 'ezcCacheStorageFilePlain', $options );
 				break;
 		}
 	}
@@ -66,5 +66,5 @@ ezcBaseInit::setCallback(
 ezcBaseInit::setCallback(
 	'ezcInitCacheManager',
 	'customLazyCacheConfiguration'
-);*/
+);
 ?>
