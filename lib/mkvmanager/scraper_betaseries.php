@@ -139,7 +139,7 @@ class MkvManagerScraperBetaSeries extends MkvManagerScraper
      *
      * Criterias:
      * - language:
-     *   - english = -10
+     *   - english = -20
      * - release group:
      *   - match = 7
      *   - no match = -7 (should always get negative prio)
@@ -163,8 +163,8 @@ class MkvManagerScraperBetaSeries extends MkvManagerScraper
         $priority = 0;
 
         // english subs
-        if ( preg_match( '#((\.VO-)|(VO/)|(en\.srt)|(\.en\.ass)|(\.txt$))#i', $subtitleName ) )
-            $priority -= 10;
+        if ( preg_match( '#((\.VO-)|(VO/)|(en\.((no)?tag\.)?(srt|ass))|(\.txt$))#i', $subtitleName ) )
+            $priority -= 20;
 
         // release
         $priority += $this->release->matchesSubtitle( $subtitleName ) ? 7 :  -7;
