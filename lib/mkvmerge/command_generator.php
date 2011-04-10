@@ -5,10 +5,8 @@
 class MKVMergeTVCommandGenerator
 {
     /**
-     * Generates an MKVMerge command from a TVShow episode filename
-     *
+     * Generates an MKVMerge command from a TVShow episode filename $filename
      * @param string $filename
-     *
      * @return MKVMergeCommand
      */
     public static function generate( $filename )
@@ -52,4 +50,60 @@ class MKVMergeTVCommandGenerator
         $command = sprintf( $commandTemplate, $outputFile, $subtitleFile, $videoSourceFile );
         return new MKVMergeCommand( $command );
     }
-}?>
+
+    /**
+     * Adds the source file $file to the command
+     * @param MKVMergeSourceFile $file
+     */
+    public function addSourceFile( MKVMergeSourceFile $file )
+    {
+
+    }
+
+    /**
+     * Sets the target disk for the output file to $disk
+     * @param string $disk
+     */
+    public function setTargetDisk( $disk )
+    {
+
+    }
+}
+
+/**
+ * MKVMergeSourceFile
+ *
+ */
+abstract class MKVMergeSourceFile
+{
+}
+
+/**
+ * MKVMergeSubtitleSourceFile
+ * One subtitle file, with its language
+ */
+class MKVMergeSubtitleSourceFile extends MKVMergeSourceFile
+{
+    function __construct( $file, $language )
+    {
+
+    }
+
+    private $file;
+    private $language;
+}
+
+/**
+ * MKVMergeSourceFile
+ * Will analyze the file for tracks
+ */
+class MKVMergeMediaSourceFile extends MKVMergeSourceFile
+{
+    function __construct( $file )
+    {
+
+    }
+
+    private $file;
+}
+?>
