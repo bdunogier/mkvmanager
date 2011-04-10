@@ -7,9 +7,9 @@ return array(
     'MKVMergeTVCommandGenerator'      => 'mkvmerge/command_generator.php',
 
     'MKVMergeTVCommandGenerator'      => 'mkvmerge/command_generator.php',
-    'MKVMergeSourceFile'              => 'mkvmerge/command_generator.php',
-    'MKVMergeSubtitleSourceFile'      => 'mkvmerge/command_generator.php',
-    'MKVMergeMediaSourceFile'         => 'mkvmerge/command_generator.php',
+    'MKVMergeInputFile'               => 'mkvmerge/command_generator.php',
+    'MKVMergeSubtitleInputFile'       => 'mkvmerge/command_generator.php',
+    'MKVMergeMediaInputFile'          => 'mkvmerge/command_generator.php',
 
     'mmMergeOperation' => 'mkvmerge/merge_operation.php',
 

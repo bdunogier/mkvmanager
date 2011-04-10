@@ -110,7 +110,7 @@ abstract class MKVMergeInputFile
  * MKVMergeSubtitleSourceFile
  * One subtitle file, with its language
  */
-class MKVMergeSubtitleFile extends MKVMergeSourceFile
+class MKVMergeSubtitleFile extends MKVMergeInputFile
 {
     function __construct( $file, $language )
     {
