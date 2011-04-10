@@ -6,6 +6,11 @@ return array(
     'MKVMergeSourceFile'              => 'mkvmerge/source_file.php',
     'MKVMergeTVCommandGenerator'      => 'mkvmerge/command_generator.php',
 
+    'MKVMergeTVCommandGenerator'      => 'mkvmerge/command_generator.php',
+    'MKVMergeSourceFile'              => 'mkvmerge/command_generator.php',
+    'MKVMergeSubtitleSourceFile'      => 'mkvmerge/command_generator.php',
+    'MKVMergeMediaSourceFile'         => 'mkvmerge/command_generator.php',
+
     'mmMergeOperation' => 'mkvmerge/merge_operation.php',
 
     'mmApp' => 'app.php',

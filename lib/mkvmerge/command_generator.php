@@ -62,27 +62,55 @@ class MKVMergeTVCommandGenerator
 
     /**
      * Sets the target disk for the output file to $disk
+     *
+     * This method is a helper for setOutputFile
+     *
      * @param string $disk
      */
     public function setTargetDisk( $disk )
     {
 
     }
+
+    /**
+     * Sets the output file for the command to $outputFile
+     *
+     * @param string $outputFile
+     */
+    public function setOutputFile( $outputFile )
+    {
+
+    }
+
+    /**
+     * The tracks the command manages
+     * @var array(MKVMergeCommandGeneratorTrack)
+     */
+    public $tracks;
 }
 
 /**
  * MKVMergeSourceFile
  *
  */
-abstract class MKVMergeSourceFile
+abstract class MKVMergeInputFile
 {
+    /**
+     *
+     */
+    public function getTracks()
+    {
+        return $tracks;
+    }
+
+    private $tracks;
 }
 
 /**
  * MKVMergeSubtitleSourceFile
  * One subtitle file, with its language
  */
-class MKVMergeSubtitleSourceFile extends MKVMergeSourceFile
+class MKVMergeSubtitleFile extends MKVMergeSourceFile
 {
     function __construct( $file, $language )
     {
@@ -97,7 +125,7 @@ class MKVMergeSubtitleSourceFile extends MKVMergeSourceFile
  * MKVMergeSourceFile
  * Will analyze the file for tracks
  */
-class MKVMergeMediaSourceFile extends MKVMergeSourceFile
+class MKVMergeMediaFile extends MKVMergeSourceFile
 {
     function __construct( $file )
     {
