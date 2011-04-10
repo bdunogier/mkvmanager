@@ -122,14 +122,16 @@ class mmMkvManagerDiskHelper
                 continue;
 
             $target = isset( $_POST['Target'] ) ? $_POST['Target'] : false;
-            $rawFreeSpace = diskfreespace( $disk->getPathname() );
+            if ( !$rawFreeSpace = @diskfreespace( $disk->getPathname() ) )
+                continue;
 
             $diskName = $disk->getFilename();
             $selectedText = ( $diskName == $target ) ? ' selected="selected"' : '';
 
             $disk = new stdClass();
             $disk->name = $diskName;
-            $disk->freespace = $freespace = self::decodeSize( $rawFreeSpace );
+            $disk->rawFreeSpace = $rawFreeSpace;
+            $disk->freespace = self::decodeSize( $disk->rawFreeSpace );
             $disk->selectedText = $selectedText;
 
             // @todo This is bullcrap: if two disks have the same freespace, only the last one will be returned
@@ -138,10 +140,10 @@ class mmMkvManagerDiskHelper
         }
 
         usort( $return, function( $a, $b ) {
-            if ( $a->freespace == $b->freespace )
+            if ( $a->rawFreeSpace == $b->rawFreeSpace )
                 return 0;
             else
-                return ( $a->freespace < $b->freespace ? -1 : 1 );
+                return ( $a->rawFreeSpace < $b->rawFreeSpace ? -1 : 1 );
         });
 
         return $return;
