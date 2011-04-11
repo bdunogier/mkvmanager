@@ -52,12 +52,23 @@ class MKVMergeTVCommandGenerator
     }
 
     /**
-     * Adds the source file $file to the command
+     * Constructs a new command generator object
+     */
+    public function construct()
+    {
+        $this->tracks = new MKVmergeCommandTrackSet();
+    }
+
+    /**
+     * Adds the input file $file to the command
      * @param MKVMergeSourceFile $file
      */
-    public function addSourceFile( MKVMergeSourceFile $file )
+    public function addInputFile( MKVMergeInputFile $file )
     {
-
+        foreach( $file->getTracks() as $track )
+        {
+            $this->addTrack( $track );
+        }
     }
 
     /**
@@ -82,11 +93,16 @@ class MKVMergeTVCommandGenerator
 
     }
 
+    private function addTrack( MKVMergeCommandTrack $track )
+    {
+        $this->tracks[] = $track;
+    }
+
     /**
      * The tracks the command manages
-     * @var array(MKVMergeCommandGeneratorTrack)
+     * @var MKVMergeCommandGeneratorTrackSet
      */
-    public $tracks;
+    private $tracks;
 }
 
 /**
@@ -96,13 +112,25 @@ class MKVMergeTVCommandGenerator
 abstract class MKVMergeInputFile
 {
     /**
-     *
+     * Returns the input file's tracks
+     * @return MKVmergeCommandTrackSet
      */
     public function getTracks()
     {
         return $tracks;
     }
 
+    /**
+     * Adds a new track to the input file
+     */
+    protected function addTrack( MKVMergeCommandTrack $track )
+    {
+        $this->tracks[] = $track;
+    }
+
+    /**
+     * @var MKVMergeCommandTrackSet
+     */
     private $tracks;
 }
 
@@ -133,5 +161,138 @@ class MKVMergeMediaFile extends MKVMergeSourceFile
     }
 
     private $file;
+}
+
+/**
+ * Media file analyzer
+ */
+class MediaAnalyzer
+{
+    private function __construct()
+    {
+
+    }
+
+    /**
+     * Returns the appropriate analyzer for the file $file
+     */
+    public static function get( $file )
+    {
+
+    }
+}
+
+/**
+ * A set of MKVmergeCommandTrack
+ */
+class MKVmergeCommandTrackSet implements ArrayAccess, Iterator, Countable
+{
+    /**
+     * ArrayAccess::offsetExists()
+     */
+    public function offsetExists( $offset )
+    {
+        return isset( $this->tracks[$offset] );
+    }
+
+    /**
+     * ArrayAccess::offsetGet()
+     * @return MKVMergeCommandTrack
+     */
+    public function offsetGet( $offset )
+    {
+        return isset( $this->tracks[$offset] ) ? $this->tracks[$offset] : null;
+    }
+
+    /**
+     * ArrayAccess::offsetSet()
+     */
+    public function offsetSet( $offset, MKVManagerCommandTrack $value )
+    {
+        if ( $offset === '' )
+            $this->tracks[] = $value;
+        else
+            $this->tracks[$offset] = $value;
+    }
+
+    /**
+     * ArrayAcces::offsetUnset()
+     */
+    public function offsetUnset( $offset )
+    {
+        unset( $this->tracks[$offset] );
+    }
+
+    /**
+     * Iterator::current()
+     */
+    public function current()
+    {
+        return $this->tracks[$key];
+    }
+
+    /**
+     * Iterator::key()
+     */
+    public function key()
+    {
+        return $this->key;
+    }
+
+    /**
+     * Iterator::next()
+     */
+    public function next()
+    {
+        $this->key++;
+    }
+
+    /**
+     * Iterator::rewind()
+     */
+    public function rewind()
+    {
+        $this->key = 0;
+    }
+
+    /**
+     * Iterator::valid()
+     */
+    public function valid()
+    {
+        return isset( $this->tracks[$this->key] );
+    }
+
+    /**
+     * Countable::count()
+     */
+    public function count()
+    {
+        return count( $this->tracks );
+    }
+
+    /**
+     * @var array(MKVManagerCommandTrack)
+     */
+    private $tracks;
+
+    /**
+     * Iterator key
+     * @var integer
+     */
+    private $key = 0;
+}
+
+/**
+ * And MKVMerge command track
+ */
+class MKVmergeCommandTrack
+{
+    public function __construct( )
+    {
+
+    }
+
+    private $inputFile;
 }
 ?>

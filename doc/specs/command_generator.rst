@@ -52,20 +52,39 @@ MKVMergeInputFile
 Abstract class for input files.
 
 MKVMergeSubtitleInputFile
------------------
+-------------------------
 
 Subtitle input files.
 
-MKVMergeInputFile
------------------
+MKVMergeMediaInputFile
+----------------------
 
 Media input files.
 
 MKVmergeCommandTrack
 --------------------
 
-A track in the generator. Each track matches an MKVMergeInputFile. An MKVMergeInputFile matches several tracks.
+A track in the generator. A track matches an MKVMergeInputFile. An MKVMergeInputFile matches several tracks.
 
+MKVmergeCommandTrackSet
+-----------------------
+
+A track in the generator. A track matches an MKVMergeInputFile. An MKVMergeInputFile matches several tracks.
+
+MKVAnalyzer
+-----------
+
+Analysis results of an mkv file. Provides the list of tracks, audio, video and subtitles.
+
+AVIAnalyzer
+-----------
+
+Analysis results of an mkv file. Provides the list of tracks, audio & video.
+
+MediaAnalyzer
+-------------
+
+Interface used by MKVAnalyzer and AVIAnalyzer.
 
 Challenges
 ==========
