@@ -19,6 +19,8 @@ class MKVMergeMediaAnalyzerTest extends PHPUnit_Framework_TestCase
         $analyzer = new MKVMergeMediaAnalyzer( new MKVMergeMediaInputFile( 'tmp/tests/test.avi' ) );
         $result = $analyzer->getResult();
 
+        echo var_export( $result );
+
         self::assertEquals( 2, count( $result ) );
 
         self::assertType( 'stdClass', $result[0] );
@@ -36,6 +38,8 @@ class MKVMergeMediaAnalyzerTest extends PHPUnit_Framework_TestCase
     {
         $analyzer = new MKVMergeMediaAnalyzer( new MKVMergeMediaInputFile( 'tmp/tests/test.mkv' ) );
         $result = $analyzer->getResult();
+
+        echo var_export( $result );
 
         self::assertEquals( 3, count( $result ) );
 

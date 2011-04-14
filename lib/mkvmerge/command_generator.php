@@ -74,12 +74,18 @@ class MKVMergeCommandGenerator
      */
     public function addInputFile( MKVMergeInputFile $file )
     {
+        /**
+         * @var MKVMergeMediaAnalyzer
+         */
         $analyzer = new $this->analyzer( $file );
 
-        foreach( $analyzer->getTracks() as $track )
+        foreach( $analyzer->getResult() as $analysisResult )
         {
-            $this->addTrack( $track );
+            $this->addTrack( MKVMergeCommandTrack::fromAnalysisResult( $analysisResult, $file ) );
         }
+
+        // Note: we should be able to manipulate the added tracks further on...
+        // Use MKVMergeCommandTrackSet ? Is this usable ? Useful ?
     }
 
     /**
@@ -104,6 +110,10 @@ class MKVMergeCommandGenerator
 
     }
 
+    /**
+     * Adds the track $track to the command
+     * @param MKVMergeCommandTrack $track
+     */
     private function addTrack( MKVMergeCommandTrack $track )
     {
         $this->tracks[] = $track;

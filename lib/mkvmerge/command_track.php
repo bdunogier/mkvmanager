@@ -64,6 +64,34 @@ class MKVmergeCommandTrack
         return isset( $this->properties[$property] ) && ( $this->properties[$property] !== false );
     }
 
+    /**
+     * Returns the appropriate MKVMergeCommandTrack from the MKVMergeMediaAnalyzer $analysisResult and input file $inputFile
+     * @param stdClass $analysisResult
+     * @param MKVMergeInputFile $inputFile
+     * @return MKVMergeCommandTrack
+     */
+    public static function fromAnalysisResult( stdClass $analysisResult, MKVMergeInputFile $inputFile )
+    {
+        switch( $analysisResult->type )
+        {
+            case 'audio':
+                $track = new MKVMergeCommandAudioTrack( $inputFile, $analysisResult->index );
+                break;
+            case 'video':
+                $track = new MKVMergeCommandVideoTrack( $inputFile, $analysisResult->index );
+                break;
+            case 'subtitles':
+                $track = new MKVMergeCommandSubtitleTrack( $inputFile, $analysisResult->index );
+                break;
+            default:
+                throw new Exception( "Unhandled track type $track" );
+        }
+        if ( isset( $analysisResult->language ) )
+            $track->language = $analysisResult->language;
+
+        return $track;
+    }
+
     private $properties = array(
         'inputFile' => false,
         'trackIndex' => false,
