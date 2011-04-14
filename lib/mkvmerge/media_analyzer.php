@@ -27,7 +27,7 @@ class MKVMergeMediaAnalyzer
      *
      * @throws ezcBaseFileNotFoundException if $mediaFile can't be found
      */
-    public function analyze()
+    private function analyze()
     {
         $return = false; $output = false;
         $command = "mkvmerge --identify-verbose \"{$this->inputFile->file}\"";
@@ -41,7 +41,7 @@ class MKVMergeMediaAnalyzer
         }
         else
         {
-            $trackSet = new MKVmergeCommandTrackSet();
+            $this->analysisResult = array();
             preg_match_all( "/^Track ID ([0-9]+): (video|audio|subtitles) \((.+)\)(?: \[language:([a-z]{3}).*\])?$/im", join( "\n", $output ), $matches, PREG_SET_ORDER );
             foreach( $matches as $match )
             {
@@ -49,37 +49,31 @@ class MKVMergeMediaAnalyzer
                 $type = $match[2];
 
                 // language doesn't exist for AVI (nor the other properties)
-                $language = isset( $match[4] ) ? $match[4] : false;
-                switch( $type )
+                $this->analysisResult[$index] = new stdClass;
+                $this->analysisResult[$index]->index = $index;
+                $this->analysisResult[$index]->type = $type;
+                if ( isset( $match[4] ) )
                 {
-                    case 'video':
-                        $trackSet[$index] = new MKVmergeCommandVideoTrack( $this->inputFile, $index );
-                        if ( $language )
-                            $trackSet[$index]->language = $language;
-                        break;
-                    case 'audio':
-                        $trackSet[$index] = new MKVmergeCommandAudioTrack( $this->inputFile, $index );
-                        if ( $language )
-                            $trackSet[$index]->language = $language;
-                        break;
-                    case 'subtitles':
-                        $trackSet[$index] = new MKVmergeCommandSubtitleTrack( $this->inputFile, $index );
-                        if ( $language )
-                            $trackSet[$index]->language = $language;
-                        break;
-                    default:
-                        throw new Exception( "Unhandled track type $type (" . print_r( $match, true ) . ')' );
+                    $this->analysisResult[$index]->language = $match[4];
                 }
             }
-            $this->trackSet = $trackSet;
         }
     }
 
     /**
-     * The tracks found in the analyzed media file
-     * @var MKVMergeCommandTrackSet
+     * Analyzes the input file and returns the tracks it contains
+     * @return array(index=>array(type,index,language)
      */
-    public $trackSet = null;
+    public function getResult()
+    {
+        if ( $this->analysisResult == null )
+        {
+            $this->analyze();
+        }
+        return $this->analysisResult;
+    }
+
+    private $analysisResult = array();
 
     /**
      * @var MKVMergeMediaInputFile
