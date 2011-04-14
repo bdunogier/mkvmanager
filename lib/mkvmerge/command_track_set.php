@@ -27,11 +27,17 @@ class MKVmergeCommandTrackSet implements ArrayAccess, Iterator, Countable
     public function offsetSet( $offset, $value )
     {
         if ( !$value instanceof MKVmergeCommandTrack )
+        {
             throw new ezcBaseValueException( "value", $value, 'MKVmergeCommandTrack' );
-        if ( $offset === '' )
+        }
+        if ( $offset === null )
+        {
             $this->tracks[] = $value;
+        }
         else
+        {
             $this->tracks[$offset] = $value;
+        }
     }
 
     /**
@@ -47,7 +53,7 @@ class MKVmergeCommandTrackSet implements ArrayAccess, Iterator, Countable
      */
     public function current()
     {
-        return $this->tracks[$key];
+        return $this->tracks[$this->key];
     }
 
     /**
@@ -93,7 +99,7 @@ class MKVmergeCommandTrackSet implements ArrayAccess, Iterator, Countable
     /**
      * @var array(MKVManagerCommandTrack)
      */
-    private $tracks;
+    private $tracks = array();
 
     /**
      * Iterator key

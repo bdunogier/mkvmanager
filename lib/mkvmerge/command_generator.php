@@ -77,75 +77,32 @@ class MKVMergeCommandGenerator
     }
 
     /**
-     * Returns the executable part of the command
-     * @return string
-     */
-    private function getCommandPartExecutable()
-    {
-        return 'mkvmerge';
-    }
-
-    /**
-     * Returns the output path part of the command
-     * @return string -o 'output file'
-     */
-    private function getCommandPartOutputPath()
-    {
-        return sprintf( '-o %s', escapeshellarg( $this->outputPath ) );
-    }
-
-    /**
-     * Returns the command string
-     * @return string
-     */
-    private function getCommandString()
-    {
-        $commandParts = array(
-            $this->getCommandPartExecutable(),
-            $this->getCommandPartOutputPath(),
-        );
-
-        // generate lines for each track
-        foreach( $this->tracks as $track )
-        {
-        }
-
-        // add track order
-
-        $command = implode( ' ', $commandParts );
-
-        return $command;
-    }
-
-    /**
-     * Returns the command
-     * @return MKVMergeCommand
-     */
-    public function get()
-    {
-        return new MKVMergeCommand( $this->getCommandString() );
-    }
-
-    /**
      * Adds the input file $file to the command
      * @param MKVMergeSourceFile $file
+     * @return MKVMergeCommandTrackSet The added track set
      */
     public function addInputFile( MKVMergeInputFile $inputFile )
     {
-        /**
-         * @var MKVMergeMediaAnalyzer
-         */
-        $analyzer = new $this->analyzer( $inputFile );
+        // local track set we will return at the end
+        $returnTrackSet = new MKVMergeCommandTrackSet();
 
-        foreach( $analyzer->getResult() as $analysisResult )
+        // media file: analyze and add found tracks
+        if ( $inputFile instanceof MKVMergeMediaInputFile )
         {
-            $this->addTrack( MKVMergeCommandTrack::fromAnalysisResult( $analysisResult, $inputFile ) );
+            $analyzer = $this->getAnalyzer( $inputFile );
+            foreach( $analyzer->getResult() as $analysisResult )
+            {
+                $returnTrackSet[] = $this->addTrack( MKVMergeCommandTrack::fromAnalysisResult( $analysisResult, $inputFile ) );
+            }
         }
-
+        // subtitle file: add as is
+        elseif ( $inputFile instanceof MKVMergeSubtitleInputFile )
+        {
+            $returnTrackSet[] = $this->addTrack( new MKVmergeCommandSubtitleTrack( $inputFile ) );
+        }
         $this->inputFiles = $inputFile;
 
-        // Note: we should be able to manipulate the added tracks further on...
-        // Use MKVMergeCommandTrackSet ? Is this usable ? Useful ?
+        return $returnTrackSet;
     }
 
     /**
@@ -171,12 +128,14 @@ class MKVMergeCommandGenerator
     }
 
     /**
-     * Adds the track $track to the command
+     * Adds the track $track to the command and returns it again
      * @param MKVMergeCommandTrack $track
+     * @return MKVMergeCommandTrack The added track
      */
     private function addTrack( MKVMergeCommandTrack $track )
     {
         $this->tracks[] = $track;
+        return $track;
     }
 
     /**
@@ -189,10 +148,118 @@ class MKVMergeCommandGenerator
     }
 
     /**
+     * Returns the media analyzer as configured using setAnalyzer
+     * @return MKVmergeMediaAnalyzer
+     */
+    private function getAnalyzer( MKvMergeMediaInputFile $inputFile )
+    {
+        return new $this->analyzer( $inputFile );
+    }
+
+    /**
+     * Returns the executable part of the command
+     * @return string
+     */
+    private function getCommandPartExecutable()
+    {
+        return 'mkvmerge';
+    }
+
+    /**
+     * Returns the output path part of the command
+     * @return string -o 'output file'
+     */
+    private function getCommandPartOutputPath()
+    {
+        if ( !$this->outputPath )
+        {
+            throw new Exception( "outputPath has not been set" );
+        }
+        return sprintf( '-o %s', escapeshellarg( $this->outputPath ) );
+    }
+
+    /**
+     * Returns the command string
+     * @return string
+     */
+    private function getCommandString()
+    {
+        $commandParts = array(
+            $this->getCommandPartExecutable(),
+            $this->getCommandPartOutputPath(),
+        );
+
+        // generate lines for each track
+        $currentInputFile = false;
+
+        // @TODO iterate by track set ! A file includes several track sets !
+        foreach( $this->tracks as $trackIndex => $track )
+        {
+            $replaceFrom = array();
+            $replaceFrom[] = '%track_index%'; $replaceTo[] = $trackIndex;
+            $replaceFrom[] = '%language'; $replacceTo[] = $track->language;
+            $replaceFrom[] = '%input_file%'; $replaceTo[] = (string)$track->inputFile;
+
+            // subtitle track
+            if ( $track instanceof MKVmergeCommandSubtitleTrack )
+            {
+                $template =
+                    '"--sub-charset" "%track_index%:%charset%" "--language" "%track_index%:%language%" ' .
+                    '"--forced-track" "%track_index%:no" "-s" "%track_index%" "-D" "-A" "-T" ' .
+                    '"--no-global-tags" "--no-chapters" "%input_file%" ';
+                $replaceFrom[] = '%charset%'; $replaceTo[] = 'ISO-8859-1';
+                $commandParts[] = str_replace( $replaceFrom, $replaceTo, $template );
+            }
+
+            // audio track
+            if ( $track instanceof MKVMergeCommandAudioTrack )
+            {
+                if ( $localInputFile === false )
+                {
+                    $currentInputFile = $track->inputFile;
+                }
+
+                $template = '"--language" "2:eng" "--default-track" "2:yes" "--forced-track" "2:no" ';
+            }
+
+            // video track
+            if ( $track instanceof MKVMergeCommandVideoTrack )
+            {
+                $template =
+                    '"--language" "%track_index%:%language%"';
+                if ( $localInputFile === false )
+                {
+                    $currentInputFile = $track->inputFile;
+                }
+            }
+
+            // TODO : set of above track set !
+            $template = '"-a" "2" "-S" "-d" "1" "-T" "--no-global-tags" "--no-chapters" "%s" ';
+        }
+
+
+        // TODO: add track order
+        $template = '"--track-order" "0:0,1:1,1:2"';
+
+        $command = implode( ' ', $commandParts );
+
+        return $command;
+    }
+
+    /**
+     * Returns the command
+     * @return MKVMergeCommand
+     */
+    public function get()
+    {
+        return new MKVMergeCommand( $this->getCommandString() );
+    }
+
+    /**
      * The tracks the command manages
      * @var MKVMergeCommandGeneratorTrackSet
      */
-    private $tracks;
+    public $tracks;
 
     /**
      * The command's input files

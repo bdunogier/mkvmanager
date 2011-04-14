@@ -14,7 +14,7 @@ class MKVmergeCommandTrack
      * @param MKVMergeInputFile $inputFile
      * @param mixed $index
      */
-    public function __construct( MKVMergeInputFile $inputFile, $index )
+    public function __construct( MKVMergeInputFile $inputFile, $index = 0 )
     {
         $this->inputFile = $inputFile;
         $this->trackIndex = $index;
@@ -90,6 +90,14 @@ class MKVmergeCommandTrack
             $track->language = $analysisResult->language;
 
         return $track;
+    }
+
+    /**
+     * Returns the string representation (the input file path)
+     */
+    public function fromString()
+    {
+        return (string)$this->inputFile->file;
     }
 
     private $properties = array(
