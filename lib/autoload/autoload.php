@@ -3,13 +3,18 @@ return array(
     'MKVMergeCommand'                 => 'mkvmerge/command.php',
     'MKVMergeCommandQueue'            => 'mkvmerge/commandqueue.php',
     'MKVMergeCommandImportWindowsGUI' => 'mkvmerge/commandimportwindowsgui.php',
-    'MKVMergeSourceFile'              => 'mkvmerge/source_file.php',
-    'MKVMergeTVCommandGenerator'      => 'mkvmerge/command_generator.php',
 
-    'MKVMergeTVCommandGenerator'      => 'mkvmerge/command_generator.php',
-    'MKVMergeInputFile'               => 'mkvmerge/command_generator.php',
-    'MKVMergeSubtitleInputFile'       => 'mkvmerge/command_generator.php',
-    'MKVMergeMediaInputFile'          => 'mkvmerge/command_generator.php',
+    'MKVMergeSourceFile'              => 'mkvmerge/source_file.php',
+    'MKVMergeCommandGenerator'        => 'mkvmerge/command_generator.php',
+    'MKVMergeInputFile'               => 'mkvmerge/input_file.php',
+    'MKVMergeMediaInputFile'          => 'mkvmerge/input_file_media.php',
+    'MKVMergeSubtitleInputFile'       => 'mkvmerge/input_file_subtitle.php',
+    'MKVmergeCommandTrackSet'         => 'mkvmerge/command_track_set.php',
+    'MKVmergeCommandTrack'            => 'mkvmerge/command_track.php',
+    'MKVmergeCommandAudioTrack'       => 'mkvmerge/command_track_audio.php',
+    'MKVmergeCommandSubtitleTrack'    => 'mkvmerge/command_track_subtitle.php',
+    'MKVmergeCommandVideoTrack'       => 'mkvmerge/command_track_video.php',
+    'MKVMergeMediaAnalyzer'           => 'mkvmerge/media_analyzer.php',
 
     'mmMergeOperation' => 'mkvmerge/merge_operation.php',
 
@@ -42,5 +47,5 @@ return array(
     'TVEpisodeDownloadedFile' => 'mkvmanager/tv_episode_downloaded_file.php',
     'TVShow' => 'mkvmanager/tv_show.php',
     'TVShowFolder' => 'mkvmanager/tv_show_folder.php',
-
-)?>
+);
+?>

@@ -1,8 +1,17 @@
 <?php
 /**
  * Generates a MKVMergeCommand from a TV Show file
+ *
+ * Basic example:
+ * <code>
+ * $generator = new MKVMergeCommandGenerator;
+ * $generator->addInputFile( new MKVMergeMediaInputFile( '/path/to/TVShows - 1x01 - Title.avi' ) );
+ * $generator->addInputFile( new MKVMergeSubtitleInputFile( '/path/to/TVShows - 1x01 - Title.srt' ) );
+ * $generator->setOutputFile( '/storage/TVShows - 1x01 - Title.mkv' );
+ * $command = $generator->getCommand();
+ * </code>
  */
-class MKVMergeTVCommandGenerator
+class MKVMergeCommandGenerator
 {
     /**
      * Generates an MKVMerge command from a TVShow episode filename $filename
@@ -54,7 +63,7 @@ class MKVMergeTVCommandGenerator
     /**
      * Constructs a new command generator object
      */
-    public function construct()
+    public function __construct()
     {
         $this->tracks = new MKVmergeCommandTrackSet();
     }
@@ -103,196 +112,5 @@ class MKVMergeTVCommandGenerator
      * @var MKVMergeCommandGeneratorTrackSet
      */
     private $tracks;
-}
-
-/**
- * MKVMergeSourceFile
- *
- */
-abstract class MKVMergeInputFile
-{
-    /**
-     * Returns the input file's tracks
-     * @return MKVmergeCommandTrackSet
-     */
-    public function getTracks()
-    {
-        return $tracks;
-    }
-
-    /**
-     * Adds a new track to the input file
-     */
-    protected function addTrack( MKVMergeCommandTrack $track )
-    {
-        $this->tracks[] = $track;
-    }
-
-    /**
-     * @var MKVMergeCommandTrackSet
-     */
-    private $tracks;
-}
-
-/**
- * MKVMergeSubtitleSourceFile
- * One subtitle file, with its language
- */
-class MKVMergeSubtitleFile extends MKVMergeInputFile
-{
-    function __construct( $file, $language )
-    {
-
-    }
-
-    private $file;
-    private $language;
-}
-
-/**
- * MKVMergeSourceFile
- * Will analyze the file for tracks
- */
-class MKVMergeMediaFile extends MKVMergeSourceFile
-{
-    function __construct( $file )
-    {
-
-    }
-
-    private $file;
-}
-
-/**
- * Media file analyzer
- */
-class MediaAnalyzer
-{
-    private function __construct()
-    {
-
-    }
-
-    /**
-     * Returns the appropriate analyzer for the file $file
-     */
-    public static function get( $file )
-    {
-
-    }
-}
-
-/**
- * A set of MKVmergeCommandTrack
- */
-class MKVmergeCommandTrackSet implements ArrayAccess, Iterator, Countable
-{
-    /**
-     * ArrayAccess::offsetExists()
-     */
-    public function offsetExists( $offset )
-    {
-        return isset( $this->tracks[$offset] );
-    }
-
-    /**
-     * ArrayAccess::offsetGet()
-     * @return MKVMergeCommandTrack
-     */
-    public function offsetGet( $offset )
-    {
-        return isset( $this->tracks[$offset] ) ? $this->tracks[$offset] : null;
-    }
-
-    /**
-     * ArrayAccess::offsetSet()
-     */
-    public function offsetSet( $offset, MKVManagerCommandTrack $value )
-    {
-        if ( $offset === '' )
-            $this->tracks[] = $value;
-        else
-            $this->tracks[$offset] = $value;
-    }
-
-    /**
-     * ArrayAcces::offsetUnset()
-     */
-    public function offsetUnset( $offset )
-    {
-        unset( $this->tracks[$offset] );
-    }
-
-    /**
-     * Iterator::current()
-     */
-    public function current()
-    {
-        return $this->tracks[$key];
-    }
-
-    /**
-     * Iterator::key()
-     */
-    public function key()
-    {
-        return $this->key;
-    }
-
-    /**
-     * Iterator::next()
-     */
-    public function next()
-    {
-        $this->key++;
-    }
-
-    /**
-     * Iterator::rewind()
-     */
-    public function rewind()
-    {
-        $this->key = 0;
-    }
-
-    /**
-     * Iterator::valid()
-     */
-    public function valid()
-    {
-        return isset( $this->tracks[$this->key] );
-    }
-
-    /**
-     * Countable::count()
-     */
-    public function count()
-    {
-        return count( $this->tracks );
-    }
-
-    /**
-     * @var array(MKVManagerCommandTrack)
-     */
-    private $tracks;
-
-    /**
-     * Iterator key
-     * @var integer
-     */
-    private $key = 0;
-}
-
-/**
- * And MKVMerge command track
- */
-class MKVmergeCommandTrack
-{
-    public function __construct( )
-    {
-
-    }
-
-    private $inputFile;
 }
 ?>
