@@ -51,7 +51,7 @@ abstract class MkvManagerScraper
 
             $this->responseHeaders = $http_response_header;
 
-            if( $this->HTTPStatus(  ) != self::HTTP_OK )
+            if( $this->HTTPStatus() != self::HTTP_OK )
                 throw new MkvManagerScraperHTTPException( $this->requestUrl, $this->responseHeaders );
             $cache->store( $cacheId, $this->responseBody );
         }
@@ -75,7 +75,7 @@ abstract class MkvManagerScraper
      */
     public function HTTPStatus()
     {
-        if( substr( $this->responseHeaders[0], -2 ) == 'OK' )
+        if( substr( $this->responseHeaders[0], -2 ) == 'OK' || substr( $this->responseHeaders[0], -5 ) == 'Found' )
             return self::HTTP_OK;
         else
             return self::HTTP_KO;
