@@ -12,7 +12,7 @@ class MkvManagerScraperHTTPException extends ezcBaseException
     {
         $this->url = $url;
         $this->http_response_headers = $http_response_headers;
-        parent::__construct( "An HTTP error code was returned while fetching URL '$url'" );
+        parent::__construct( "An HTTP error code was returned while fetching URL '$url'. Response headers: " . print_r( $http_response_headers, true ) );
     }
 
     /**
