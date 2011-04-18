@@ -87,6 +87,14 @@ br {
     overflow: auto;
 }
 
+ul.listEpisodes {
+    overflow: hidden;
+}
+
+ul.listEpisodes li {
+    white-space: nowrap;
+}
+
 ul.icon {
   list-style-type: none;
   padding: 0;
@@ -249,7 +257,7 @@ $(document).ready(function() {
                         href="/ajax/searchsubtitles/<?=rawurlencode( $episodeFile->filename )?>/<?=rawurlencode( $episodeFile->downloadedFile )?>">
                         <?=$episodeFile->seasonNumber?>x<?=$episodeFile->episodeNumber?>: <?=$episodeFile->episodeName?></a>
                 </li>
-                <? if ( ++$displayed == 3 && count( $episodeFiles ) > 3 ):
+                <? if ( ++$displayed == 5 && count( $episodeFiles ) > 3 ):
                    $others = count( $episodeFiles ) - $displayed; ?>
                 <li>... and <?=$others?> more</li>
                 <? break; endif; ?>
