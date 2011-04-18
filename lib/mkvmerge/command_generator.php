@@ -14,6 +14,14 @@
 class MKVMergeCommandGenerator
 {
     /**
+     * Constructs a new command generator object
+     */
+    public function __construct()
+    {
+        $this->tracks = new MKVmergeCommandTrackSet();
+    }
+
+    /**
      * Generates an MKVMerge command from a TVShow episode filename $filename
      * @param string $filename
      * @return MKVMergeCommand
@@ -21,12 +29,20 @@ class MKVMergeCommandGenerator
     public static function generate( $filename )
     {
         $commandTemplate =
-            'mkvmerge -o "%s" ' . // OutputFile
+            // OutputFile
+            'mkvmerge -o "%s" ' .
+
+            // SourceSubtitleFile
             '"--sub-charset" "0:ISO-8859-1" "--language" "0:fre" "--forced-track" "0:no" "-s" "0" "-D" "-A" "-T" ' .
-            '"--no-global-tags" "--no-chapters" "%s" ' . // SourceSubtitleFile
+            '"--no-global-tags" "--no-chapters" "%s" ' .
+
+            // SourceVideoFile
+            // Track1 (video)
             '"--language" "1:eng" "--default-track" "1:no" "--forced-track" "1:no" "--display-dimensions" "1:16x9" ' .
+            // Track2 (audio)
             '"--language" "2:eng" "--default-track" "2:yes" "--forced-track" "2:no" "-a" "2" "-d" "1" "-S" "-T" ' .
-            '"--no-global-tags" "--no-chapters" "%s" ' . // SourceVideoFile
+            // Valid for both tracks ?
+            '"--no-global-tags" "--no-chapters" "%s" ' .
             '"--track-order" "0:0,1:1,1:2"';
 
         // input is a .mkv or .avi file
@@ -61,28 +77,72 @@ class MKVMergeCommandGenerator
     }
 
     /**
-     * Constructs a new command generator object
+     * Returns the executable part of the command
+     * @return string
      */
-    public function __construct()
+    private function getCommandPartExecutable()
     {
-        $this->tracks = new MKVmergeCommandTrackSet();
+        return 'mkvmerge';
+    }
+
+    /**
+     * Returns the output path part of the command
+     * @return string -o 'output file'
+     */
+    private function getCommandPartOutputPath()
+    {
+        return sprintf( '-o %s', escapeshellarg( $this->outputPath ) );
+    }
+
+    /**
+     * Returns the command string
+     * @return string
+     */
+    private function getCommandString()
+    {
+        $commandParts = array(
+            $this->getCommandPartExecutable(),
+            $this->getCommandPartOutputPath(),
+        );
+
+        // generate lines for each track
+        foreach( $this->tracks as $track )
+        {
+        }
+
+        // add track order
+
+        $command = implode( ' ', $commandParts );
+
+        return $command;
+    }
+
+    /**
+     * Returns the command
+     * @return MKVMergeCommand
+     */
+    public function get()
+    {
+        return new MKVMergeCommand( $this->getCommandString() );
     }
 
     /**
      * Adds the input file $file to the command
      * @param MKVMergeSourceFile $file
      */
-    public function addInputFile( MKVMergeInputFile $file )
+    public function addInputFile( MKVMergeInputFile $inputFile )
     {
         /**
          * @var MKVMergeMediaAnalyzer
          */
-        $analyzer = new $this->analyzer( $file );
+        $analyzer = new $this->analyzer( $inputFile );
 
         foreach( $analyzer->getResult() as $analysisResult )
         {
-            $this->addTrack( MKVMergeCommandTrack::fromAnalysisResult( $analysisResult, $file ) );
+            $this->addTrack( MKVMergeCommandTrack::fromAnalysisResult( $analysisResult, $inputFile ) );
         }
+
+        $this->inputFiles = $inputFile;
 
         // Note: we should be able to manipulate the added tracks further on...
         // Use MKVMergeCommandTrackSet ? Is this usable ? Useful ?
@@ -101,13 +161,13 @@ class MKVMergeCommandGenerator
     }
 
     /**
-     * Sets the output file for the command to $outputFile
+     * Sets the output path for the command to $outputPath
      *
-     * @param string $outputFile
+     * @param string $outputPath
      */
-    public function setOutputFile( $outputFile )
+    public function setOutputFile( $outputPath )
     {
-
+        $this->outputPath = $outputPath;
     }
 
     /**
@@ -134,6 +194,22 @@ class MKVMergeCommandGenerator
      */
     private $tracks;
 
-    private $analyzer = 'MKVMergeMediaAnalyzer'
+    /**
+     * The command's input files
+     * @var array(MKVMergeInputFile)
+     */
+    private $inputFiles;
+
+    /**
+     * The media analyzer class
+     * @var string
+     */
+    private $analyzer = 'MKVMergeMediaAnalyzer';
+
+    /**
+     * The command's outut path
+     * @var string
+     */
+    private $outputPath = false;
 }
 ?>
