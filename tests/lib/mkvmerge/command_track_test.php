@@ -30,5 +30,31 @@ class MKVMergeCommandTrackTest extends PHPUnit_Framework_TestCase
         self::assertType( 'MKVMergeCommandVideoTrack', $track );
         self::assertEquals( 'eng', $track->language );
     }
+
+    function testFromAnalysisResultAudio()
+    {
+        $inputFile = new MKVMergeMediaInputFile( 'tmp/tests/test.avi');
+        $analysisResult = new stdClass;
+        $analysisResult->index = 0;
+        $analysisResult->type = 'audio';
+        $analysisResult->language = 'eng';
+
+        $track = MKVmergeCommandTrack::fromAnalysisResult( $analysisResult, $inputFile );
+        self::assertType( 'MKVMergeCommandAudioTrack', $track );
+        self::assertEquals( 'eng', $track->language );
+    }
+
+    function testFromAnalysisResultSubtitle()
+    {
+        $inputFile = new MKVMergeMediaInputFile( 'tmp/tests/test.avi');
+        $analysisResult = new stdClass;
+        $analysisResult->index = 0;
+        $analysisResult->type = 'subtitles';
+        $analysisResult->language = 'fre';
+
+        $track = MKVmergeCommandTrack::fromAnalysisResult( $analysisResult, $inputFile );
+        self::assertType( 'MKVMergeCommandSubtitleTrack', $track );
+        self::assertEquals( 'fre', $track->language );
+    }
 }
 ?>
