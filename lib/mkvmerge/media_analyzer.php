@@ -15,7 +15,7 @@ class MKVMergeMediaAnalyzer
 {
     public function __construct( $inputFile )
     {
-        if ( !file_exists( $inputFile->file ) )
+        if ( !file_exists( (string)$inputFile ) )
         {
             throw new ezcBaseFileNotFoundException( $inputFile );
         }
@@ -30,7 +30,7 @@ class MKVMergeMediaAnalyzer
     private function analyze()
     {
         $return = false; $output = false;
-        $command = "mkvmerge --identify-verbose \"{$this->inputFile->file}\"";
+        $command = "mkvmerge --identify-verbose \"{$this->inputFile}\"";
 
         exec( $command, $output, $return );
 

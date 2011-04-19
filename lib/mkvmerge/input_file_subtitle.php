@@ -7,10 +7,10 @@ class MKVMergeSubtitleInputFile extends MKVMergeInputFile
 {
     function __construct( $file, $language )
     {
-
+        parent::__construct( $file );
+        $this->language = $language;
     }
 
-    private $file;
     private $language;
 }
 ?>

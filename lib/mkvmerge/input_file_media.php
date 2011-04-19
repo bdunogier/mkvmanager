@@ -5,15 +5,7 @@
  */
 class MKVMergeMediaInputFile extends MKVMergeInputFile
 {
-    function __construct( $file )
-    {
-        $this->file = $file;
-    }
 
-    /**
-     * @var string
-     */
-    public $file;
 
     /**
      * The input file tracks

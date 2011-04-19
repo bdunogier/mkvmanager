@@ -84,7 +84,7 @@ class MKVMergeCommandGenerator
     public function addInputFile( MKVMergeInputFile $inputFile )
     {
         // local track set we will return at the end
-        $returnTrackSet = new MKVMergeCommandTrackSet();
+        $trackSet = new MKVMergeCommandTrackSet();
 
         // media file: analyze and add found tracks
         if ( $inputFile instanceof MKVMergeMediaInputFile )
@@ -92,17 +92,18 @@ class MKVMergeCommandGenerator
             $analyzer = $this->getAnalyzer( $inputFile );
             foreach( $analyzer->getResult() as $analysisResult )
             {
-                $returnTrackSet[] = $this->addTrack( MKVMergeCommandTrack::fromAnalysisResult( $analysisResult, $inputFile ) );
+                $trackSet[] = MKVMergeCommandTrack::fromAnalysisResult( $analysisResult, $inputFile );
             }
         }
         // subtitle file: add as is
         elseif ( $inputFile instanceof MKVMergeSubtitleInputFile )
         {
-            $returnTrackSet[] = $this->addTrack( new MKVmergeCommandSubtitleTrack( $inputFile ) );
+            $trackSet[] = new MKVmergeCommandSubtitleTrack( $inputFile );
         }
-        $this->inputFiles = $inputFile;
+        $this->inputFiles[] = $inputFile;
+        $this->trackSets[] = $trackSet;
 
-        return $returnTrackSet;
+        return $trackSet;
     }
 
     /**
@@ -125,17 +126,6 @@ class MKVMergeCommandGenerator
     public function setOutputFile( $outputPath )
     {
         $this->outputPath = $outputPath;
-    }
-
-    /**
-     * Adds the track $track to the command and returns it again
-     * @param MKVMergeCommandTrack $track
-     * @return MKVMergeCommandTrack The added track
-     */
-    private function addTrack( MKVMergeCommandTrack $track )
-    {
-        $this->tracks[] = $track;
-        return $track;
     }
 
     /**
@@ -179,69 +169,84 @@ class MKVMergeCommandGenerator
     }
 
     /**
-     * Returns the command string
-     * @return string
+     * Returns the tracks command line parts
+     * @return array
      */
-    private function getCommandString()
+    private function getCommandTrackParts()
     {
-        $commandParts = array(
-            $this->getCommandPartExecutable(),
-            $this->getCommandPartOutputPath(),
-        );
+        $return = array();
 
         // generate lines for each track
         $currentInputFile = false;
 
-        // @TODO iterate by track set ! A file includes several track sets !
-        foreach( $this->tracks as $trackIndex => $track )
+        // iterate track sets
+        $inputFileIndex = 0;
+        foreach( $this->trackSets as $trackSet )
         {
-            $replaceFrom = array();
-            $replaceFrom[] = '%track_index%'; $replaceTo[] = $trackIndex;
-            $replaceFrom[] = '%language'; $replacceTo[] = $track->language;
-            $replaceFrom[] = '%input_file%'; $replaceTo[] = (string)$track->inputFile;
-
-            // subtitle track
-            if ( $track instanceof MKVmergeCommandSubtitleTrack )
+            $command = '';
+            foreach( $trackSet as $track )
             {
-                $template =
-                    '"--sub-charset" "%track_index%:%charset%" "--language" "%track_index%:%language%" ' .
-                    '"--forced-track" "%track_index%:no" "-s" "%track_index%" "-D" "-A" "-T" ' .
-                    '"--no-global-tags" "--no-chapters" "%input_file%" ';
-                $replaceFrom[] = '%charset%'; $replaceTo[] = 'ISO-8859-1';
-                $commandParts[] = str_replace( $replaceFrom, $replaceTo, $template );
-            }
-
-            // audio track
-            if ( $track instanceof MKVMergeCommandAudioTrack )
-            {
-                if ( $localInputFile === false )
+                // subtitle track
+                if ( $track instanceof MKVmergeCommandSubtitleTrack )
                 {
-                    $currentInputFile = $track->inputFile;
+                    // @todo FIXME
+                    $charset = 'ISO-8859-1';
+                    $command .=
+                        "--sub-charset {$track->index}:{$charset} --language {$track->index}:{$track->language} " .
+                        "--forced-track {$track->index}:no " .
+                        "-s {$track->index} "; // Copy subtitle tracks n,m etc. Default: copy all subtitle tracks.
+                        //"-D " . // Don't copy any video track from this file.
+                        //"-A " . // Don't copy any audio track from this file.
+                        //"-T " // Don't copy tags for tracks from the source file.
                 }
 
-                $template = '"--language" "2:eng" "--default-track" "2:yes" "--forced-track" "2:no" ';
-            }
-
-            // video track
-            if ( $track instanceof MKVMergeCommandVideoTrack )
-            {
-                $template =
-                    '"--language" "%track_index%:%language%"';
-                if ( $localInputFile === false )
+                // audio track
+                if ( $track instanceof MKVMergeCommandAudioTrack or $track instanceof MKVMergeCommandVideoTrack )
                 {
-                    $currentInputFile = $track->inputFile;
+                    if ( $track instanceof MKVMergeCommandVideoTrack )
+                    {
+                        $command .= "--language {$track->index}:{$track->language} ";
+                    }
+                    elseif ( $track instanceof MKVMergeCommandAudioTrack )
+                    {
+                        $command .=
+                            "--language {$track->index}:{$track->language} " .
+                            "--default-track $track->index:yes " .
+                            "--forced-track $track->index:no ";
+                    }
                 }
             }
 
             // TODO : set of above track set !
-            $template = '"-a" "2" "-S" "-d" "1" "-T" "--no-global-tags" "--no-chapters" "%s" ';
+            $command .=
+                // "-a $audioTrackIndex " . // Copy the audio tracks n, m etc. The numbers are track IDs which can be obtained with the --identify switch. They're not simply the track numbers (see section TRACK IDS). Default: copy all audio tracks.
+                // "-S " . // Don't copy any subtitle track from this file.
+                // "-d $videoTrackIndex " . // Copy the video tracks n, m etc. The numbers are track IDs which can be obtained with the --identify switch (see section TRACK IDS). They're not simply the track numbers. Default: copy all video tracks.
+                "-T " . // Don't copy tags for tracks from the source file.
+                "--no-global-tags " . // Don't keep global tags from the source file.
+                "--no-chapters " . // Don't keep chapters from the source file.
+                escapeshellarg( (string)$this->inputFiles[$inputFileIndex] );
+            $return[] = $command;
+
+            $inputFileIndex++;
         }
 
 
         // TODO: add track order
-        $template = '"--track-order" "0:0,1:1,1:2"';
+        // $template = '"--track-order" "0:0,1:1,1:2"';
 
-        $command = implode( ' ', $commandParts );
+        return $return;
+    }
+    /**
+     * Returns the command string
+     * @return string
+     */
+    public function getCommandString()
+    {
+        $commandParts = array( $this->getCommandPartExecutable(), $this->getCommandPartOutputPath() );
+        $commandParts = array_merge( $commandParts, $this->getCommandTrackParts() );
+
+        $command = implode( " \\\n", $commandParts );
 
         return $command;
     }
@@ -256,10 +261,10 @@ class MKVMergeCommandGenerator
     }
 
     /**
-     * The tracks the command manages
-     * @var MKVMergeCommandGeneratorTrackSet
+     * The tracks the command manages, one for each $inputFile item
+     * @var array(MKVMergeCommandGeneratorTrackSet)
      */
-    public $tracks;
+    public $trackSets;
 
     /**
      * The command's input files

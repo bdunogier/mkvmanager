@@ -4,6 +4,11 @@
  */
 abstract class MKVMergeInputFile
 {
+    function __construct( $file )
+    {
+        $this->file = $file;
+    }
+
     /**
      * Returns the input file's tracks
      * @return MKVmergeCommandTrackSet
@@ -13,17 +18,14 @@ abstract class MKVMergeInputFile
         return $tracks;
     }
 
-    /**
-     * Adds a new track to the input file
-     */
-    protected function addTrack( MKVMergeCommandTrack $track )
+    public function __toString()
     {
-        $this->tracks[] = $track;
+        return $this->file;
     }
 
     /**
-     * @var MKVMergeCommandTrackSet
+     * @var string
      */
-    private $tracks;
+    protected $file;
 }
 ?>

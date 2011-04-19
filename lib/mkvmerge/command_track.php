@@ -17,7 +17,7 @@ class MKVmergeCommandTrack
     public function __construct( MKVMergeInputFile $inputFile, $index = 0 )
     {
         $this->inputFile = $inputFile;
-        $this->trackIndex = $index;
+        $this->index = $index;
     }
 
     public function __set( $property, $value )
@@ -34,9 +34,9 @@ class MKVmergeCommandTrack
                 if ( !$value instanceof MKVMergeInputFile )
                     throw new ezcBaseValueException( 'inputFile', $value, 'instanceof MKVMergeInputFile' );
                 break;
-            case 'trackIndex':
+            case 'index':
                 if ( !is_numeric( $value ) )
-                    throw new ezcBaseValueException( 'trackIndex', $value, 'integer' );
+                    throw new ezcBaseValueException( 'index', $value, 'integer' );
                 $value = (int)$value;
                 break;
             case 'language':
@@ -55,7 +55,10 @@ class MKVmergeCommandTrack
         }
         else
         {
-            return $this->properties[$property];
+            if ( $property == 'language' && $this->properties[$property] === false )
+                return 'und';
+            else
+                return $this->properties[$property];
         }
     }
 
@@ -102,7 +105,7 @@ class MKVmergeCommandTrack
 
     private $properties = array(
         'inputFile' => false,
-        'trackIndex' => false,
+        'index' => false,
         'language' => false,
     );
 }
