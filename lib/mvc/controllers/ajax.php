@@ -394,6 +394,7 @@ class mmAjaxController extends ezcMvcController
                 as $track )
             {
                 $track->language = 'fre';
+                $track->default_track = true;
             }
 
             $commandGenerator->setOutputFile( "/media/storage/CARROT/TV Shows/{$episodeFile->showName}/{$episodeFile->filename}" );

@@ -114,7 +114,7 @@ class MKVmergeCommandTrack
         return (string)$this->inputFile->file;
     }
 
-    private $properties = array(
+    protected $properties = array(
         'inputFile' => false,
         'index' => false,
         'language' => false,

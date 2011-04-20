@@ -191,7 +191,8 @@ class MKVMergeCommandGenerator
                 {
                     // @todo FIXME
                     $charset = 'ISO-8859-1';
-                    $command .= "--sub-charset {$track->index}:{$charset} --language {$track->index}:{$track->language} ";
+                    $command .= "--language {$track->index}:{$track->language} ";
+                    $command .= "--sub-charset {$track->index}:{$track->fileCharset} ";
 
                     if ( $track->forced_track !== null)
                         $command .= "--forced-track {$track->index}:" . ( $track->forced_track ? 'yes' : 'no' ) . ' ';

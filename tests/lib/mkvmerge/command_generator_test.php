@@ -53,7 +53,7 @@ class MKVMergeCommandGeneratorTest extends PHPUnit_Framework_TestCase
             "mkvmerge " .
             "-o 'tmp/tests/generated.mkv' " .
             "--language 0:eng --language 1:eng -T --no-global-tags --no-chapters 'tmp/tests/test.avi' " .
-            "--sub-charset 0:ISO-8859-1 --language 0:fre -s 0 -T --no-global-tags --no-chapters 'tmp/tests/test.ass'";
+            "--language 0:fre --sub-charset 0:ISO-8859-1 -s 0 -T --no-global-tags --no-chapters 'tmp/tests/test.ass'";
 
         $generator = new MKVMergeCommandGenerator();
         foreach( $generator->addInputFile( new MKVMergeMediaInputFile( 'tmp/tests/test.avi' ) ) as $commandTrack )
@@ -82,8 +82,8 @@ class MKVMergeCommandGeneratorTest extends PHPUnit_Framework_TestCase
             "-o 'tmp/tests/generated.mkv' " .
             "--language 1:eng --forced-track 1:no --default-track 1:yes " .
             "--language 2:eng --forced-track 2:no --default-track 2:yes " .
-            "--sub-charset 3:ISO-8859-1 --language 3:eng --forced-track 3:no --default-track 3:yes -s 3 -T --no-global-tags --no-chapters 'tmp/tests/test.mkv' " .
-            "--sub-charset 0:ISO-8859-1 --language 0:fre --default-track 0:yes -s 0 -T --no-global-tags --no-chapters 'tmp/tests/test.ass'";
+            "--language 3:eng --sub-charset 3:UTF-8 --forced-track 3:no --default-track 3:yes -s 3 -T --no-global-tags --no-chapters 'tmp/tests/test.mkv' " .
+            "--language 0:fre --sub-charset 0:ISO-8859-1 --default-track 0:yes -s 0 -T --no-global-tags --no-chapters 'tmp/tests/test.ass'";
 
         $generator = new MKVMergeCommandGenerator();
         foreach( $generator->addInputFile( new MKVMergeMediaInputFile( 'tmp/tests/test.mkv' ) ) as $commandTrack )
