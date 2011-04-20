@@ -1,9 +1,59 @@
 <?php
 /**
  * A set of MKVmergeCommandTrack
+ * @property-read boolean $hasSubtitles
+ * @property-write boolean $hasAudio
+ * @property-write boolean $hasVideo
  */
 class MKVmergeCommandTrackSet implements ArrayAccess, Iterator, Countable
 {
+    /**
+     * Returns the value of $property
+     */
+    public function __get( $property )
+    {
+        switch( $property )
+        {
+            case 'hasSubtitles':
+                return $this->hasTrackType( 'subtitles' );
+                break;
+
+            case 'hasVideo':
+                return $this->hasTrackType( 'video' );
+                break;
+
+            case 'hasAudio':
+                return $this->hasTrackType( 'audio' );
+                break;
+
+            default:
+                throw new ezcBasePropertyNotFoundException( $property );
+        }
+    }
+
+    /**
+     * Tests if the set contains the track type $type
+     * @param string $type audio, subtitles, video
+     * @return boolean
+     */
+    private function hasTrackType( $type )
+    {
+        $typeMapping = array(
+            'subtitles' => 'MKVmergeCommandSubtitleTrack',
+            'audio' => 'MKVmergeCommandAudioTrack',
+            'video' => 'MKVmergeCommandVideoTrack'
+        );
+        if ( !isset( $typeMapping['type'] ) )
+            throw new ezcBaseValueException( 'type', $type, implode( ', ', array_values( $typeMapping ) ) );
+
+        foreach( $this->tracks as $track )
+        {
+            if ( $track instanceof $typeMapping[$type] )
+                return true;
+            return false;
+        }
+    }
+
     /**
      * ArrayAccess::offsetExists()
      */
