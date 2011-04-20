@@ -6,6 +6,8 @@ if ( !defined('PHPUnit_MAIN_METHOD' ) )
     define('PHPUnit_MAIN_METHOD', 'MKVMergeCommandGeneratorTest::main' );
 }
 
+require 'ezc/Base/ezc_bootstrap.php';
+
 require_once 'lib/mkvmerge/command_generator.php';
 require_once 'lib/mkvmerge/command_track_set.php';
 require_once 'lib/mkvmerge/command_track.php';
@@ -22,11 +24,10 @@ class MKVMergeCommandGeneratorTest extends PHPUnit_Framework_TestCase
 {
     function testGenerateFromAVI()
     {
-        $expectedCommand = <<< EOF
-mkvmerge \
--o 'tmp/tests/generated.mkv' \
---language 0:eng --language 1:eng --default-track 1:yes --forced-track 1:no -T --no-global-tags --no-chapters 'tmp/tests/test.avi'
-EOF;
+        $expectedCommand =
+            "mkvmerge " .
+            "-o 'tmp/tests/generated.mkv' "  .
+            "--language 0:eng --language 1:eng -T --no-global-tags --no-chapters 'tmp/tests/test.avi'";
 
         $generator = new MKVMergeCommandGenerator();
         foreach( $generator->addInputFile( new MKVMergeMediaInputFile( 'tmp/tests/test.avi' ) ) as $commandTrack )
@@ -48,12 +49,11 @@ EOF;
 
     function testGenerateFromAVIWithSub()
     {
-        $expectedCommand = <<< EOF
-mkvmerge \
--o 'tmp/tests/generated.mkv' \
---language 0:eng --language 1:eng --default-track 1:yes --forced-track 1:no -T --no-global-tags --no-chapters 'tmp/tests/test.avi' \
---sub-charset 0:ISO-8859-1 --language 0:fre --forced-track 0:no -s 0 -T --no-global-tags --no-chapters 'tmp/tests/test.ass'
-EOF;
+        $expectedCommand =
+            "mkvmerge " .
+            "-o 'tmp/tests/generated.mkv' " .
+            "--language 0:eng --language 1:eng -T --no-global-tags --no-chapters 'tmp/tests/test.avi' " .
+            "--sub-charset 0:ISO-8859-1 --language 0:fre -s 0 -T --no-global-tags --no-chapters 'tmp/tests/test.ass'";
 
         $generator = new MKVMergeCommandGenerator();
         foreach( $generator->addInputFile( new MKVMergeMediaInputFile( 'tmp/tests/test.avi' ) ) as $commandTrack )
@@ -77,20 +77,23 @@ EOF;
 
     function testGenerateFromMKV()
     {
-        $expectedCommand = <<< EOF
-mkvmerge \
--o 'tmp/tests/generated.mkv' \
---language 1:eng --language 2:eng --default-track 2:yes --forced-track 2:no --sub-charset 3:ISO-8859-1 --language 3:eng --forced-track 3:no -s 3 -T --no-global-tags --no-chapters 'tmp/tests/test.mkv' \
---sub-charset 0:ISO-8859-1 --language 0:fre --forced-track 0:no -s 0 -T --no-global-tags --no-chapters 'tmp/tests/test.ass'
-EOF;
+        $expectedCommand =
+            "mkvmerge " .
+            "-o 'tmp/tests/generated.mkv' " .
+            "--language 1:eng --forced-track 1:no --default-track 1:yes " .
+            "--language 2:eng --forced-track 2:no --default-track 2:yes " .
+            "--sub-charset 3:ISO-8859-1 --language 3:eng --forced-track 3:no --default-track 3:yes -s 3 -T --no-global-tags --no-chapters 'tmp/tests/test.mkv' " .
+            "--sub-charset 0:ISO-8859-1 --language 0:fre --default-track 0:yes -s 0 -T --no-global-tags --no-chapters 'tmp/tests/test.ass'";
 
         $generator = new MKVMergeCommandGenerator();
         foreach( $generator->addInputFile( new MKVMergeMediaInputFile( 'tmp/tests/test.mkv' ) ) as $commandTrack )
         {
             $commandTrack->language = 'eng';
+            $commandTrack->default_track = true;
         }
         $subtitlesTrack = $generator->addInputFile( new MKVMergeSubtitleInputFile( 'tmp/tests/test.ass', 'fre' ) );
         $subtitlesTrack[0]->language = 'fre';
+        $subtitlesTrack[0]->default_track = true;
 
         foreach( $generator->tracks as $track )
         {
@@ -124,7 +127,7 @@ EOF;
         $generator->setOutputFile( '/media/storage/CARROT/TV Shows/Californication/Californication - 4x09 - Another Perfect Day.mkv' );
         $command = $generator->getCommandString();
 
-        echo $command;
+        // echo $command;
     }
 }
 ?>

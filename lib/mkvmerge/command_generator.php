@@ -191,13 +191,16 @@ class MKVMergeCommandGenerator
                 {
                     // @todo FIXME
                     $charset = 'ISO-8859-1';
-                    $command .=
-                        "--sub-charset {$track->index}:{$charset} --language {$track->index}:{$track->language} " .
-                        "--forced-track {$track->index}:no " .
-                        "-s {$track->index} "; // Copy subtitle tracks n,m etc. Default: copy all subtitle tracks.
-                        //"-D " . // Don't copy any video track from this file.
-                        //"-A " . // Don't copy any audio track from this file.
-                        //"-T " // Don't copy tags for tracks from the source file.
+                    $command .= "--sub-charset {$track->index}:{$charset} --language {$track->index}:{$track->language} ";
+
+                    if ( $track->forced_track !== null)
+                        $command .= "--forced-track {$track->index}:" . ( $track->forced_track ? 'yes' : 'no' ) . ' ';
+                    if ( $track->default_track !== null)
+                        $command .= "--default-track {$track->index}:" . ( $track->default_track ? 'yes' : 'no' ) . ' ';
+                    $command .= "-s {$track->index} "; // Copy subtitle tracks n,m etc. Default: copy all subtitle tracks.
+                    //"-D " . // Don't copy any video track from this file.
+                    //"-A " . // Don't copy any audio track from this file.
+                    //"-T " // Don't copy tags for tracks from the source file.
                 }
 
                 // audio track
@@ -206,13 +209,18 @@ class MKVMergeCommandGenerator
                     if ( $track instanceof MKVMergeCommandVideoTrack )
                     {
                         $command .= "--language {$track->index}:{$track->language} ";
+                        if ( $track->forced_track !== null)
+                            $command .= "--forced-track {$track->index}:" . ( $track->forced_track ? 'yes' : 'no' ) . ' ';
+                        if ( $track->default_track !== null)
+                            $command .= "--default-track {$track->index}:" . ( $track->default_track ? 'yes' : 'no' ) . ' ';
                     }
                     elseif ( $track instanceof MKVMergeCommandAudioTrack )
                     {
-                        $command .=
-                            "--language {$track->index}:{$track->language} " .
-                            "--default-track $track->index:yes " .
-                            "--forced-track $track->index:no ";
+                        $command .= "--language {$track->index}:{$track->language} ";
+                        if ( $track->forced_track !== null)
+                            $command .= "--forced-track {$track->index}:" . ( $track->forced_track ? 'yes' : 'no' ) . ' ';
+                        if ( $track->default_track !== null)
+                            $command .= "--default-track {$track->index}:" . ( $track->default_track ? 'yes' : 'no' ) . ' ';
                     }
                 }
             }

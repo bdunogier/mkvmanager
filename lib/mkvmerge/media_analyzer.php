@@ -42,7 +42,7 @@ class MKVMergeMediaAnalyzer
         else
         {
             $this->analysisResult = array();
-            preg_match_all( "/^Track ID ([0-9]+): (video|audio|subtitles) \((.+)\)(?: \[language:([a-z]{3}).*\])?$/im", join( "\n", $output ), $matches, PREG_SET_ORDER );
+            preg_match_all( "/^Track ID ([0-9]+): (video|audio|subtitles) \((.+)\)(?: \[(.*)\])?$/im", join( "\n", $output ), $matches, PREG_SET_ORDER );
             foreach( $matches as $match )
             {
                 $index = $match[1];
@@ -52,9 +52,14 @@ class MKVMergeMediaAnalyzer
                 $this->analysisResult[$index] = new stdClass;
                 $this->analysisResult[$index]->index = $index;
                 $this->analysisResult[$index]->type = $type;
+                // meta informations
                 if ( isset( $match[4] ) )
                 {
-                    $this->analysisResult[$index]->language = $match[4];
+                    foreach( explode( ' ', $match[4] ) as $metaProperty )
+                    {
+                        list( $name, $value ) = explode( ':', $metaProperty );
+                        $this->analysisResult[$index]->$name = $value;
+                    }
                 }
             }
         }

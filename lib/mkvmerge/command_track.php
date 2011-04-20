@@ -5,6 +5,8 @@
  * @property MKVMergeInputFile $inputFile The file the track is taken from
  * @property integer $track The file's index in the input file, starting from 0
  * @property string $language The track's language, as a 3 letters code
+ * @property string $default_track
+ * @property string $forced_track
  */
 class MKVmergeCommandTrack
 {
@@ -22,7 +24,7 @@ class MKVmergeCommandTrack
 
     public function __set( $property, $value )
     {
-        if ( !isset( $this->properties[$property] ) )
+        if ( !array_key_exists( $property, $this->properties ) )
         {
             throw new ezcBasePropertyNotFoundException( $property );
         }
@@ -43,13 +45,18 @@ class MKVmergeCommandTrack
                 if ( strlen( $value ) != 3 )
                     throw new ezcBaseValueException( 'language', $value, 'three letters language code' );
                 break;
+            case 'default_track':
+            case 'forced_track':
+                $value = (bool)$value;
+                break;
+
         }
         $this->properties[$property] = $value;
     }
 
     public function __get( $property )
     {
-        if ( !isset( $this->properties[$property] ) )
+        if ( !array_key_exists( $property, $this->properties ) )
         {
             throw new ezcBasePropertyNotFoundException( $property );
         }
@@ -89,8 +96,12 @@ class MKVmergeCommandTrack
             default:
                 throw new Exception( "Unhandled track type $track" );
         }
-        if ( isset( $analysisResult->language ) )
-            $track->language = $analysisResult->language;
+        foreach( $analysisResult as $property => $value )
+        {
+            try {
+                $track->$property = $value;
+            } catch ( ezcBasePropertyNotFoundException $e ) {}
+        }
 
         return $track;
     }
@@ -107,6 +118,8 @@ class MKVmergeCommandTrack
         'inputFile' => false,
         'index' => false,
         'language' => false,
+        'default_track' => null,
+        'forced_track' => null,
     );
 }
 ?>
