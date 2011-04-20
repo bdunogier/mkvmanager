@@ -87,6 +87,17 @@ br {
     overflow: auto;
 }
 
+#CommandOverlay {
+    display: none;
+    background-color: white;
+    width: 600px;
+    height: 600px;
+    border: 2px solid black;
+    border-radius: 10px;
+    padding: 5px;
+    overflow: auto;
+}
+
 ul.listEpisodes {
     overflow: hidden;
 }
@@ -200,7 +211,6 @@ $(document).ready(function() {
             }
         }, "json" );
 
-
         return false;
     });
 
@@ -219,6 +229,30 @@ $(document).ready(function() {
             }
         }, "json" );
     });
+
+    $(".generateCommand").bind('click', function(e) {
+        e.preventDefault();
+
+        var targetDiv = $("#CommandOverlay");
+
+        // popup the overlay
+        bPopup = $("#CommandOverlay").bPopup({opacity:'0.5'});
+        $.get( $(this).attr('href'), function success( data ) {
+            if ( data.status == 'ok' )
+            {
+                html = '<h5>Command</h5>';
+                html += data.command;
+                targetDiv.html( html );
+            }
+            else if ( data.status == 'ko' )
+            {
+                targetDiv.html( 'Error:' + data.message );
+            }
+        }, "json" );
+
+        return false;
+    });
+
 });
 </script>
 
@@ -251,11 +285,15 @@ $(document).ready(function() {
             <ul class="icon listEpisodes">
             <? $displayed = 0; ?>
             <? foreach( $episodeFiles as $episodeFile ): ?>
-                <li id="li<?=ucfirst( anchorLink( $episodeFile->filename ) )?>"class="<?=($episodeFile->hasSubtitleFile ? 'subtitle' : 'nosubtitle' )?>">
+                <li id="li<?=ucfirst( anchorLink( $episodeFile->filename ) )?>"class="<?=( $episodeFile->hasSubtitleFile ? 'subtitle' : 'nosubtitle' )?>">
                     Episode <a class="episode"
                         title="Downloaded release: <?=htmlentities( (string)$episodeFile->downloadedFile )?> (<?=$episodeFile->downloadedFile->releaseGroup?>)"
                         href="/ajax/searchsubtitles/<?=rawurlencode( $episodeFile->filename )?>/<?=rawurlencode( $episodeFile->downloadedFile )?>">
                         <?=$episodeFile->seasonNumber?>x<?=$episodeFile->episodeNumber?>: <?=$episodeFile->episodeName?></a>
+
+                        <?php if ( $episodeFile->hasSubtitleFile ): ?>
+                            <a class="generateCommand" href="/ajax/generate-command/<?=rawurlencode( $episodeFile->filename )?>">mkvmerge</a>
+                        <?php endif; ?>
                 </li>
                 <? if ( ++$displayed == 5 && count( $episodeFiles ) > 3 ):
                    $others = count( $episodeFiles ) - $displayed; ?>
@@ -269,6 +307,8 @@ $(document).ready(function() {
 <? endforeach ?>
 
 <div id="SubtitlesOverlay">Subtitles go here</div>
+<div id="CommandOverlay">Command goes here</div>
+
 <?php
 function anchorLink( $showName )
 {

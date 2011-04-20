@@ -5,8 +5,10 @@
  * @version $Id$
  * @copyright 2011
  *
- * @property-read bool hasSubtitleFile
- * @property-read TVEpisodeDownloadedFile downloadedFile filename of the originally downloaded file (release)
+ * @property-read bool $hasSubtitleFile
+ * @property-read TVEpisodeDownloadedFile $downloadedFile filename of the originally downloaded file (release)
+ * @property-read string $path the file's full path
+ * @property-read string $subtitleFile the file's subtitle, if it exists
  */
 class TVEpisodeFile
 {
@@ -31,6 +33,24 @@ class TVEpisodeFile
             case 'hasSubtitleFile':
                 $basedirAndFile = "/home/download/downloads/complete/TV/Sorted/{$this->showName}/{$this->fullname}";
                 return ( file_exists( "$basedirAndFile.srt" ) || file_exists( "$basedirAndFile.ass" ) );
+                break;
+
+            case 'subtitleFile':
+                $basedirAndFile = "/home/download/downloads/complete/TV/Sorted/{$this->showName}/{$this->fullname}";
+                if ( file_exists( "$basedirAndFile.ass" ) )
+                    return "$basedirAndFile.ass";
+                elseif ( file_exists( "$basedirAndFile.srt" ) )
+                {
+                    return "$basedirAndFile.srt";
+                }
+                else
+                {
+                    throw new Exception("No subtitle found for $this->filename" );
+                }
+                break;
+
+            case 'path':
+                return "/home/download/downloads/complete/TV/Sorted/{$this->showName}/{$this->filename}";
                 break;
 
             case 'downloadedFile':

@@ -10,10 +10,10 @@ return array(
     'MKVMergeMediaInputFile'          => 'mkvmerge/input_file_media.php',
     'MKVMergeSubtitleInputFile'       => 'mkvmerge/input_file_subtitle.php',
     'MKVmergeCommandTrackSet'         => 'mkvmerge/command_track_set.php',
-    'MKVmergeCommandTrack'            => 'mkvmerge/command_track.php',
-    'MKVmergeCommandAudioTrack'       => 'mkvmerge/command_track_audio.php',
+    'MKVMergeCommandTrack'            => 'mkvmerge/command_track.php',
+    'MKVMergeCommandAudioTrack'       => 'mkvmerge/command_track_audio.php',
     'MKVmergeCommandSubtitleTrack'    => 'mkvmerge/command_track_subtitle.php',
-    'MKVmergeCommandVideoTrack'       => 'mkvmerge/command_track_video.php',
+    'MKVMergeCommandVideoTrack'       => 'mkvmerge/command_track_video.php',
     'MKVMergeMediaAnalyzer'           => 'mkvmerge/media_analyzer.php',
 
     'mmMergeOperation' => 'mkvmerge/merge_operation.php',

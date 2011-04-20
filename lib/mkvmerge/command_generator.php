@@ -246,7 +246,7 @@ class MKVMergeCommandGenerator
         $commandParts = array( $this->getCommandPartExecutable(), $this->getCommandPartOutputPath() );
         $commandParts = array_merge( $commandParts, $this->getCommandTrackParts() );
 
-        $command = implode( " \\\n", $commandParts );
+        $command = implode( " ", $commandParts );
 
         return $command;
     }

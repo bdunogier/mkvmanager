@@ -118,7 +118,7 @@ EOF;
 
         foreach( $generator->addInputFile( new MKVMergeMediaInputFile( $assFile ) ) as $commandTrack )
         {
-            $commandTrack->language = 'eng';
+            $commandTrack->language = 'fre';
         }
 
         $generator->setOutputFile( '/media/storage/CARROT/TV Shows/Californication/Californication - 4x09 - Another Perfect Day.mkv' );
