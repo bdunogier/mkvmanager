@@ -61,7 +61,7 @@ class MkvManagerScraperBetaSeries extends MkvManagerScraper
             $item = $li[0]->children();
 
             $url = (string)$item[0]['href'];
-            list( ,,,,$subtitleId ) = explode( '/', $url );
+            list( , $subtitleId ) = explode( '/', $url );
             $subtitleName = (string)$item[0];
 
             // class="<originSite> off/on"
