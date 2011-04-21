@@ -397,9 +397,13 @@ class mmAjaxController extends ezcMvcController
                 $track->default_track = true;
             }
             // determine best disk
-            $recommendedDisk = mmMkvManagerDiskHelper::BestTVEpisodeFit( $episodeFile->fullname, $episodeFile->fileSize );
+            $bestFit = mmMkvManagerDiskHelper::BestTVEpisodeFit( $episodeFile->fullname, $episodeFile->fileSize );
+            if ( $bestFit['RecommendedDiskHasFreeSpace'] )
+                $disk = $bestFit['RecommendedDisk'];
+            else
+                $disk = 'VIMES';
 
-            $commandGenerator->setOutputFile( "/media/storage/{$recommendedDisk}/TV Shows/{$episodeFile->showName}/{$episodeFile->filename}" );
+            $commandGenerator->setOutputFile( "/media/storage/{$disk}/TV Shows/{$episodeFile->showName}/{$episodeFile->filename}" );
 
             $commandObject = $commandGenerator->get();
             $commandObject->appendSymLink = true;
