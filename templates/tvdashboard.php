@@ -266,11 +266,12 @@ $(document).ready(function() {
     });
 
         // Add converted merge to the queue
-    $("#CommandOverlay > #BtnQueueOperation").click( function() {
+    $("#BtnQueueOperation").live( 'click', function() {
         var Command = $("#CommandOverlay > #CommandPlaceholder").text();
         $.post( "/ajax/queue-command", { MergeCommand: Command },
         function success( data ) {
-            $("#CommandOverlay > #BtnQueueOperation").val( "Done" );
+            $("#BtnQueueOperation").val( "Done" );
+	    $("#CommandOverlay").close();
         }, "json" );
     });
 
