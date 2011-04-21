@@ -396,8 +396,10 @@ class mmAjaxController extends ezcMvcController
                 $track->language = 'fre';
                 $track->default_track = true;
             }
+            // determine best disk
+            $recommendedDisk = mmMkvManagerDiskHelper::BestTVEpisodeFit( $episodeFile->fullname, $episodeFile->fileSize );
 
-            $commandGenerator->setOutputFile( "/media/storage/CARROT/TV Shows/{$episodeFile->showName}/{$episodeFile->filename}" );
+            $commandGenerator->setOutputFile( "/media/storage/{$recommendedDisk}/TV Shows/{$episodeFile->showName}/{$episodeFile->filename}" );
 
             $commandObject = $commandGenerator->get();
             $commandObject->appendSymLink = true;

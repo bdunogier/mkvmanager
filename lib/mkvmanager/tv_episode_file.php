@@ -9,6 +9,7 @@
  * @property-read TVEpisodeDownloadedFile $downloadedFile filename of the originally downloaded file (release)
  * @property-read string $path the file's full path
  * @property-read string $subtitleFile the file's subtitle, if it exists
+ * @property-read double $fileSize the episode file's size
  */
 class TVEpisodeFile
 {
@@ -84,6 +85,8 @@ class TVEpisodeFile
                 $stmt->execute();
                 return new TVEpisodeDownloadedFile( basename( $downloadedFile = $stmt->fetchColumn() ) );
 
+            case 'fileSize':
+                return mmMkvManagerDiskHelper::bigFileSize( $this->path );
 
             default:
                 throw new ezcBasePropertyNotFoundException( $property );
