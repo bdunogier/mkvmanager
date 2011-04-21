@@ -154,6 +154,7 @@ $(document).ready(function() {
 
         // @todo search for this episode subtitles
         $.get( $(this).attr('href'), function success( data ) {
+            $('#tmpFetchingSubtitles').remove();
             if ( data.status == 'ok' )
             {
                 $('#tmpFetchingSubtitles').remove();
@@ -202,11 +203,11 @@ $(document).ready(function() {
             {
                 if ( data.message == 'nosubtitles' )
                 {
-                    targetDiv.html( 'No subtitles available for this episode' );
+                    targetDiv.append( 'No subtitles available for this episode' );
                 }
                 else
                 {
-                    targetDiv.html( 'Unknown error: ' + data.message );
+                    targetDiv.append( 'Unknown error: ' + data.message );
                 }
             }
         }, "json" );
