@@ -135,6 +135,10 @@ currentEpisode = false;
 bPopup = false;
 
 $(document).ready(function() {
+    /**
+     * Click on an episode
+     * Fetch and show available subtitles
+     */
     $(".episode").bind('click', function(e) {
         e.preventDefault();
 
@@ -215,6 +219,10 @@ $(document).ready(function() {
         return false;
     });
 
+    /**
+     * Click on a download subtitle link from the popup
+     * Call the download href with ajax and download the subtitle file
+     */
     $(".SubtitleDownloadLink").live( 'click', function(e) {
         e.preventDefault();
         $(this).parent().addClass( 'loading' );
@@ -231,6 +239,10 @@ $(document).ready(function() {
         }, "json" );
     });
 
+    /**
+     * Click on the generate command link from the dashboard for a file that has a subtitle
+     * Open the popup, and show the generated commandd
+     */
     $(".generateCommand").bind('click', function(e) {
         e.preventDefault();
 
@@ -241,17 +253,25 @@ $(document).ready(function() {
         $.get( $(this).attr('href'), function success( data ) {
             if ( data.status == 'ok' )
             {
-                html = '<h5>Command</h5>';
-                html += data.command;
-                targetDiv.html( html );
+                $("#CommandOverlay > #CommandPlaceholder").html( data.command );
+                $("#CommandOverlay > .Controls").show();
             }
             else if ( data.status == 'ko' )
             {
-                targetDiv.html( 'Error:' + data.message );
+                $("#CommandOverlay > #CommandPlaceholder").html( data.message );
             }
         }, "json" );
 
         return false;
+    });
+
+        // Add converted merge to the queue
+    $("#CommandOverlay > #BtnQueueOperation").click( function() {
+        var Command = $("#CommandOverlay > #CommandPlaceholder").text();
+        $.post( "/ajax/queue-command", { MergeCommand: Command },
+        function success( data ) {
+            $("#CommandOverlay > #BtnQueueOperation").val( "Done" );
+        }, "json" );
     });
 
 });
@@ -308,7 +328,13 @@ $(document).ready(function() {
 <? endforeach ?>
 
 <div id="SubtitlesOverlay">Subtitles go here</div>
-<div id="CommandOverlay">Command goes here</div>
+<div id="CommandOverlay">
+    <h5>Command</h5>
+    <div id="CommandPlaceholder"></div>
+    <div class="Controls" style="display: none">
+        <input type="button" id="BtnQueueOperation" value="Queue" />
+    </div>
+</div>
 
 <?php
 function anchorLink( $showName )
