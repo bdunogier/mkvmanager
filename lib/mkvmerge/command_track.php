@@ -91,7 +91,7 @@ class MKVmergeCommandTrack
                 $track = new MKVMergeCommandVideoTrack( $inputFile, $analysisResult->index );
                 break;
             case 'subtitles':
-                $track = new MKVMergeCommandSubtitleTrack( $inputFile, $analysisResult->index );
+                $track = new MKVmergeCommandSubtitleTrack( $inputFile, $analysisResult->index );
                 break;
             default:
                 throw new Exception( "Unhandled track type $track" );
