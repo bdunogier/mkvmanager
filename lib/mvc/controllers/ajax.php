@@ -454,7 +454,13 @@ class mmAjaxController extends ezcMvcController
             $movieTitle = $matches[1];
 
             $scraper = new MkvManagerScraperSubsynchro();
-            $movies = $scraper->searchMovies( $movieTitle );
+            $movies = array_map(
+                function( $movie ) {
+                    $movie['id'] = rawurlencode( $movie['id'] );
+                    return $movie;
+                },
+                $scraper->searchMovies( $movieTitle )
+            );
 
             $variables = array( 'status' => 'ok', 'movies' => $movies );
         }
@@ -471,8 +477,17 @@ class mmAjaxController extends ezcMvcController
      */
     public function doMovieSearchReleases()
     {
+        $movieId = rawurldecode( $this->MovieId );
+
         $scraper = new MkvManagerScraperSubsynchro();
-        $releases = $scraper->releasesList( $this->MovieId );
+
+        $releases = array_map(
+            function( $release ) {
+                $release['id'] = rawurlencode( $release['id'] );
+                return $release;
+            },
+            $scraper->releasesList( $movieId )
+        );
 
         $variables = array( 'status' => 'ok', 'releases' => $releases );
 
