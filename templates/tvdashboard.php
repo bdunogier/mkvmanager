@@ -121,6 +121,12 @@ ul.listEpisodes li.nosubtitle {
 ul.listEpisodes li.subtitle {
   background-image: url('images/icons/subtitles_16x16.png');
 }
+ul.listEpisodes li.subtitle a.generateCommand {
+  display: visible;
+}
+ul.listEpisodes li.nosubtitle a.generateCommand {
+  display: none;
+}
 /* list item with loading animation - needs ul.icon class */
 ul.icon li.loading {
   background-image: url('images/icons/loading_16x16.gif');
@@ -271,7 +277,8 @@ $(document).ready(function() {
         $.post( "/ajax/queue-command", { MergeCommand: Command },
         function success( data ) {
             $("#BtnQueueOperation").val( "Done" );
-	    $("#CommandOverlay").close();
+	        bPopup.close();
+            $("#BtnQueueOperation").val( "Queue" );
         }, "json" );
     });
 
@@ -312,10 +319,7 @@ $(document).ready(function() {
                         title="Downloaded release: <?=htmlentities( (string)$episodeFile->downloadedFile )?> (<?=$episodeFile->downloadedFile->releaseGroup?>)"
                         href="/ajax/searchsubtitles/<?=rawurlencode( $episodeFile->filename )?>/<?=rawurlencode( $episodeFile->downloadedFile )?>">
                         <?=$episodeFile->seasonNumber?>x<?=$episodeFile->episodeNumber?>: <?=$episodeFile->episodeName?></a>
-
-                        <?php if ( $episodeFile->hasSubtitleFile ): ?>
-                            <a class="generateCommand" href="/ajax/generate-command/<?=rawurlencode( $episodeFile->filename )?>">mkvmerge</a>
-                        <?php endif; ?>
+                        <a class="generateCommand" href="/ajax/generate-command/<?=rawurlencode( $episodeFile->filename )?>">mkvmerge</a>
                 </li>
                 <? if ( ++$displayed == 5 && count( $episodeFiles ) > 3 ):
                    $others = count( $episodeFiles ) - $displayed; ?>
