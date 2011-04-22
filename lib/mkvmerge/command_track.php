@@ -7,6 +7,7 @@
  * @property string $language The track's language, as a 3 letters code
  * @property string $default_track
  * @property string $forced_track
+ * @property string $enabled
  */
 class MKVmergeCommandTrack
 {
@@ -120,6 +121,7 @@ class MKVmergeCommandTrack
         'language' => false,
         'default_track' => null,
         'forced_track' => null,
+        'enabled' => true,
     );
 }
 ?>
