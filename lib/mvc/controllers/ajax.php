@@ -364,5 +364,53 @@ class mmAjaxController extends ezcMvcController
         $result->variables['message'] = $message;
         return $result;
     }
+
+    /**
+     * Generates an MKVMerge command for the video file $videoFile
+     * @param string $videoFile
+     */
+    public function doGenerateCommand()
+    {
+        $result = new ezcMvcResult();
+
+        $videoFile = $this->VideoFile;
+
+        $episodeFile = new TVEpisodeFile( $videoFile );
+        if ( !$episodeFile->hasSubtitleFile )
+        {
+            $result->variables['status'] = 'ko';
+            $result->variables['message'] = "No subtitles found for $videoFile";
+        }
+        else
+        {
+            $result->variables['status'] = 'ok';
+            $commandGenerator = new MKVMergeCommandGenerator();
+            foreach( $commandGenerator->addInputFile( new MKVMergeMediaInputFile( $episodeFile->path ) )
+                as $track )
+            {
+                $track->language = 'fre';
+            }
+            foreach( $commandGenerator->addInputFile( new MKVMergeSubtitleInputFile( $episodeFile->subtitleFile, 'fre' ) )
+                as $track )
+            {
+                $track->language = 'fre';
+                $track->default_track = true;
+            }
+            // determine best disk
+            $bestFit = mmMkvManagerDiskHelper::BestTVEpisodeFit( $episodeFile->fullname, $episodeFile->fileSize );
+            if ( $bestFit['RecommendedDiskHasFreeSpace'] )
+                $disk = $bestFit['RecommendedDisk'];
+            else
+                $disk = 'VIMES';
+
+            $commandGenerator->setOutputFile( "/media/storage/{$disk}/TV Shows/{$episodeFile->showName}/{$episodeFile->filename}" );
+
+            $commandObject = $commandGenerator->get();
+            $commandObject->appendSymLink = true;
+
+            $result->variables['command'] = $commandObject->asString();
+        }
+        return $result;
+    }
 }
 ?>

@@ -87,6 +87,17 @@ br {
     overflow: auto;
 }
 
+#CommandOverlay {
+    display: none;
+    background-color: white;
+    width: 600px;
+    height: 600px;
+    border: 2px solid black;
+    border-radius: 10px;
+    padding: 5px;
+    overflow: auto;
+}
+
 ul.listEpisodes {
     overflow: hidden;
 }
@@ -110,6 +121,12 @@ ul.listEpisodes li.nosubtitle {
 ul.listEpisodes li.subtitle {
   background-image: url('images/icons/subtitles_16x16.png');
 }
+ul.listEpisodes li.subtitle a.generateCommand {
+  display: visible;
+}
+ul.listEpisodes li.nosubtitle a.generateCommand {
+  display: none;
+}
 /* list item with loading animation - needs ul.icon class */
 ul.icon li.loading {
   background-image: url('images/icons/loading_16x16.gif');
@@ -124,6 +141,10 @@ currentEpisode = false;
 bPopup = false;
 
 $(document).ready(function() {
+    /**
+     * Click on an episode
+     * Fetch and show available subtitles
+     */
     $(".episode").bind('click', function(e) {
         e.preventDefault();
 
@@ -143,6 +164,7 @@ $(document).ready(function() {
 
         // @todo search for this episode subtitles
         $.get( $(this).attr('href'), function success( data ) {
+            $('#tmpFetchingSubtitles').remove();
             if ( data.status == 'ok' )
             {
                 $('#tmpFetchingSubtitles').remove();
@@ -191,19 +213,22 @@ $(document).ready(function() {
             {
                 if ( data.message == 'nosubtitles' )
                 {
-                    targetDiv.html( 'No subtitles available for this episode' );
+                    targetDiv.append( 'No subtitles available for this episode' );
                 }
                 else
                 {
-                    targetDiv.html( 'Unknown error: ' + data.message );
+                    targetDiv.append( 'Unknown error: ' + data.message );
                 }
             }
         }, "json" );
 
-
         return false;
     });
 
+    /**
+     * Click on a download subtitle link from the popup
+     * Call the download href with ajax and download the subtitle file
+     */
     $(".SubtitleDownloadLink").live( 'click', function(e) {
         e.preventDefault();
         $(this).parent().addClass( 'loading' );
@@ -219,6 +244,44 @@ $(document).ready(function() {
             }
         }, "json" );
     });
+
+    /**
+     * Click on the generate command link from the dashboard for a file that has a subtitle
+     * Open the popup, and show the generated commandd
+     */
+    $(".generateCommand").bind('click', function(e) {
+        e.preventDefault();
+
+        var targetDiv = $("#CommandOverlay");
+
+        // popup the overlay
+        bPopup = $("#CommandOverlay").bPopup({opacity:'0.5'});
+        $.get( $(this).attr('href'), function success( data ) {
+            if ( data.status == 'ok' )
+            {
+                $("#CommandOverlay > #CommandPlaceholder").html( data.command );
+                $("#CommandOverlay > .Controls").show();
+            }
+            else if ( data.status == 'ko' )
+            {
+                $("#CommandOverlay > #CommandPlaceholder").html( data.message );
+            }
+        }, "json" );
+
+        return false;
+    });
+
+        // Add converted merge to the queue
+    $("#BtnQueueOperation").live( 'click', function() {
+        var Command = $("#CommandOverlay > #CommandPlaceholder").text();
+        $.post( "/ajax/queue-command", { MergeCommand: Command },
+        function success( data ) {
+            $("#BtnQueueOperation").val( "Done" );
+	        bPopup.close();
+            $("#BtnQueueOperation").val( "Queue" );
+        }, "json" );
+    });
+
 });
 </script>
 
@@ -251,11 +314,12 @@ $(document).ready(function() {
             <ul class="icon listEpisodes">
             <? $displayed = 0; ?>
             <? foreach( $episodeFiles as $episodeFile ): ?>
-                <li id="li<?=ucfirst( anchorLink( $episodeFile->filename ) )?>"class="<?=($episodeFile->hasSubtitleFile ? 'subtitle' : 'nosubtitle' )?>">
+                <li id="li<?=ucfirst( anchorLink( $episodeFile->filename ) )?>"class="<?=( $episodeFile->hasSubtitleFile ? 'subtitle' : 'nosubtitle' )?>">
                     Episode <a class="episode"
                         title="Downloaded release: <?=htmlentities( (string)$episodeFile->downloadedFile )?> (<?=$episodeFile->downloadedFile->releaseGroup?>)"
                         href="/ajax/searchsubtitles/<?=rawurlencode( $episodeFile->filename )?>/<?=rawurlencode( $episodeFile->downloadedFile )?>">
                         <?=$episodeFile->seasonNumber?>x<?=$episodeFile->episodeNumber?>: <?=$episodeFile->episodeName?></a>
+                        <a class="generateCommand" href="/ajax/generate-command/<?=rawurlencode( $episodeFile->filename )?>">mkvmerge</a>
                 </li>
                 <? if ( ++$displayed == 5 && count( $episodeFiles ) > 3 ):
                    $others = count( $episodeFiles ) - $displayed; ?>
@@ -269,6 +333,14 @@ $(document).ready(function() {
 <? endforeach ?>
 
 <div id="SubtitlesOverlay">Subtitles go here</div>
+<div id="CommandOverlay">
+    <h5>Command</h5>
+    <div id="CommandPlaceholder"></div>
+    <div class="Controls" style="display: none">
+        <input type="button" id="BtnQueueOperation" value="Queue" />
+    </div>
+</div>
+
 <?php
 function anchorLink( $showName )
 {

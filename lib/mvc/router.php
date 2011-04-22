@@ -29,6 +29,7 @@ class mmMvcRouter extends ezcMvcRouter
             new ezcMvcRailsRoute( '/ajax/queue-command',                       'mmAjaxController', 'queueCommand' ),
             new ezcMvcRailsRoute( '/ajax/merge-queue/:items',                  'mmAjaxController', 'mergeQueue' ),
             new ezcMvcRailsRoute( '/ajax/sourcefiles/archive/:hash',           'mmAjaxController', 'sourcefileArchive' ),
+            new ezcMvcRailsRoute( '/ajax/generate-command/:VideoFile',         'mmAjaxController', 'generateCommand' ),
 
             new ezcMvcRailsRoute( '/ajax/downloadsubtitle/:VideoFile/:SubFileId/:SubType/:ZipFileId',
                 'mmAjaxController', 'downloadSubtitles' ),

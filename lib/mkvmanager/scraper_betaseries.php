@@ -59,9 +59,10 @@ class MkvManagerScraperBetaSeries extends MkvManagerScraper
         foreach( $xp->div->ul->li as $li )
         {
             $item = $li[0]->children();
+            error_log($item->asXml() );
 
             $url = (string)$item[0]['href'];
-            list( ,,,,$subtitleId ) = explode( '/', $url );
+            list( ,, $subtitleId ) = explode( '/', $url );
             $subtitleName = (string)$item[0];
 
             // class="<originSite> off/on"
@@ -71,11 +72,13 @@ class MkvManagerScraperBetaSeries extends MkvManagerScraper
             // if the file is a zip, we need to download it and read its contents
             if ( substr( $subtitleName, -4 ) == '.zip' )
             {
+                $bsUrl = "http://betaseries.com{$url}";
+                error_log( $bsUrl );
                 // download to temporary folder
                 $targetPath = '/tmp/' . md5( $subtitleName ) . '.zip';
                 $fp = fopen( $targetPath, 'wb' );
-                $ch = curl_init( $url );
-                curl_setopt( $ch, CURLOPT_URL, $url );
+                $ch = curl_init( $bsUrl );
+                curl_setopt( $ch, CURLOPT_URL, $bsUrl );
                 curl_setopt( $ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US) AppleWebKit/534.10 (KHTML, like Gecko) Chrome/8.0.552.18 Safari/534.10' );
                 curl_setopt( $ch, CURLOPT_REFERER, $this->baseURL );
                 curl_setopt( $ch, CURLOPT_FILE, $fp );
