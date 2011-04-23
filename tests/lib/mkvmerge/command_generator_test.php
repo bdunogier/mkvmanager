@@ -27,7 +27,7 @@ class MKVMergeCommandGeneratorTest extends PHPUnit_Framework_TestCase
         $expectedCommand =
             "mkvmerge " .
             "-o 'tmp/tests/generated.mkv' "  .
-            "--language 0:eng --language 1:eng -T --no-global-tags --no-chapters 'tmp/tests/test.avi'";
+            "--language 0:eng --language 1:eng -a 1 -d 0 -S -T -M --no-global-tags 'tmp/tests/test.avi'";
 
         $generator = new MKVMergeCommandGenerator();
         foreach( $generator->addInputFile( new MKVMergeMediaInputFile( 'tmp/tests/test.avi' ) ) as $commandTrack )
@@ -52,8 +52,8 @@ class MKVMergeCommandGeneratorTest extends PHPUnit_Framework_TestCase
         $expectedCommand =
             "mkvmerge " .
             "-o 'tmp/tests/generated.mkv' " .
-            "--language 0:eng --language 1:eng -T --no-global-tags --no-chapters 'tmp/tests/test.avi' " .
-            "--language 0:fre --sub-charset 0:ISO-8859-1 -s 0 -T --no-global-tags --no-chapters 'tmp/tests/test.ass'";
+            "--language 0:eng --language 1:eng -a 1 -d 0 -S -T -M --no-global-tags 'tmp/tests/test.avi' " .
+            "--language 0:fre --sub-charset 0:ISO-8859-1 -A -D -s 0 -T -M --no-global-tags 'tmp/tests/test.ass'";
 
         $generator = new MKVMergeCommandGenerator();
         foreach( $generator->addInputFile( new MKVMergeMediaInputFile( 'tmp/tests/test.avi' ) ) as $commandTrack )
@@ -82,8 +82,10 @@ class MKVMergeCommandGeneratorTest extends PHPUnit_Framework_TestCase
             "-o 'tmp/tests/generated.mkv' " .
             "--language 1:eng --forced-track 1:no --default-track 1:yes " .
             "--language 2:eng --forced-track 2:no --default-track 2:yes " .
-            "--language 3:eng --sub-charset 3:UTF-8 --forced-track 3:no --default-track 3:yes -s 3 -T --no-global-tags --no-chapters 'tmp/tests/test.mkv' " .
-            "--language 0:fre --sub-charset 0:ISO-8859-1 --default-track 0:yes -s 0 -T --no-global-tags --no-chapters 'tmp/tests/test.ass'";
+            "--language 3:eng --sub-charset 3:UTF-8 --forced-track 3:no --default-track 3:yes " .
+            "-a 2 -d 1 -s 3 -T -M --no-global-tags 'tmp/tests/test.mkv' " .
+            "--language 0:fre --sub-charset 0:ISO-8859-1 --default-track 0:yes ".
+            "-A -D -s 0 -T -M --no-global-tags 'tmp/tests/test.ass'";
 
         $generator = new MKVMergeCommandGenerator();
         foreach( $generator->addInputFile( new MKVMergeMediaInputFile( 'tmp/tests/test.mkv' ) ) as $commandTrack )
@@ -109,6 +111,8 @@ class MKVMergeCommandGeneratorTest extends PHPUnit_Framework_TestCase
 
     public function testGenerateRealTVMKV()
     {
+        self::markTestSkipped();
+
         $mkvFile = '/home/download/downloads/complete/TV/Sorted/Californication/Californication - 4x09 - Another Perfect Day.mkv';
         $assFile = '/home/download/downloads/complete/TV/Sorted/Californication/Californication - 4x09 - Another Perfect Day.ass';
 

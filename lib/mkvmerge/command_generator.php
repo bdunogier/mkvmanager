@@ -129,62 +129,76 @@ class MKVMergeCommandGenerator
         foreach( $this->trackSets as $trackSet )
         {
             $command = '';
+            $audioTracksIndexes = array();
+            $videoTracksIndexes = array();
+            $subtitleTracksIndexes = array();
             foreach( $trackSet as $track )
             {
+                if ( !$track->enabled )
+                    continue;
+
                 // subtitle track
                 if ( $track instanceof MKVmergeCommandSubtitleTrack )
                 {
-                    // @todo FIXME
-                    $charset = 'ISO-8859-1';
+                    $subtitleTracksIndexes[] = $track->index;
+
                     $command .= "--language {$track->index}:{$track->language} ";
                     $command .= "--sub-charset {$track->index}:{$track->fileCharset} ";
 
-                    if ( $track->forced_track !== null)
+                    if ( $track->forced_track !== null )
                         $command .= "--forced-track {$track->index}:" . ( $track->forced_track ? 'yes' : 'no' ) . ' ';
-                    if ( $track->default_track !== null)
+                    if ( $track->default_track !== null )
                         $command .= "--default-track {$track->index}:" . ( $track->default_track ? 'yes' : 'no' ) . ' ';
-                    $command .= "-s {$track->index} "; // Copy subtitle tracks n,m etc. Default: copy all subtitle tracks.
-                    //"-D " . // Don't copy any video track from this file.
-                    //"-A " . // Don't copy any audio track from this file.
-                    //"-T " // Don't copy tags for tracks from the source file.
                 }
 
                 // audio track
-                if ( $track instanceof MKVMergeCommandAudioTrack or $track instanceof MKVMergeCommandVideoTrack )
+                elseif ( $track instanceof MKVMergeCommandVideoTrack )
                 {
-                    if ( $track instanceof MKVMergeCommandVideoTrack )
-                    {
-                        $command .= "--language {$track->index}:{$track->language} ";
-                        if ( $track->forced_track !== null)
-                            $command .= "--forced-track {$track->index}:" . ( $track->forced_track ? 'yes' : 'no' ) . ' ';
-                        if ( $track->default_track !== null)
-                            $command .= "--default-track {$track->index}:" . ( $track->default_track ? 'yes' : 'no' ) . ' ';
-                    }
-                    elseif ( $track instanceof MKVMergeCommandAudioTrack )
-                    {
-                        $command .= "--language {$track->index}:{$track->language} ";
-                        if ( $track->forced_track !== null)
-                            $command .= "--forced-track {$track->index}:" . ( $track->forced_track ? 'yes' : 'no' ) . ' ';
-                        if ( $track->default_track !== null)
-                            $command .= "--default-track {$track->index}:" . ( $track->default_track ? 'yes' : 'no' ) . ' ';
-                    }
+                    $videoTracksIndexes[] = $track->index;
+
+                    $command .= "--language {$track->index}:{$track->language} ";
+                    if ( $track->forced_track !== null )
+                        $command .= "--forced-track {$track->index}:" . ( $track->forced_track ? 'yes' : 'no' ) . ' ';
+                    if ( $track->default_track !== null )
+                        $command .= "--default-track {$track->index}:" . ( $track->default_track ? 'yes' : 'no' ) . ' ';
+                }
+
+                // audio track
+                elseif ( $track instanceof MKVMergeCommandAudioTrack )
+                {
+                    $audioTracksIndexes[] = $track->index;
+
+                    $command .= "--language {$track->index}:{$track->language} ";
+                    if ( $track->forced_track !== null )
+                        $command .= "--forced-track {$track->index}:" . ( $track->forced_track ? 'yes' : 'no' ) . ' ';
+                    if ( $track->default_track !== null )
+                        $command .= "--default-track {$track->index}:" . ( $track->default_track ? 'yes' : 'no' ) . ' ';
                 }
             }
 
-            // TODO : set of above track set !
+            // "-a n,m" Copy the audio tracks n,m etc
+            // "-A" Don't copy any audio track from this file.
+            $command .= ( count( $audioTracksIndexes )    ? "-a " . implode( ',', $audioTracksIndexes ) : "-A" ) . " ";
+
+            // "-d n,m" Copy the video tracks n, m etc
+            // "-D" Don't copy any video track from this file
+            $command .= ( count( $videoTracksIndexes )    ? "-d " . implode( ',', $videoTracksIndexes ) : "-D" ) . " ";
+
+            // "-s n,m" // Copy the subtitle tracks n, m etc.
+            // "-S" Don't copy any subtitle track from this file.
+            $command .= ( count( $subtitleTracksIndexes )    ? "-s " . implode( ',', $subtitleTracksIndexes ) : "-S" ) . " ";
+
             $command .=
-                // "-a $audioTrackIndex " . // Copy the audio tracks n, m etc. The numbers are track IDs which can be obtained with the --identify switch. They're not simply the track numbers (see section TRACK IDS). Default: copy all audio tracks.
-                // "-S " . // Don't copy any subtitle track from this file.
-                // "-d $videoTrackIndex " . // Copy the video tracks n, m etc. The numbers are track IDs which can be obtained with the --identify switch (see section TRACK IDS). They're not simply the track numbers. Default: copy all video tracks.
                 "-T " . // Don't copy tags for tracks from the source file.
+                "-M " . // Don't copy attachments from this file.
                 "--no-global-tags " . // Don't keep global tags from the source file.
-                "--no-chapters " . // Don't keep chapters from the source file.
+                // "--no-chapters " . // Don't keep chapters from the source file <= please do keep chapters !
                 escapeshellarg( (string)$this->inputFiles[$inputFileIndex] );
+
             $return[] = $command;
 
             $inputFileIndex++;
         }
-
 
         // TODO: add track order
         // $template = '"--track-order" "0:0,1:1,1:2"';
