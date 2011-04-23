@@ -385,17 +385,29 @@ class mmAjaxController extends ezcMvcController
         {
             $result->variables['status'] = 'ok';
             $commandGenerator = new MKVMergeCommandGenerator();
+
+            // add audio + video in english, and disable existing subtitles
             foreach( $commandGenerator->addInputFile( new MKVMergeMediaInputFile( $episodeFile->path ) )
                 as $track )
             {
-                $track->language = 'fre';
+                if ( $track instanceof MKVmergeCommandSubtitleTrack )
+                {
+                    $track->disabled = true;
+                }
+                else
+                {
+                    $track->language = 'eng';
+                    $track->default_track = true;
+                }
             }
+            // add subtitle file
             foreach( $commandGenerator->addInputFile( new MKVMergeSubtitleInputFile( $episodeFile->subtitleFile, 'fre' ) )
                 as $track )
             {
                 $track->language = 'fre';
                 $track->default_track = true;
             }
+
             // determine best disk
             $bestFit = mmMkvManagerDiskHelper::BestTVEpisodeFit( $episodeFile->fullname, $episodeFile->fileSize );
             if ( $bestFit['RecommendedDiskHasFreeSpace'] )
