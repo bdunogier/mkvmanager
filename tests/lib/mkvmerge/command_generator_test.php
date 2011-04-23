@@ -109,6 +109,40 @@ class MKVMergeCommandGeneratorTest extends PHPUnit_Framework_TestCase
         self::assertEquals( $expectedCommand, $command );
     }
 
+    function testGenerateFromMKVWithDisabledSubtitlesTrack()
+    {
+        $expectedCommand =
+            "mkvmerge " .
+            "-o 'tmp/tests/generated.mkv' " .
+            "--language 1:eng --forced-track 1:no --default-track 1:yes " .
+            "--language 2:eng --forced-track 2:no --default-track 2:yes " .
+            "-a 2 -d 1 -S -T -M --no-global-tags 'tmp/tests/test.mkv' " .
+            "--language 0:fre --sub-charset 0:ISO-8859-1 --default-track 0:yes ".
+            "-A -D -s 0 -T -M --no-global-tags 'tmp/tests/test.ass'";
+
+        $generator = new MKVMergeCommandGenerator();
+        foreach( $generator->addInputFile( new MKVMergeMediaInputFile( 'tmp/tests/test.mkv' ) ) as $commandTrack )
+        {
+            if ( $commandTrack instanceof MKVmergeCommandSubtitleTrack )
+            {
+                $commandTrack->enabled = false;
+            }
+            else
+            {
+                $commandTrack->language = 'eng';
+                $commandTrack->default_track = true;
+            }
+        }
+        $subtitlesTrack = $generator->addInputFile( new MKVMergeSubtitleInputFile( 'tmp/tests/test.ass', 'fre' ) );
+        $subtitlesTrack[0]->language = 'fre';
+        $subtitlesTrack[0]->default_track = true;
+
+        $generator->setOutputFile( 'tmp/tests/generated.mkv' );
+        $command = $generator->getCommandString();
+
+        self::assertEquals( $expectedCommand, $command );
+    }
+
     public function testGenerateRealTVMKV()
     {
         self::markTestSkipped();
