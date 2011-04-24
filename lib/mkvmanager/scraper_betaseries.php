@@ -164,7 +164,7 @@ class MkvManagerScraperBetaSeries extends MkvManagerScraper
         $priority = 0;
 
         // english subs
-        if ( preg_match( '#((\.VO-)|(VO/)|(en\.((no)?tag\.)?(srt|ass))|(\.txt$))#i', $subtitleName ) )
+        if ( preg_match( '#((\.VO[-\. ])|(en\.((no)?tag\.)?(srt|ass))|(\.txt$))#i', $subtitleName ) )
             $priority -= 20;
 
         // release
