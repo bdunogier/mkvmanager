@@ -53,8 +53,23 @@ class mmAjaxController extends ezcMvcController
         $result = new ezcMvcResult;
 
         $release = isset( $this->release ) ? $this->release : null;
-        $scraper = new MkvManagerScraperBetaSeries( $this->VideoFile, $release );
-        $subtitles = $scraper->get();
+        $subtitles = array();
+        foreach( array( 'MkvManagerScraperBetaSeries', 'MkvManagerScraperSoustitreseu' ) as $scraperClass )
+        {
+            $scraper = new $scraperClass( $this->VideoFile, $release );
+            $scrapResult = $scraper->get();
+
+            if ( $scrapResult != false )
+            {
+                $subtitles = array_merge( $subtitles, $scrapResult );
+            }
+        }
+
+        usort( $subtitles, function( $a, $b ) {
+            if ( $a['priority'] == $b['priority'] ) return 0;
+            return ( $a['priority'] < $b['priority'] ) ? 1 : -1;
+        } );
+
         if ( $subtitles === false )
         {
             $variables = array( 'status' => 'ko', 'message' => 'nosubtitles' );
@@ -71,31 +86,30 @@ class mmAjaxController extends ezcMvcController
     {
         $result = new ezcMvcResult;
 
-        $fileUrl = "http://www.betaseries.com/srt/{$this->SubFileId}";
-        error_log( $fileUrl );
+        $downloadUrl = str_replace( '#', '/', $this->DownloadUrl );
 
         // subtitle save path
         $targetPath = '/home/download/downloads/complete/TV/Sorted/';
-        preg_match( '/^((.*) - [0-9]+x[0-9]+ - (.*))\.(avi|mkv)$/', $this->VideoFile, $matches );
+        $episodeFile = new TVEpisodeFile( $this->VideoFile );
 
         // add show name folder and check for existence
-        $targetPath .= $matches[2];
+        $targetPath .= $episodeFile->showName;
         if ( !file_exists( $targetPath ) )
             throw new Exception("Unable to locate folder $targetPath" );
 
         // add episode . subextension
-        $targetPath .= "/{$matches[1]}.{$this->SubType}";
+        $targetPath .= "/{$episodeFile->fullname}." . pathinfo( $this->SubFileName, PATHINFO_EXTENSION );
 
         // zip file: open as temporary
-        if ( isset( $this->ZipFileId ) )
+        if ( isset( $this->Zip ) )
         {
-            $ZipFileId = str_replace( '#', '/', $this->ZipFileId );
+            $zipFileId = str_replace( '#', '/', $this->SubFileName );
 
             $temporaryPath = '/tmp/' . md5( $this->VideoFile );
 
             $fp = fopen( $temporaryPath, 'wb' );
-            $ch = curl_init( $fileUrl );
-            curl_setopt( $ch, CURLOPT_URL, $fileUrl );
+            $ch = curl_init( $downloadUrl );
+            curl_setopt( $ch, CURLOPT_URL, $downloadUrl );
             curl_setopt( $ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US) AppleWebKit/534.10 (KHTML, like Gecko) Chrome/8.0.552.18 Safari/534.10' );
             // curl_setopt( $ch, CURLOPT_REFERER, $this->baseURL );
             curl_setopt( $ch, CURLOPT_FILE, $fp );
@@ -107,7 +121,7 @@ class mmAjaxController extends ezcMvcController
             // open zip file and get requested subtitle
             $zip = new ZipArchive;
             $zip->open( $temporaryPath );
-            $inputStream = $zip->getStream( $ZipFileId );
+            $inputStream = $zip->getStream( $zipFileId );
             $outputStream = fopen( $targetPath, 'wb' );
             stream_copy_to_stream( $inputStream, $outputStream );
             fclose( $inputStream );
@@ -120,8 +134,8 @@ class mmAjaxController extends ezcMvcController
         else
         {
             $fp = fopen( $targetPath, 'wb' );
-            $ch = curl_init( $fileUrl );
-            curl_setopt( $ch, CURLOPT_URL, $fileUrl );
+            $ch = curl_init( $downloadUrl );
+            curl_setopt( $ch, CURLOPT_URL, $downloadUrl );
             curl_setopt( $ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US) AppleWebKit/534.10 (KHTML, like Gecko) Chrome/8.0.552.18 Safari/534.10' );
             // curl_setopt( $ch, CURLOPT_REFERER, $this->baseURL );
             curl_setopt( $ch, CURLOPT_FILE, $fp );

@@ -59,26 +59,25 @@ class MkvManagerScraperBetaSeries extends MkvManagerScraper
         foreach( $xp->div->ul->li as $li )
         {
             $item = $li[0]->children();
-            error_log($item->asXml() );
 
             $url = (string)$item[0]['href'];
+            $downloadURL = "{$this->siteURL}{$url}";
+            $encodedDownloadURL = rawurlencode( str_replace( '/', '#', $downloadURL ) );
             list( ,, $subtitleId ) = explode( '/', $url );
             $subtitleName = (string)$item[0];
 
             // class="<originSite> off/on"
             list( $originSite ) = explode( ' ', (string)$li['class'] );
-            $subtitleLink = "/ajax/downloadsubtitle/" . rawurlencode( $this->fileName ) . "/{$subtitleId}";
+            $subtitleLink = "/ajax/downloadsubtitle/" . rawurlencode($this->fileName) . "/{$encodedDownloadURL}/" . rawurlencode( $subtitleName );
 
             // if the file is a zip, we need to download it and read its contents
             if ( substr( $subtitleName, -4 ) == '.zip' )
             {
-                $bsUrl = "http://betaseries.com{$url}";
-                error_log( $bsUrl );
                 // download to temporary folder
                 $targetPath = '/tmp/' . md5( $subtitleName ) . '.zip';
                 $fp = fopen( $targetPath, 'wb' );
-                $ch = curl_init( $bsUrl );
-                curl_setopt( $ch, CURLOPT_URL, $bsUrl );
+                $ch = curl_init( $downloadURL );
+                curl_setopt( $ch, CURLOPT_URL, $downloadURL );
                 curl_setopt( $ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US) AppleWebKit/534.10 (KHTML, like Gecko) Chrome/8.0.552.18 Safari/534.10' );
                 curl_setopt( $ch, CURLOPT_REFERER, $this->baseURL );
                 curl_setopt( $ch, CURLOPT_FILE, $fp );
@@ -91,7 +90,6 @@ class MkvManagerScraperBetaSeries extends MkvManagerScraper
                 }
                 else
                 {
-                    // file_put_contents( $targetPath, $data );
                     $zip = new ZipArchive;
                     $zip->open( $targetPath );
                     for( $i = 0; $i < $zip->numFiles; $i++ )
@@ -102,7 +100,7 @@ class MkvManagerScraperBetaSeries extends MkvManagerScraper
 
                         $ret[] = array(
                             'name' => $name,
-                            'link' => "{$subtitleLink}/{$subType}/" . urlencode( str_replace( '/', '#', $name ) ),
+                            'link' => "{$subtitleLink}/" . rawurlencode( str_replace( '/', '#', $name ) ),
                             'priority' => $this->computeSubtitlePriority( $name, $originSite ),
                             'originSite' => $originSite  );
                     }
@@ -112,10 +110,10 @@ class MkvManagerScraperBetaSeries extends MkvManagerScraper
             }
             else
             {
-                // add sub  type (srt, ass)
+                // add sub type (srt, ass)
                 $subType = substr( $subtitleName, strrpos( $subtitleName, '.' ) + 1 );
                 $ret[] = array(
-                    'link' => "{$subtitleLink}/{$subType}",
+                    'link' => "{$subtitleLink}",
                     'name' => $subtitleName,
                     'priority' => $this->computeSubtitlePriority( $subtitleName, $originSite ),
                     'originSite' => $originSite );
@@ -243,7 +241,8 @@ class MkvManagerScraperBetaSeries extends MkvManagerScraper
      */
     private $release;
 
-    protected $baseURL = 'http://www.betaseries.com/ajax/episodes/season.php';
+    protected $siteURL = 'http://www.betaseries.com/';
+    protected $baseURL = "http://www.betaseries.com/ajax/episodes/season.php";
 
     private $aliases = array(
         'howimetyourmother' => 'himym',

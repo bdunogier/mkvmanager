@@ -39,6 +39,7 @@ return array(
 
     'MkvManagerScraper'           => 'mkvmanager/interfaces/scraper.php',
     'MkvManagerScraperBetaSeries' => 'mkvmanager/scraper_betaseries.php',
+    'MkvManagerScraperSoustitreseu' => 'mkvmanager/scraper_soustitreseu.php',
 
     'MkvManagerScraperHTTPException' => 'mkvmanager/exceptions/scraper_http.php',
     'MkvManagerScraperHTMLException' => 'mkvmanager/exceptions/scraper_html.php',

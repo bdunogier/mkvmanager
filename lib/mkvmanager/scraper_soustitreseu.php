@@ -53,7 +53,6 @@ class MkvManagerScraperSoustitreseu extends MkvManagerScraper
         $link = $res[0];
         $subtitleName = (string)$link;
         $url = (string)$link['href'];
-        $subtitleLink = str_replace( '/', '::', $url );
         $zipUrl = "http://www.sous-titres.eu/series/{$url}";
 
         // download to temporary folder
@@ -73,7 +72,8 @@ class MkvManagerScraperSoustitreseu extends MkvManagerScraper
         }
         else
         {
-            // file_put_contents( $targetPath, $data );
+            $resultUrl = "/ajax/downloadsubtitle/{$this->fileName}/" . rawurlencode( str_replace( '/', '#', $zipUrl ) ) . '/zip';
+
             $zip = new ZipArchive;
             $zip->open( $targetPath );
             for( $i = 0; $i < $zip->numFiles; $i++ )
@@ -84,13 +84,13 @@ class MkvManagerScraperSoustitreseu extends MkvManagerScraper
 
                 $ret[] = array(
                     'name' => $name,
-                    'link' => "{$subtitleLink}/{$subType}/" . urlencode( str_replace( '/', '#', $name ) ),
+                    'link' => "{$resultUrl}/" . urlencode( str_replace( '/', '#', $name ) ),
                     'priority' => $this->computeSubtitlePriority( $name ),
                     /*'originSite' => $originSite */ );
             }
         }
         // remove temporary file
-        // @unlink( $targetPath );
+        @unlink( $targetPath );
 
         // no subtitles for this file
         if ( !count( $ret ) )
