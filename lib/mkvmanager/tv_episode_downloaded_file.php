@@ -41,7 +41,8 @@ class TVEpisodeDownloadedFile
     {
         $separator = "[-\.]";
         $releaseGroupPattern = implode( '|', $this->releaseGroupWithAliases() );
-        return preg_match( "/{$separator}({$releaseGroupPattern}){$separator}/i", $subtitleFile );
+        $pattern = "/{$separator}({$releaseGroupPattern}){$separator}/i";
+        return preg_match( $pattern, $subtitleFile );
     }
 
     /**
