@@ -145,5 +145,13 @@ class mmMkvManagerController extends ezcMvcController
         $result->variables += mmApp::doTVDashboard();
         return $result;
     }
+
+    public function doMovies()
+    {
+        $result = new ezcMvcResult;
+        $result->variables['page_title'] = "Movies :: MKV Manager";
+        $result->variables += mmApp::doMovies();
+        return $result;
+    }
 }
 ?>

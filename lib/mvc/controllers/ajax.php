@@ -438,5 +438,48 @@ class mmAjaxController extends ezcMvcController
         }
         return $result;
     }
+
+    /**
+     * Searches a movie release
+     * @param string Release
+     */
+    public function doMovieSearch()
+    {
+        if ( !preg_match( "/^(.*)(19|20)[0-9]{2}/", $this->Release, $matches ) )
+        {
+            $variables = array( 'status' => 'ko', 'message' => 'unable to extract the movie name' );
+        }
+        else
+        {
+            $movieTitle = $matches[1];
+
+            $scraper = new MkvManagerScraperSubsynchro();
+            $movies = $scraper->searchMovies( $movieTitle );
+
+            $variables = array( 'status' => 'ok', 'movies' => $movies );
+        }
+
+        $result = new ezcMvcResult();
+        $result->variables += $variables;
+
+        return $result;
+    }
+
+    /**
+     * Searches the subtitles for a movie ID
+     * @param string Release Movie ID URI (subsynchro)
+     */
+    public function doMovieSearchReleases()
+    {
+        $scraper = new MkvManagerScraperSubsynchro();
+        $releases = $scraper->releasesList( $this->MovieId );
+
+        $variables = array( 'status' => 'ok', 'releases' => $releases );
+
+        $result = new ezcMvcResult();
+        $result->variables += $variables;
+
+        return $result;
+    }
 }
 ?>

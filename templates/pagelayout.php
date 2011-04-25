@@ -47,6 +47,7 @@
     <div id="centeredmenu">
       <ul>
         <li><a href="/tvdashboard">TV Dashboard</a></li>
+        <li><a href="/movies">Movies</a></li>
         <li><a href="/mkvmerge">MKV Merger</a></li>
         <li><a href="/subtitles">Subtitles</a></li>
         <li><a href="/movies-without-nfo">Movies without NFO</a></li>

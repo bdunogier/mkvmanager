@@ -100,8 +100,14 @@ EOF;
     {
         // callback that strips down a movie file path to the movie's path
 
-        $callback = function( &$value, $key ) {
-    $value = substr( $value, 0, strrpos( $value, '/', 5 ) );
+
+            /**
+             * mmApp::doMovies()
+             *
+             * @return
+             */
+            $callback = function( &$value, $key ) {
+$value = substr( $value, 0, strrpos( $value, '/', 5 ) );
 };
 
         // list of movie files, extensions stripped
@@ -147,6 +153,18 @@ EOF;
         $latest = array_slice( $byDate, 0, 3 );
 
         return array( 'shows' => $shows, 'latest' => $latest );
+    }
+
+    public static function doMovies()
+    {
+        $movieFolders = array();
+        foreach( glob( '/home/download/downloads/complete/Movies/*', GLOB_BRACE|GLOB_ONLYDIR ) as $movieFolder )
+        {
+            $movieFolders[] = basename( $movieFolder );
+        }
+        return array(
+            'movies' => $movieFolders,
+        );
     }
 }
 ?>
