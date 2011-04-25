@@ -37,9 +37,10 @@ return array(
 
     'UnsortedEpisodesFilter' => 'iterators/unsorted_episodes.php',
 
-    'MkvManagerScraper'           => 'mkvmanager/interfaces/scraper.php',
-    'MkvManagerScraperBetaSeries' => 'mkvmanager/scraper_betaseries.php',
+    'MkvManagerScraper'             => 'mkvmanager/interfaces/scraper.php',
+    'MkvManagerScraperBetaSeries'   => 'mkvmanager/scraper_betaseries.php',
     'MkvManagerScraperSoustitreseu' => 'mkvmanager/scraper_soustitreseu.php',
+    'MkvManagerScraperSubsynchro'   => 'mkvmanager/scraper_subsynchro.php',
 
     'MkvManagerScraperHTTPException' => 'mkvmanager/exceptions/scraper_http.php',
     'MkvManagerScraperHTMLException' => 'mkvmanager/exceptions/scraper_html.php',

@@ -24,7 +24,7 @@ abstract class MkvManagerScraper
      * @return SimpleXMLElement
      * @throws tclScraperNetworkException If the URL couldn't be fetched
      */
-    protected function fetch( $url = null )
+    protected function fetch( $url = null, $handler = 'parseFromHTMLToXML' )
     {
         $this->requestUrl = $url !== null ? $url : $this->baseURL;
         if ( count( $this->params ) > 0 )
@@ -34,14 +34,17 @@ abstract class MkvManagerScraper
             $this->requestUrl .= '?' . implode( '&', $URIComponents );
         }
 
-        try {
-            $cache = ezcCacheManager::getCache( 'scrapers' );
-        } catch( Exception $e ) {
-            throw $e;
+        if ( $this->isCacheEnabled )
+        {
+            try {
+                $cache = ezcCacheManager::getCache( 'scrapers' );
+            } catch( Exception $e ) {
+                throw $e;
+            }
+            $cacheId = md5( $this->requestUrl );
         }
-        $cacheId = md5( $this->requestUrl );
 
-        if ( !( $this->responseBody = $cache->restore( $cacheId ) ) )
+        if ( !$this->isCacheEnabled || !( $this->responseBody = $cache->restore( $cacheId ) ) )
         {
             set_error_handler( array( $this, 'phpFileGetContentsErrorHandler' ) );
             $this->responseBody = @file_get_contents( $this->requestUrl, 0, stream_context_create( array(
@@ -53,20 +56,40 @@ abstract class MkvManagerScraper
 
             if( $this->HTTPStatus() != self::HTTP_OK )
                 throw new MkvManagerScraperHTTPException( $this->requestUrl, $this->responseHeaders );
-            $cache->store( $cacheId, $this->responseBody );
+
+            if ( $this->isCacheEnabled)
+                $cache->store( $cacheId, $this->responseBody );
         }
         else
         {
             error_log( 'restored from cache' );
         }
+
+        return $this->$handler();
+    }
+
+    /**
+     * Parses the response body from an HTML string to a SimpleXML object
+     * @return SimpleXMLElement
+     */
+    public function parseFromHTMLToXML()
+    {
         $doc = new DOMDocument();
         $doc->strictErrorChecking = FALSE;
+        $this->responseBody = str_replace( '&times;', 'x', $this->responseBody );
         if ( @$doc->loadHTML( $this->responseBody ) === false )
             throw new MkvManagerScraperHTMLException( $this->requestUrl, $this->responseBody );
 
-        $doc = simplexml_import_dom( $doc );
+        return simplexml_import_dom( $doc );
+    }
 
-        return $doc;
+    /**
+     * Parses the response body from an HTML string to a SimpleXML object
+     * @return SimpleXMLElement
+     */
+    public function parseFromXMLToXML()
+    {
+        return simplexml_load_string( $this->responseBody );
     }
 
     /**
@@ -116,5 +139,7 @@ abstract class MkvManagerScraper
      * @return mixed
      */
     abstract public function get();
+
+    public $isCacheEnabled = true;
 }
 ?>
