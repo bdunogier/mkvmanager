@@ -67,7 +67,7 @@ class MKVMergeCommandImportWindowsGUI
                     $finfo = new finfo( FILEINFO_MIME_ENCODING );
                     $encoding = strtoupper( $finfo->file( $subFileName ) );
                     // assume iso by default
-                    if ( $encoding == 'UNKNOWN-8BITS' )
+                    if ( $encoding == 'UNKNOWN-8BIT' )
                         $encoding = "ISO-8859-1";
                     $command = str_replace( "\"{$subFileName}\"", "\"--sub-charset\" \"0:{$encoding}\" \"{$subFileName}\"", $command );
                 }
