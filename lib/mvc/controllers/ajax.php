@@ -456,7 +456,7 @@ class mmAjaxController extends ezcMvcController
             $scraper = new MkvManagerScraperSubsynchro();
             $movies = array_map(
                 function( $movie ) {
-                    $movie['id'] = rawurlencode( $movie['id'] );
+                    $movie['id'] = str_replace( array( '/', '.' ), array( '|', '~' ), $movie['id'] );
                     return $movie;
                 },
                 $scraper->searchMovies( $movieTitle )
@@ -477,19 +477,45 @@ class mmAjaxController extends ezcMvcController
      */
     public function doMovieSearchReleases()
     {
-        $movieId = rawurldecode( $this->MovieId );
+        $movieId = str_replace( array( '|', '~' ), array( '/', '.' ), $this->MovieId );
 
         $scraper = new MkvManagerScraperSubsynchro();
 
         $releases = array_map(
             function( $release ) {
-                $release['id'] = rawurlencode( $release['id'] );
+                $release['id'] = str_replace( array( '/', '.' ), array( '|', '~' ), $release['id'] );
                 return $release;
             },
             $scraper->releasesList( $movieId )
         );
 
         $variables = array( 'status' => 'ok', 'releases' => $releases );
+
+        $result = new ezcMvcResult();
+        $result->variables += $variables;
+
+        return $result;
+    }
+
+    /**
+     * Searches the subtitles for a movie ID
+     * @param string Release Movie ID URI (subsynchro)
+     */
+    public function doMovieSearchReleaseSubtitles()
+    {
+        $releaseId = str_replace( array( '|', '~' ), array( '/', '.' ), $this->ReleaseId );
+
+        $scraper = new MkvManagerScraperSubsynchro();
+
+        $subtitles = array_map(
+            function( $subtitle ) {
+                $subtitle['id'] = str_replace( array( '/', '.' ), array( '|', '~' ), $subtitle['id'] );
+                return $subtitle;
+            },
+            $scraper->getReleaseSubtitles( $releaseId )
+        );
+
+        $variables = array( 'status' => 'ok', 'subtitles' => $subtitles );
 
         $result = new ezcMvcResult();
         $result->variables += $variables;

@@ -48,7 +48,7 @@ $(".movieFolder").bind( 'click', function(e) {
             for ( index in r.movies )
             {
                 movie = r.movies[index];
-                targetDiv.append( '<li><a href="/ajax/movie-search-releases/' + encodeURIComponent( movie.id ) + '" class="movieId">' + movie.title + ' (' + movie.info + ')</a></li>' );
+                targetDiv.append( '<li><a href="/ajax/movie-search-releases/' + movie.id + '" class="movieId">' + movie.title + ' (' + movie.info + ')</a></li>' );
             }
             targetDiv.append( '</ul>' );
         }
@@ -77,7 +77,36 @@ $(".movieId").live( 'click', function(e) {
             for ( index in r.releases )
             {
                 release = r.releases[index];
-                targetDiv.append( '<li><a href="/ajax/movie-search-subtitles/' + encodeURIComponent( release.id ) + '" class="movieRelease">' + release.title + ')</a></li>' );
+                targetDiv.append( '<li><a href="/ajax/movie-search-subtitles/' + release.id + '" class="movieRelease">' + release.title + '</a></li>' );
+            }
+            targetDiv.append( '</ul>' );
+        }
+        else
+        {
+            targetDiv.append( r.message );
+        }
+    }, "json" );
+
+    return false;
+
+});
+
+$(".movieRelease").live( 'click', function(e) {
+    e.preventDefault();
+
+    // popup the overlay
+    targetDiv = $("#MoviePopup");
+    targetDiv.append( '<h4>Subtitles</h4>' );
+
+    // @todo search for this episode subtitles
+    $.get( $(this).attr('href'), function success( r ) {
+        if ( r.status == 'ok' )
+        {
+            targetDiv.append( '<ul>' );
+            for ( index in r.subtitles )
+            {
+                subtitle = r.subtitles[index];
+                targetDiv.append( '<li>' + subtitle + '</a></li>' );
             }
             targetDiv.append( '</ul>' );
         }

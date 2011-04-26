@@ -39,7 +39,8 @@ class MkvManagerScraperSubsynchro extends MkvManagerScraper
         {
             $results[] = array(
                 'title' => (string)$resultNode,
-                'id' => str_replace( '.html', '', (string)$resultNode['id'] ),
+                //'id' => str_replace( '.html', '', (string)$resultNode['id'] ),
+                'id' => (string)$resultNode['id'],
                 'info' => (string)$resultNode['info'],
             );
         }
@@ -54,7 +55,7 @@ class MkvManagerScraperSubsynchro extends MkvManagerScraper
      */
     public function releasesList( $id )
     {
-        $url = "{$this->siteURL}/{$id}.html";
+        $url = "{$this->siteURL}/{$id}";
         $doc = $this->fetch( $url );
         $resultNodes = $doc->xpath( "//ul[@class='liste_release']/descendant::a[not(@class)]" );
         $results = array();
@@ -62,7 +63,8 @@ class MkvManagerScraperSubsynchro extends MkvManagerScraper
         {
             $release = array(
                 'title' => (string)$resultNode,
-                'id' => str_replace( '.html', '', (string)$resultNode['href'] ),
+                // 'id' => str_replace( '.html', '', (string)$resultNode['href'] ),
+                'id' => (string)$resultNode['href'],
             );
             $results[] = $release;
         }
@@ -77,7 +79,7 @@ class MkvManagerScraperSubsynchro extends MkvManagerScraper
 
     public function getReleaseSubtitles( $id )
     {
-        $url = "{$this->siteURL}/{$id}.html";
+        $url = "{$this->siteURL}/{$id}";
         $doc = $this->fetch( $url );
 
         $results = array();
