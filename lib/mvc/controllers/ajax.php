@@ -406,7 +406,7 @@ class mmAjaxController extends ezcMvcController
             {
                 if ( $track instanceof MKVmergeCommandSubtitleTrack )
                 {
-                    $track->disabled = true;
+                    $track->enabled = false;
                 }
                 else
                 {
