@@ -32,9 +32,10 @@ class mmMvcRouter extends ezcMvcRouter
             new ezcMvcRailsRoute( '/ajax/sourcefiles/archive/:hash',           'mmAjaxController', 'sourcefileArchive' ),
             new ezcMvcRailsRoute( '/ajax/generate-command/:VideoFile',         'mmAjaxController', 'generateCommand' ),
 
-            new ezcMvcRailsRoute( '/ajax/movie-search/:Release',             'mmAjaxController', 'movieSearch' ),
-            new ezcMvcRailsRoute( '/ajax/movie-search-releases/:MovieId',    'mmAjaxController', 'movieSearchReleases' ),
-            new ezcMvcRailsRoute( '/ajax/movie-search-subtitles/:ReleaseId', 'mmAjaxController', 'movieSearchReleaseSubtitles' ),
+            new ezcMvcRailsRoute( '/ajax/movie-search/:Release',                       'mmAjaxController', 'movieSearch' ),
+            new ezcMvcRailsRoute( '/ajax/movie-search-releases/:MovieId',              'mmAjaxController', 'movieSearchReleases' ),
+            new ezcMvcRailsRoute( '/ajax/movie-search-subtitles/:ReleaseId',           'mmAjaxController', 'movieSearchReleaseSubtitles' ),
+            new ezcMvcRailsRoute( '/ajax/movie-download-subtitle/:Folder/:SubtitleId', 'mmAjaxController', 'movieDownloadSubtitle' ),
 
             new ezcMvcRailsRoute( '/ajax/downloadsubtitle/:VideoFile/:DownloadUrl/:Zip/:SubFileName',
                 'mmAjaxController', 'downloadSubtitles' ),

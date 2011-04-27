@@ -509,13 +509,33 @@ class mmAjaxController extends ezcMvcController
 
         $subtitles = array_map(
             function( $subtitle ) {
-                $subtitle['id'] = str_replace( array( '/', '.' ), array( '|', '~' ), $subtitle['id'] );
+                $subtitle = str_replace( array( '/', '.' ), array( '|', '~' ), $subtitle );
                 return $subtitle;
             },
             $scraper->getReleaseSubtitles( $releaseId )
         );
 
         $variables = array( 'status' => 'ok', 'subtitles' => $subtitles );
+
+        $result = new ezcMvcResult();
+        $result->variables += $variables;
+
+        return $result;
+    }
+
+    /**
+     * Searches the subtitles for a movie ID
+     * @param string Release Movie ID URI (subsynchro)
+     */
+    public function doMovieDownloadSubtitle()
+    {
+        $subtitleId = str_replace( array( '|', '~' ), array( '/', '.' ), $this->SubtitleId );
+        $releaseFolder = $this->Folder;
+
+        $scraper = new MkvManagerScraperSubsynchro();
+        $downloadedPath = $scraper->downloadSubtitle( $subtitleId, "/home/download/downloads/complete/Movies/$releaseFolder/$releaseFolder" );
+
+        $variables = array( 'status' => 'ok', 'path' => $downloadedPath );
 
         $result = new ezcMvcResult();
         $result->variables += $variables;

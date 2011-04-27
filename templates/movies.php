@@ -29,6 +29,8 @@ h1 {
 <script type="text/javascript">
 $(document).ready(function() {
 
+var releaseName = false;
+
 $(".movieFolder").bind( 'click', function(e) {
     e.preventDefault();
 
@@ -106,7 +108,7 @@ $(".movieRelease").live( 'click', function(e) {
             for ( index in r.subtitles )
             {
                 subtitle = r.subtitles[index];
-                targetDiv.append( '<li>' + subtitle + '</a></li>' );
+                targetDiv.append( '<li><a href="/ajax/movie-download-subtitle/' + releaseName + '/' + subtitle + '">' + subtitle + '</a></li>' );
             }
             targetDiv.append( '</ul>' );
         }
