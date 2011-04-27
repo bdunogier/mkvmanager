@@ -120,7 +120,7 @@ class MkvManagerScraperSubsynchro extends MkvManagerScraper
         }
 
         if ( !is_writable( dirname( $targetPath ) ) )
-            throw new ezcBaseFilePermissionException( $targetPath );
+            throw new ezcBaseFilePermissionException( $targetPath, ezcBaseFileException::WRITE );
 
         $fp = fopen( $zipPath, 'wb' );
         $ch = curl_init( $downloadFileUrl );
