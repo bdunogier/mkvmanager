@@ -390,52 +390,48 @@ class mmAjaxController extends ezcMvcController
         $videoFile = $this->VideoFile;
 
         $episodeFile = new TVEpisodeFile( $videoFile );
-        if ( !$episodeFile->hasSubtitleFile )
-        {
-            $result->variables['status'] = 'ko';
-            $result->variables['message'] = "No subtitles found for $videoFile";
-        }
-        else
-        {
-            $result->variables['status'] = 'ok';
-            $commandGenerator = new MKVMergeCommandGenerator();
+        $result->variables['status'] = 'ok';
+        $commandGenerator = new MKVMergeCommandGenerator();
 
-            // add audio + video in english, and disable existing subtitles
-            foreach( $commandGenerator->addInputFile( new MKVMergeMediaInputFile( $episodeFile->path ) )
-                as $track )
+        // add audio + video in english, and disable existing subtitles
+        foreach( $commandGenerator->addInputFile( new MKVMergeMediaInputFile( $episodeFile->path ) )
+            as $track )
+        {
+            if ( $track instanceof MKVmergeCommandSubtitleTrack )
             {
-                if ( $track instanceof MKVmergeCommandSubtitleTrack )
-                {
-                    $track->enabled = false;
-                }
-                else
-                {
-                    $track->language = 'eng';
-                    $track->default_track = true;
-                }
+                $track->enabled = false;
             }
-            // add subtitle file
+            else
+            {
+                $track->language = 'eng';
+                $track->default_track = true;
+            }
+        }
+        // add subtitle file
+        if ( $episodeFile->hasSubtitleFile )
+        {
             foreach( $commandGenerator->addInputFile( new MKVMergeSubtitleInputFile( $episodeFile->subtitleFile, 'fre' ) )
                 as $track )
             {
                 $track->language = 'fre';
                 $track->default_track = true;
             }
-
-            // determine best disk
-            $bestFit = mmMkvManagerDiskHelper::BestTVEpisodeFit( $episodeFile->fullname, $episodeFile->fileSize );
-            if ( isset( $bestFit['RecommendedDiskHasFreeSpace'] ) && $bestFit['RecommendedDiskHasFreeSpace'] === 'true' )
-                $disk = $bestFit['RecommendedDisk'];
-            else
-                $disk = 'VIMES';
-
-            $commandGenerator->setOutputFile( "/media/storage/{$disk}/TV Shows/{$episodeFile->showName}/{$episodeFile->filename}" );
-
-            $commandObject = $commandGenerator->get();
-            $commandObject->appendSymLink = true;
-
-            $result->variables['command'] = $commandObject->asString();
         }
+
+        // determine best disk
+        $bestFit = mmMkvManagerDiskHelper::BestTVEpisodeFit( $episodeFile->fullname, $episodeFile->fileSize );
+        if ( isset( $bestFit['RecommendedDiskHasFreeSpace'] ) && $bestFit['RecommendedDiskHasFreeSpace'] === 'true' )
+            $disk = $bestFit['RecommendedDisk'];
+        else
+            $disk = 'VIMES';
+
+        $commandGenerator->setOutputFile( "/media/storage/{$disk}/TV Shows/{$episodeFile->showName}/{$episodeFile->filename}" );
+
+        $commandObject = $commandGenerator->get();
+        $commandObject->appendSymLink = true;
+
+        $result->variables['command'] = $commandObject->asString();
+
         return $result;
     }
 

@@ -121,12 +121,12 @@ ul.listEpisodes li.nosubtitle {
 ul.listEpisodes li.subtitle {
   background-image: url('images/icons/subtitles_16x16.png');
 }
-ul.listEpisodes li.subtitle a.generateCommand {
+/*ul.listEpisodes li.subtitle a.generateCommand {
   display: visible;
 }
 ul.listEpisodes li.nosubtitle a.generateCommand {
   display: none;
-}
+}*/
 /* list item with loading animation - needs ul.icon class */
 ul.icon li.loading {
   background-image: url('images/icons/loading_16x16.gif');
