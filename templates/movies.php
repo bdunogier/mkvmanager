@@ -108,9 +108,36 @@ $(".movieRelease").live( 'click', function(e) {
             for ( index in r.subtitles )
             {
                 subtitle = r.subtitles[index];
-                targetDiv.append( '<li><a href="/ajax/movie-download-subtitle/' + releaseName + '/' + subtitle + '">' + subtitle + '</a></li>' );
+                targetDiv.append( '<li><a class="subtitleFile" href="/ajax/movie-download-subtitle/' + releaseName + '/' + subtitle + '">' + subtitle + '</a></li>' );
             }
             targetDiv.append( '</ul>' );
+        }
+        else
+        {
+            targetDiv.append( r.message );
+        }
+    }, "json" );
+
+    return false;
+
+});
+
+/**
+ * Click on on a subtitleFile link
+ * Download the clicked subtitle using the href in an AJAX request
+ */
+$(".subtitleFile").live( 'click', function(e) {
+    e.preventDefault();
+
+    // popup the overlay
+    targetDiv = $( "#MoviePopup" );
+    targetDiv.append( '<h4>Download subtitle</h4>' );
+
+    // @todo search for this episode subtitles
+    $.get( $(this).attr('href'), function success( r ) {
+        if ( r.status == 'ok' )
+        {
+            targetDiv.append( "Downloaded to " + r.path );
         }
         else
         {
