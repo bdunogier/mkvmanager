@@ -143,7 +143,9 @@ class MKVMergeCommand
     {
         $string = $this->command;
         if ( $this->appendSymLink === true )
-            $string .= "; ln -fs \"{$this->target}\" \"{$this->linkTarget}\"";
+        {
+            $string .= "; if [ ! -f \"{$this->linkTarget}\" ]; then ln -fs \"{$this->target}\" \"{$this->linkTarget}\"; fi";
+        }
         if ( $this->appendDoneText === true )
             $string .= "; echo \"Done converting {$this->title}\"";
 
