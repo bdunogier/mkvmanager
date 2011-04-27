@@ -424,7 +424,7 @@ class mmAjaxController extends ezcMvcController
 
             // determine best disk
             $bestFit = mmMkvManagerDiskHelper::BestTVEpisodeFit( $episodeFile->fullname, $episodeFile->fileSize );
-            if ( isset( $bestFit['RecommendedDiskHasFreeSpace'] ) && $bestFit['RecommendedDiskHasFreeSpace'] )
+            if ( isset( $bestFit['RecommendedDiskHasFreeSpace'] ) && $bestFit['RecommendedDiskHasFreeSpace'] === 'true' )
                 $disk = $bestFit['RecommendedDisk'];
             else
                 $disk = 'VIMES';
