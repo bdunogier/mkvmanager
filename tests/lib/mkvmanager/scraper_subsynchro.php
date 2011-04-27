@@ -45,14 +45,17 @@ class MkvManagerScraperSubsynchroTest extends PHPUnit_Framework_TestCase
             array (
                 'title' => 'Kill.Bill.2003.720p.Bluray.x264-SEPTiC',
                 'id' => '2003/kill-bill--volume-1/kill-bill-2003-720p-bluray-x264-septic.html',
+                'files' => '1',
             ),
             array (
                 'title' => 'Kill.Bill.Vol.1.2003.720p.BluRay.DTS.x264-ESiR',
                 'id' => '2003/kill-bill--volume-1/kill-bill-vol-1-2003-720p-bluray-dts-x264-esir.html',
+                'files' => '1',
             ),
             array (
                 'title' => 'Kill.Bill.Volume1.RETAIL.DVDRip.XviD-DiAMOND',
                 'id' => '2003/kill-bill--volume-1/kill-bill-volume1-retail-dvdrip-xvid-diamond.html',
+                'files' => '1',
             ),
         );
         self::assertEquals( $contents, $releases );

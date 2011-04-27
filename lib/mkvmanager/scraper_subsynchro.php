@@ -57,14 +57,19 @@ class MkvManagerScraperSubsynchro extends MkvManagerScraper
     {
         $url = "{$this->siteURL}/{$id}";
         $doc = $this->fetch( $url );
-        $resultNodes = $doc->xpath( "//ul[@class='liste_release']/descendant::a[not(@class)]" );
+
+        // get the 'li's embedding each result
+        $resultNodes = $doc->xpath( "//ul[@class='liste_release']/li" );
+
         $results = array();
         foreach( $resultNodes as $resultNode )
         {
+            list( $link ) = $resultNode->xpath( "a[not(@class)]" );
+            list( $files )   = $resultNode->xpath( "span[@class='fichiers']/strong" );
             $release = array(
-                'title' => (string)$resultNode,
-                // 'id' => str_replace( '.html', '', (string)$resultNode['href'] ),
-                'id' => (string)$resultNode['href'],
+                'title' => (string)$link,
+                'id'    => (string)$link['href'],
+                'files' => (string)$files,
             );
             $results[] = $release;
         }
