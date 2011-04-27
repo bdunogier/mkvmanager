@@ -139,7 +139,13 @@ class MkvManagerScraperSubsynchro extends MkvManagerScraper
         else
         {
             $zip = new ZipArchive;
-            $zip->open( $zipPath );
+            $ret = $zip->open( $zipPath );
+
+            // invalid zip => 3 downloads limit exceeded ?
+            if ( $ret !==  true )
+            {
+                throw new Exception( "Error opening zip file $zipPath" );
+            }
             for( $i = 0; $i < $zip->numFiles; $i++ )
             {
                 $name = (string)$zip->getNameIndex( $i );
