@@ -316,8 +316,8 @@ $(document).ready(function() {
             <? foreach( $episodeFiles as $episodeFile ): ?>
                 <li id="li<?=ucfirst( anchorLink( $episodeFile->filename ) )?>"class="<?=( $episodeFile->hasSubtitleFile ? 'subtitle' : 'nosubtitle' )?>">
                     Episode <a class="episode"
-                        title="Downloaded release: <?=htmlentities( (string)$episodeFile->downloadedFile )?> (<?=$episodeFile->downloadedFile->releaseGroup?>)"
-                        href="/ajax/searchsubtitles/<?=rawurlencode( $episodeFile->filename )?>/<?=rawurlencode( $episodeFile->downloadedFile )?>">
+                        title="Downloaded release: <?=htmlentities( (string)$episodeFile->downloadedFile )?> (<?=$episodeFile->downloadedFile->releaseGroup ? $episodeFile->downloadedFile->releaseGroup : 'none'?>)"
+                        href="/ajax/searchsubtitles/<?=rawurlencode( $episodeFile->filename )?>/<?=$episodeFile->downloadedFile != '' ? rawurlencode( $episodeFile->downloadedFile ) : 'none' ?>">
                         <?=$episodeFile->seasonNumber?>x<?=$episodeFile->episodeNumber?>: <?=$episodeFile->episodeName?></a>
                         <a class="generateCommand" href="/ajax/generate-command/<?=rawurlencode( $episodeFile->filename )?>">mkvmerge</a>
                 </li>
