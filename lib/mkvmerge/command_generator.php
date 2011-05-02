@@ -110,7 +110,7 @@ class MKVMergeCommandGenerator
         {
             throw new Exception( "outputPath has not been set" );
         }
-        return sprintf( '-o %s', escapeshellarg( $this->outputPath ) );
+        return sprintf( "-o %s", escapeshellarg( $this->outputPath ) );
     }
 
     /**
