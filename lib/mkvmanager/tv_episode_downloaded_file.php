@@ -56,6 +56,10 @@ class TVEpisodeDownloadedFile
                 return array( 'dimension', 'dim' );
                 break;
 
+            case 'immerse':
+                return array( 'immerse', 'imm' );
+                break;
+
             default:
                 return array( $this->releaseGroup );
         }
