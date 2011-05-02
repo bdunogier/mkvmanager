@@ -11,13 +11,15 @@ class mmMvcRouter extends ezcMvcRouter
             new ezcMvcRailsRoute( '/default',   'mmMkvManagerController', 'default' ),
 
             // actual features
-            new ezcMvcRailsRoute( '/mkvmerge',            'mmMkvManagerController', 'mkvMerge' ),
-            new ezcMvcRailsRoute( '/subtitles',           'mmMkvManagerController', 'subtitles' ),
-            new ezcMvcRailsRoute( '/tvshow/image/:image', 'mmMkvManagerController', 'TVShowImage' ),
-            new ezcMvcRailsRoute( '/movies-without-nfo',  'mmMkvManagerController', 'MoviesWithoutNFO' ),
-            new ezcMvcRailsRoute( '/merge-queue/:items',  'mmMkvManagerController', 'mergeQueue' ),
-            new ezcMvcRailsRoute( '/tvdashboard',         'mmMkvManagerController', 'TVDashboard' ),
-            new ezcMvcRailsRoute( '/movies',              'mmMkvManagerController', 'Movies' ),
+            new ezcMvcRailsRoute( '/mkvmerge',             'mmMkvManagerController', 'mkvMerge' ),
+            new ezcMvcRailsRoute( '/subtitles',            'mmMkvManagerController', 'subtitles' ),
+            new ezcMvcRailsRoute( '/tvshow/image/:image',  'mmMkvManagerController', 'TVShowImage' ),
+            new ezcMvcRailsRoute( '/movies-without-nfo',   'mmMkvManagerController', 'MoviesWithoutNFO' ),
+            new ezcMvcRailsRoute( '/merge-queue/:items',   'mmMkvManagerController', 'mergeQueue' ),
+            new ezcMvcRailsRoute( '/tvdashboard',          'mmMkvManagerController', 'TVDashboard' ),
+            new ezcMvcRailsRoute( '/movies',               'mmMkvManagerController', 'Movies' ),
+
+            new ezcMvcRailsRoute( '/movie-merge/:Folder',  'mmMkvManagerController', 'movieMerge' ),
 
             // AJAX callbacks
             new ezcMvcRailsRoute( '/ajax/fatal',                               'mmAjaxController', 'fatal' ),

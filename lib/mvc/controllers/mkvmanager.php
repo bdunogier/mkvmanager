@@ -146,10 +146,63 @@ class mmMkvManagerController extends ezcMvcController
         return $result;
     }
 
+    /**
+     * List movies waiting for merge
+     */
     public function doMovies()
     {
         $result = new ezcMvcResult;
         $result->variables['page_title'] = "Movies :: MKV Manager";
+        $result->variables += mmApp::doMovies();
+        return $result;
+    }
+
+    /**
+     * Merge interface for movies
+     * @param string $this->Folder The name of the movie folder
+     */
+    public function doMovieMerge()
+    {
+        $result = new ezcMvcResult;
+        $result->variables['page_title'] = "{$this->Folder} :: Movies :: MKV Manager";
+        $result->variables['movie'] = $this->Folder;
+
+        $generator = new MKVMergeCommandGenerator();
+
+        // video file, mandatory
+        $videoFiles = glob( "/home/download/downloads/complete/Movies/{$this->Folder}/{$this->Folder}.{mkv,avi}", GLOB_BRACE );
+        if ( !count( $videoFiles ) )
+        {
+            throw new InvalidArgumentException( "No files found matching pattern /home/download/downloads/complete/Movies/{$this->Folder}/{$this->Folder}.{mkv,avi}" );
+        }
+        $videoFiles = $videoFiles[0];
+        $generator->addInputFile( new MKVMergeMediaInputFile( $videoFiles ) );
+
+        // subtitle file(s), optional
+        $subtitlesFiles = glob( "/home/download/downloads/complete/Movies/{$this->Folder}/{$this->Folder}*.{srt,avi}", GLOB_BRACE );
+        if ( count( $subtitlesFiles ) )
+        {
+        }
+        foreach( $subtitlesFiles as $subtitlesFile )
+        {
+            $generator->addInputFile( new MKVMergeSubtitleInputFile( $subtitlesFile, 'und' ) );
+        }
+
+        $tracks = array();
+        foreach ( $generator->trackSets as $trackSet )
+        {
+            foreach ( $trackSet as $track )
+            {
+                $tracks[] = $track;
+            }
+        }
+
+        // output file
+        $generator->setOutputFile( "/media/storage/VIMES/Movies/{$this->Folder}/{$this->Folder}.mkv" );
+
+        $result->variables['tracks'] = $tracks;
+        $result->variables['command'] = $generator->getCommandString();
+
         $result->variables += mmApp::doMovies();
         return $result;
     }

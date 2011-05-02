@@ -31,7 +31,7 @@ $(document).ready(function() {
 
 var releaseName = false;
 
-$(".movieFolder").bind( 'click', function(e) {
+$(".movieSubtitlesAction").bind( 'click', function(e) {
     e.preventDefault();
 
     // popup the overlay
@@ -153,7 +153,12 @@ $(".subtitleFile").live( 'click', function(e) {
 </script>
 <ul>
     <? foreach( $this->movies as $movie ): ?>
-    <li><a class="movieFolder" href="/ajax/movie-search/<?=urlencode( $movie)?>"><?=$movie?></a></li>
+    <li><?=$movie?>
+        &nbsp;|&nbsp;
+        <a class="movieSubtitlesAction" href="/ajax/movie-search/<?=urlencode( $movie)?>">subtitles</a>
+        &nbsp;|&nbsp;
+        <a class="movieMergeAction" href="/movie-merge/<?=urlencode( $movie)?>">merge</a>
+    </li>
     <? endforeach ?>
 </ul>
 
