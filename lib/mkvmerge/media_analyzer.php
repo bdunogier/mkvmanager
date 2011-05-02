@@ -3,12 +3,23 @@
  * Media file analyzer. Will identify the various tracks in a media file.
  *
  * Uses the mkvmerge --identify-verbose and parses the result to do so.
+ *
  * Example output:
  * <code>
  * File '/media/storage/STARBUCK/TV Shows/Fringe/Fringe - 1x01 -  Pilot.mkv': container: Matroska [duration:4844384000000]
  * Track ID 1: video (V_MPEG4/ISO/AVC) [language:eng track_name:English display_dimensions:16x9 default_track:1 forced_track:0 packetizer:mpeg4_p10_video]
  * Track ID 2: audio (A_AC3) [language:eng track_name:English default_track:1 forced_track:0]
  * Track ID 3: subtitles (S_TEXT/UTF8) [language:fre track_name:Français default_track:1 forced_track:0]
+ * </code>
+ *
+ * Example output 2 (movie):
+ * <code>
+ * $ mkvmerge --identify-verbose /home/download/downloads/complete/Movies/The\ Brothers\ Bloom\ 2008\ 720p\ BluRay\ DTS\ x264\ EbP/The\ Brothers\ Bloom\ 2008\ 720p\ BluRay\ DTS\ x264\ EbP.mkv
+ * File '/home/download/downloads/complete/Movies/The Brothers Bloom 2008 720p BluRay DTS x264 EbP/The Brothers Bloom 2008 720p BluRay DTS x264 EbP.mkv': container: Matroska [duration:6820950000000]
+ * Track ID 1: video (V_MPEG4/ISO/AVC) [language:eng track_name:The\sBrothers\sBloom\s(2008) display_dimensions:640x267 default_track:1 forced_track:0 packetizer:mpeg4_p10_video]
+ * Track ID 2: audio (A_DTS) [language:eng track_name:DTS\score\s5.1\s@\s1.5\sMbps default_track:1 forced_track:0]
+ * Track ID 3: audio (A_AAC) [language:eng track_name:Commentary\sAAC-HE\s2.0\s@\s64\sKbps default_track:0 forced_track:0]
+ * Track ID 4: subtitles (S_TEXT/UTF8) [language:eng default_track:1 forced_track:0]
  * </code>
  */
 class MKVMergeMediaAnalyzer

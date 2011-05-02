@@ -8,6 +8,9 @@
  * @property string $default_track
  * @property string $forced_track
  * @property string $enabled
+ * @property string $name
+ *
+ * @property-write string $track_name Alias for name, used for analysis by mkvmerge
  */
 class MKVmergeCommandTrack
 {
@@ -33,6 +36,10 @@ class MKVmergeCommandTrack
         // value check / preprocessing
         switch( $property )
         {
+            case 'track_name':
+                $property = 'name';
+                break;
+
             case 'inputFile':
                 if ( !$value instanceof MKVMergeInputFile )
                     throw new ezcBaseValueException( 'inputFile', $value, 'instanceof MKVMergeInputFile' );
@@ -116,6 +123,7 @@ class MKVmergeCommandTrack
     }
 
     protected $properties = array(
+        'name' => false,
         'inputFile' => false,
         'index' => false,
         'language' => false,
