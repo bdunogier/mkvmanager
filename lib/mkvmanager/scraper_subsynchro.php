@@ -35,11 +35,14 @@ class MkvManagerScraperSubsynchro extends MkvManagerScraper
 
         $doc = $this->fetch( $this->searchURL, 'parseFromXMLToXML' );
         $results = array();
+
+        // if there are no results, an empty doc is returned
+        if ( $doc === false )
+            return false;
         foreach( $doc->rs as $resultNode )
         {
             $results[] = array(
                 'title' => (string)$resultNode,
-                //'id' => str_replace( '.html', '', (string)$resultNode['id'] ),
                 'id' => (string)$resultNode['id'],
                 'info' => (string)$resultNode['info'],
             );

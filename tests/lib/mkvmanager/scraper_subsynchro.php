@@ -14,11 +14,15 @@ require_once 'lib/mkvmanager/exceptions/scraper_html.php';
 
 class MkvManagerScraperSubsynchroTest extends PHPUnit_Framework_TestCase
 {
+    public function setUp()
+    {
+        $this->scraper = new MkvManagerScraperSubsynchro();
+        $this->scraper->isCacheEnabled = false;
+    }
+
     public function testSearch()
     {
-        $scraper = new MkvManagerScraperSubsynchro();
-        $scraper->isCacheEnabled = false;
-        $movies = $scraper->searchMovies( "kill bill" );
+        $movies = $this->scraper->searchMovies( "kill bill" );
 
         $contents = array (
             array (
@@ -35,11 +39,16 @@ class MkvManagerScraperSubsynchroTest extends PHPUnit_Framework_TestCase
         self::assertEquals( $contents, $movies );
     }
 
+    public function testSearchNoResults()
+    {
+        $movies = $this->scraper->searchMovies( "azerty12345" );
+
+        self::assertFalse( $movies );
+    }
+
     public function testReleasesList()
     {
-        $scraper = new MkvManagerScraperSubsynchro();
-        $scraper->isCacheEnabled = false;
-        $releases = $scraper->releasesList( "2003/kill-bill--volume-1.html" );
+        $releases = $this->scraper->releasesList( "2003/kill-bill--volume-1.html" );
 
         $contents = array (
             array (
@@ -63,9 +72,7 @@ class MkvManagerScraperSubsynchroTest extends PHPUnit_Framework_TestCase
 
     public function testGetReleaseSubtitles()
     {
-        $scraper = new MkvManagerScraperSubsynchro();
-        $scraper->isCacheEnabled = false;
-        $subtitles = $scraper->getReleaseSubtitles( "2003/kill-bill--volume-1/kill-bill-2003-720p-bluray-x264-septic.html" );
+        $subtitles = $this->scraper->getReleaseSubtitles( "2003/kill-bill--volume-1/kill-bill-2003-720p-bluray-x264-septic.html" );
 
         $contents = array( '2003/kill-bill--volume-1/kill-bill-2003-720p-bluray-x264-septic/fichier-3914.html' );
 
@@ -74,10 +81,10 @@ class MkvManagerScraperSubsynchroTest extends PHPUnit_Framework_TestCase
 
     public function testDownloadSubtitle()
     {
-        $scraper = new MkvManagerScraperSubsynchro();
-        $scraper->isCacheEnabled = false;
-        $path = $scraper->downloadSubtitle( "2001/monstres--cie/monsters-inc-2001-bdrip-h264-5-1ch-secretmyth/fichier-5584.html" );
+        $path = $this->scraper->downloadSubtitle( "2001/monstres--cie/monsters-inc-2001-bdrip-h264-5-1ch-secretmyth/fichier-5584.html" );
         self::assertEquals( '2899b6063dfcc8bccc7d5c0d28287867', md5_file( $path ) );
     }
+
+    private $scraper;
 }
 ?>
