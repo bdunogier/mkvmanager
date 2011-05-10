@@ -89,6 +89,14 @@ abstract class MkvManagerScraper
      */
     public function parseFromXMLToXML()
     {
+        $this->responseBody = preg_replace('/(<\?xml[^?]+?)utf-16/i', '$1utf-8', $this->responseBody );
+        return simplexml_load_string( $this->responseBody );
+    }
+
+    public function parseFromXMLToXMLWithUTF8Conversion()
+    {
+        $this->responseBody = preg_replace('/(<\?xml[^?]+?)utf-16/i', '$1utf-8', $this->responseBody );
+        $this->responseBody = utf8_encode( $this->responseBody );
         return simplexml_load_string( $this->responseBody );
     }
 

@@ -1,255 +1,325 @@
 <?php
-class MkvManagerScraperBetaSeries extends MkvManagerScraper
+/**
+ * Scraper allocine
+ * 1. search by string
+ *    http://www.allocine.fr/recherche/?q=lord+of+the+rings )
+ *    => HTML results list
+ *    <div class="colcontent">
+ *      <div class="rubric">
+ *        <div class="vmargin10t">
+ *        ...
+ *        <div class="vmargin10b">
+ *        4 résultats trouvés dans les titres de films.
+ *        </div>
+ *        <table class="totalwidth noborder purehtml">
+ *          <tbody>
+ *            <tr>
+ *              <td>
+ *                <a href="/film/fichefilm_gen_cfilm=38512.html">
+ *                  <img src="http://images.allocine.fr/r_75_106/medias/nmedia/18/65/65/36/18880027.jpg" alt="The Lord of the Rings">
+ *                </a>
+ *              </td>
+ *              <td>
+ *                <div><div style="margin-top:-5px;">
+ *                  <a href="/film/fichefilm_gen_cfilm=38512.html">
+ *                    Le Seigneur des anneaux
+ *                  </a>
+ *                  (The Lord of the Rings)
+ *                  <br>
+ *                  <span class="fs11">
+ *                  1978<br>
+ *                  de Ralph Bakshi<br>
+ *                  avec Christopher Guard, Michel Caccia<br>
+ *                  </span>
+ *                </div></div>
+ *              </td>
+ *            </tr>
+ *          </tbody>
+ *        </table>
+ *    <results>
+ *      <rs id="2003/kill-bill--volume-1.html" info="Kill Bill : Volume 1 - 3 releases - 3 fichiers">Kill Bill : Volume 1 (2003)</rs>
+ *      <rs id="2003/kill-bill--volume-2.html" info="Kill Bill : Volume 2 - 2 releases - 2 fichiers">Kill Bill : Volume 2 (2003)</rs>
+ *    </results>
+ *    </code>
+ * - search movie details
+ *   http://www.allocine.fr/film/fichefilm_gen_cfilm=39187.html
+ */
+class MkvManagerScraperAllocine extends MkvManagerScraper
 {
     /**
-     * Constructs a new betaseries.com scraper
-     *
-     * @param string $searchCriteria
-     *        One of:
-     *        - TV Show filename (<series> - <season>x<episode>...)
-     *        - BetaSeries ID: theitcrowd, southpark...
-     * @param string $release The release filename
-     *
-     * @todo Improve criteria to a named struct so that the scraper behaviour can
-     *       be changed depending on the info we have
+     * Returns the list of movies for the search string $query
+     * @param string $query
+     * @return array(MkvManagerScraperAllocineSearchResult) or false if no results were found
      */
-    public function __construct( $searchCriteria, $release )
+    public function searchMovies( $queryString )
     {
-        // space: we have a human readable series name
-        if ( strpos( $searchCriteria, ' ' ) !== false )
+        $this->params['q'] = $queryString;
+
+        $doc = $this->fetch( $this->searchURL );
+        $results = array();
+
+        list( $contentDiv ) = $doc->xpath( '//div[@class="colcontent"]' );
+        $contentDiv = simplexml_load_string( $contentDiv->asXML() );
+
+        $resultPhraseArray = $contentDiv->xpath( '//div[@class="vmargin10b "]' );
+        if ( !count( $resultPhraseArray ) )
         {
-            if ( !preg_match( '/^(.*) - ([0-9]+)x([0-9]+)/', $searchCriteria, $matches ) )
-                throw new Exception( "Unable to use search criteria $searchCriteria" );
-            $this->searchShow = $matches[1];
-            $this->searchShowCode = strtolower( str_replace( array( ' ', '(', ')', '\'', '.' ), '', $matches[1] ) );
-
-            // aliases
-            if ( isset( $this->aliases[$this->searchShowCode] ) )
-                $this->searchShowCode = $this->aliases[$this->searchShowCode];
-
-            $this->fileName = $searchCriteria;
-            $this->searchSeason = $matches[2];
-            $this->searchEpisode = $matches[3];
-
-            $this->params['url'] = $this->searchShowCode;
-            $this->params['saison'] = $this->searchSeason;
-
-            if ( $release )
-                $this->release = new TVEpisodeDownloadedFile( $release );
-        }
-    }
-
-    public function get()
-    {
-        try {
-            $doc = $this->fetch();
-        } catch ( MkvManagerScraperHTMLException $e ) {
-            throw $e;
-        }
-
-        $episodeId = sprintf( 'srt%sS%02dE%02d', $this->searchShowCode, $this->searchSeason, $this->searchEpisode );
-
-        $ret = array();
-        list( $xp ) = $doc->xpath( '//div[@id="'.$episodeId.'"]' );
-
-        // no subtitles for this file
-        if ( count( $xp->div->ul[0]->children() ) === 0 )
             return false;
-
-        foreach( $xp->div->ul->li as $li )
-        {
-            $item = $li[0]->children();
-
-            $url = (string)$item[0]['href'];
-            $downloadURL = "{$this->siteURL}{$url}";
-            $encodedDownloadURL = rawurlencode( str_replace( '/', '#', $downloadURL ) );
-            list( ,, $subtitleId ) = explode( '/', $url );
-            $subtitleName = (string)$item[0];
-
-            // class="<originSite> off/on"
-            list( $originSite ) = explode( ' ', (string)$li['class'] );
-            $subtitleLink = "/ajax/downloadsubtitle/" . rawurlencode($this->fileName) . "/{$encodedDownloadURL}/" . rawurlencode( $subtitleName );
-
-            // if the file is a zip, we need to download it and read its contents
-            if ( substr( $subtitleName, -4 ) == '.zip' )
-            {
-                // download to temporary folder
-                $targetPath = '/tmp/' . md5( $subtitleName ) . '.zip';
-                $fp = fopen( $targetPath, 'wb' );
-                $ch = curl_init( $downloadURL );
-                curl_setopt( $ch, CURLOPT_URL, $downloadURL );
-                curl_setopt( $ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US) AppleWebKit/534.10 (KHTML, like Gecko) Chrome/8.0.552.18 Safari/534.10' );
-                curl_setopt( $ch, CURLOPT_REFERER, $this->baseURL );
-                curl_setopt( $ch, CURLOPT_FILE, $fp );
-                curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, true );
-                $data = curl_exec( $ch );
-                fclose( $fp );
-                if ( $data === false )
-                {
-                    // @todo Add some kind of logging
-                }
-                else
-                {
-                    $zip = new ZipArchive;
-                    $zip->open( $targetPath );
-                    for( $i = 0; $i < $zip->numFiles; $i++ )
-                    {
-                        $name = (string)$zip->getNameIndex( $i );
-
-                        $subType = substr( $name, strrpos( $name, '.' ) + 1 );
-
-                        $ret[] = array(
-                            'name' => $name,
-                            'link' => "{$subtitleLink}/" . rawurlencode( str_replace( '/', '#', $name ) ),
-                            'priority' => $this->computeSubtitlePriority( $name, $originSite ),
-                            'originSite' => $originSite  );
-                    }
-                }
-                // remove temporary file
-                @unlink( $targetPath );
-            }
-            else
-            {
-                // add sub type (srt, ass)
-                $subType = substr( $subtitleName, strrpos( $subtitleName, '.' ) + 1 );
-                $ret[] = array(
-                    'link' => "{$subtitleLink}",
-                    'name' => $subtitleName,
-                    'priority' => $this->computeSubtitlePriority( $subtitleName, $originSite ),
-                    'originSite' => $originSite );
-            }
         }
 
-        // no subtitles for this file
-        if ( !count( $ret ) )
-            return false;
+        list( $resultTable ) = $contentDiv->xpath( '//table' );
+        $resultTable = simplexml_load_string( $resultTable->asXML() );
+        foreach( $resultTable->xpath( '//tr[count(td)=2]') as $rowNode )
+        {
+            $result = new MkvManagerScraperAllocineSearchResult();
 
-        $this->filterList( $ret );
+            $rowNode = simplexml_load_string( $rowNode->asXML() );
 
-        // reverse sort by priority
-        usort( $ret, function( $a, $b ) {
-            if ( $a['priority'] == $b['priority'] ) return 0;
-            return ( $a['priority'] < $b['priority'] ) ? 1 : -1;
-        } );
+            list( $img ) = $rowNode->xpath( '//td//img' );
+            $result->thumbnail = (string)$img['src'];
 
-        return $ret;
+            list( $div ) = $rowNode->xpath( '//td//div/div' );
+            $result->originalTitle = trim( (string)$div, "()\t\n\r\0\x0B" );
+
+            list( $a ) = $rowNode->xpath( '//td//div//a' );
+            $result->title = trim( (string)$a );
+            $result->link = trim( (string)$a['href'] );
+            $result->allocineId = (int)substr( $result->link,
+                strrpos( $result->link, '=' ) + 1,
+                -5
+            );
+
+            list( $extraNode ) = $rowNode->xpath( '//span[@class="fs11"]' );
+            list( $year, $director, $with ) = explode( "\n", trim( (string)$extraNode ) );
+            $result->year = (int)$year;
+            $result->director = substr( $director, 3 );
+            $result->actors = explode( ', ', substr( $with, 5 ) );
+
+            $results[] = $result;
+        }
+
+        return $results;
     }
 
     /**
-     * Computes the priority for the subtitle file $subtitleName and origin website $originSite
-     *
-     * Criterias:
-     * - language:
-     *   - english = -20
-     * - release group:
-     *   - match = 7
-     *   - no match = -7 (should always get negative prio)
-     * - type:
-     *   - ass = +3
-     * - tag/notag:
-     *   - tag = +1
-     *   - notag = -1
-     * - origin site:
-     *   - soustitres: +1
-     *   - usub: 0
-     *   - addic7ed: -1
-     *   - tvsubtitles: -2
-     *
-     * @param string $subtitleName
-     * @param string $originSite tvsubtitles, usub, addic7ed, soustitres
-     * @return integer
+     * Fetches the details for the movie with id $movieId
+     * @param int $movieId
+     * @return MkvManagerScraperAllocineResult
      */
-    private function computeSubtitlePriority( $subtitleName, $originSite )
+    public function getMovieDetails( $movieId )
     {
-        $priority = 0;
+        $url = sprintf( $this->detailsURL, $movieId );
+        $doc = $this->fetch( $url );
 
-        // english subs
-        if ( preg_match( '#((\.VO[-\. ])|(en\.((no)?tag\.)?(srt|ass))|(\.txt$))#i', $subtitleName ) )
-            $priority -= 20;
+        // print_r( $doc );
+        list( $movieNode ) = $doc->xpath( '//div[@typeof="v:Movie"]' );
+        $xml = str_replace( array( 'src=" http:=""', 'class="-ico -icofavadd\' ' ), '', $movieNode->asXML() );
+        $movieNode = simplexml_load_string( $xml );
 
-        // release
-        $priority += $this->release->matchesSubtitle( $subtitleName ) ? 7 :  -7;
+        $result = new MkvManagerScraperAllocineResult();
+        $result->allocineId = $movieId;
+        $result->link = $url;
 
-        // type + tag/notag
-        if ( substr( $subtitleName, strrpos( $subtitleName, '.' ) + 1 ) == 'ass' )
+        // title
+        list( $titleNode ) = $movieNode->xpath( '//h1[@property="v:name"]' );
+        $result->title = trim( (string)$titleNode );
+
+        // poster thumbnail
+        list( $thumbnailNode ) = $movieNode->xpath( '//div[@class="poster"]//a/img' );
+        $result->thumbnail = trim( (string)$thumbnailNode['src'] );
+
+        // summary
+        list( $summaryNode ) = $movieNode->xpath( '//span[@property="v:summary"]' );
+        $result->summary = trim( (string)$summaryNode );
+
+        // directory
+        list( $directorNode ) = $movieNode->xpath( '//a[@rel="v:directedBy"]' );
+        $result->director = trim( (string)$directorNode );
+
+        // actors
+        foreach( $movieNode->xpath( '//a[@rel="v:starring"]' ) as $actor )
         {
-            $priority += 3;
-            if ( strstr( strtolower( $subtitleName ), '.tag' ) )
-                $priority++;
-            if ( strstr( strtolower( $subtitleName ), '.notag' ) )
-                $priority--;
+            $result->actors[] = trim( (string)$actor );
         }
-        elseif ( strstr( strtolower( $subtitleName ), '.tag' ) )
-            $priority++;
-        if ( strstr( strtolower( $subtitleName ), '.notag' ) )
-            $priority--;
 
-        // origin site
-        switch ( $originSite )
+        // original title
+        list( $originalTitle ) = $movieNode->xpath( '//span[@class="purehtml"]/em' );
+        $result->originalTitle = trim( (string)$originalTitle );
+
+        // year
+        list( $year ) = $movieNode->xpath( '//a[@class="underline" and contains(@href, "?year=")]' );
+        $result->year = trim( (string)$year );
+
+        // genres
+        foreach( $movieNode->xpath( '//a[@class="underline" and contains(@href, "/film/tous/genre-")]') as $genre )
         {
-            case 'soustitres':  $priority += 2; break;
-            case 'addic7ed':    $priority -= 1; break;
-            case 'tvsubtitles': $priority -= 2; break;
+            $result->genre[] = trim( (string)$genre );
         }
 
-        return $priority;
-    }
+        // votes
+        list( $votesNode ) = $movieNode->xpath( '//p[@class="withstars"]/a[contains(@href, "/critiquepublic_")]/img' );
+        $result->score = (float)str_replace(',', '.', $votesNode['title'] ) * 2;
 
-    /**
-     * Filters out unwanted subtitles based on similar files & priorities
-     * - TAG over NoTaG
-     * - ASS over SRT
-     * - duplicates ? unsure... depends on version & origin
-     *
-     * @param array $list
-     * @return void
-     */
-    private function filterList( &$list )
-    {
-        $assFiles = $srtFiles = array();
-        $filesIndex = array();
-
-        foreach( $list as $idx => $file )
+        // trailers
+        $trailerButtonNodeArray = $movieNode->xpath( '//div[@class="btn_trailer"]/a' );
+        if ( count( $trailerButtonNodeArray ) )
         {
-            $parts = pathinfo( $file['name'] );
-            $filesIndex[$parts['basename']][] = $idx;
-            if ( !isset( $parts['extension'] ) )
+            // link to the trailers page, which will give us the full trailers & videos list
+            (string)$trailerPageLink = (string)$trailerButtonNodeArray[0]['href'];
+            $result->trailerPageLink = $trailerPageLink;
+
+            $trailerUrl = "{$this->siteURL}{$trailerPageLink}";
+            $trailerDoc = $this->fetch( $trailerUrl );
+            foreach( $trailerDoc->xpath( '//div[@id="carouselcontainer_BA"]//div[@class="datablock"]//div[@class="contenzone"]//a') as $trailerPageAnchor )
             {
-                unset( $list[$idx] );
-                continue;
+                $trailerPageLink = (string)$trailerPageAnchor['href'];
+                $trailerTitle = trim( (string)$trailerPageAnchor, "-\t\n\r\0\x0B" );
+                if ( substr( $trailerTitle, 0, 3 ) == " - " )
+                    $trailerTitle = substr( $trailerTitle, 3 );
+                $trailerUrl = "{$this->siteURL}{$trailerPageLink}";
+                $trailerDoc = $this->fetch( $trailerUrl );
+                $embeds = $trailerDoc->xpath( '//embed' );
+                if ( !count( $embeds ) )
+                    continue;
+                $trailerUrl = (string)$embed['href'];
+
+                $realTrailerUrl = str_replace(
+                    array( 'http://h.', '_b_004.mp4' ),
+                    array( 'http://hd.', '_hd.flv' ),
+                    $trailerUrl
+                );
+                if ( !file_exists( $realTrailerUrl ) )
+                    $realTrailerUrl = $trailerUrl;
+
+                $result->trailers[] = array( 'title' => $trailerTitle, 'href' => $realTrailerUrl );
             }
-            if ( $parts['extension'] == 'srt' )
-                $srtFiles[] = $parts['filename'];
-            elseif ( $parts['extension'] == 'ass' )
-                $assFiles[] = $parts['filename'];
         }
-        foreach( array_intersect( $assFiles, $srtFiles ) as $duplicateFile )
+
+        // posters
+        $postersDoc = $this->fetch( sprintf( $this->postersURL, $movieId ) );
+        foreach( $postersDoc->xpath( '//a[contains(@href, "/film/fichefilm-' . $movieId . '/affiches/detail/")]') as $posterAnchor )
         {
-            $srtFile = "{$duplicateFile}.srt";
-            foreach( $filesIndex[$srtFile] as $idx )
-                unset( $list[$idx] );
+            $poster = array( 'thumbnail' => (string)$posterAnchor->img[0]['src'] );
+            $posterDetailsUrl = (string)$posterAnchor['href'];
+
+            $posterDetailsDoc = $this->fetch( "{$this->siteURL}{$posterDetailsUrl}" );
+            list( $fullImage ) = $posterDetailsDoc->xpath( '//a[@target="_blank" and contains(text(), "Agrandir")]' );
+            $poster['href'] = (string)$fullImage['href'];
+
+            $result->posters[] = $poster;
+
         }
+        return $result;
     }
 
-    private $searchShowCode;
-    private $searchSeason;
-    private $searchEpisode;
+    public function get(){
+
+    }
+
+    protected $baseURL = 'http://www.allocine.fr';
+    protected $siteURL = 'http://www.allocine.fr';
+    protected $searchURL = 'http://www.allocine.fr/recherche/';
+    protected $detailsURL = 'http://www.allocine.fr/film/fichefilm_gen_cfilm=%d.html';
+    protected $postersURL = 'http://www.allocine.fr/film/fichefilm-%d/affiches/';
+}
+
+class MkvManagerScraperAllocineSearchResult
+{
+    /**
+     * Absolute URL to the movie thumbnail
+     * @var string
+     */
+    public $thumbnail;
 
     /**
-     * The downloaded file
-     * @param TVEpisodeDownloadedFile
+     * Movie title in the original language
+     * @var string
      */
-    private $release;
+    public $originalTitle;
 
-    protected $siteURL = 'http://www.betaseries.com/';
-    protected $baseURL = "http://www.betaseries.com/ajax/episodes/season.php";
+    /**
+     * Movie title in french
+     * @var string
+     */
+    public $title;
 
-    private $aliases = array(
-        'howimetyourmother' => 'himym',
-        'thebigbangtheory' => 'bigbangtheory',
-        'theitcrowd' => 'itcrowd',
-        'thesimpsons' => 'simpsons',
-        'mrsunshine2011' => 'mrsunshine',
-    );
+    /**
+     * Allocine relative link to the movie details page
+     * @var string
+     */
+    public $link;
+
+    /**
+     * Allocine movie page ID
+     * @var int
+     */
+    public $allocineId;
+
+    /**
+     * Movie release year
+     * @var int
+     */
+    public $productionYear;
+
+    /**
+     * @var string
+     */
+    public $directors;
+
+    /**
+     * Movie actors
+     * @var array( (string)name )
+     */
+    public $actors;
+
+    public static function __set_state( $array )
+    {
+        $object = new self;
+        foreach( $array as $property => $value )
+        {
+            if ( property_exists( $object, $property ))
+                $object->$property = $value;
+        }
+        return $object;
+    }
+}
+
+class MkvManagerScraperAllocineResult extends MkvManagerScraperAllocineSearchResult
+{
+    public $plot;
+
+    public $synopsis;
+
+    /**
+     * Genre
+     * @var array(string)
+     */
+    public $genre;
+
+    public $score;
+
+    public $releaseDate;
+
+    public $trailers = array();
+
+    public $posters = array();
+}
+
+class MkvManagerScraperAllocinePerson
+{
+    public $name;
+    public $thumbnail;
+}
+
+class MkvManagerScraperAllocineActor extends MkvManagerScraperAllocinePerson
+{
+    public $role;
+}
+
+class MkvManagerScraperAllocineTrailer
+{
+    public $title;
+    public $href;
+    public $language;
 }
 ?>
