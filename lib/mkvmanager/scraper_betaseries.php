@@ -50,21 +50,18 @@ class MkvManagerScraperBetaSeries extends MkvManagerScraper
         $episodeId = sprintf( 'srt%sS%02dE%02d', $this->searchShowCode, $this->searchSeason, $this->searchEpisode );
 
         $ret = array();
-        list( $xp ) = $doc->xpath( '//div[@id="'.$episodeId.'"]' );
 
-        // no subtitles for this file
-        if ( count( $xp->div->ul[0]->children() ) === 0 )
+        $liArray = $doc->xpath( sprintf( '//div[@id="srt%sS%02dE%02d"]//li', $this->searchShowCode, $this->searchSeason, $this->searchEpisode ) );
+        if ( !count( $liArray ) )
             return false;
 
-        foreach( $xp->div->ul->li as $li )
+        foreach( $liArray as $li )
         {
-            $item = $li[0]->children();
-
-            $url = (string)$item[0]['href'];
-            $downloadURL = "{$this->siteURL}{$url}";
+            $link = $li->a;
+            $downloadURL = (string)$link['href'];
             $encodedDownloadURL = rawurlencode( str_replace( '/', '#', $downloadURL ) );
-            list( ,, $subtitleId ) = explode( '/', $url );
-            $subtitleName = (string)$item[0];
+            $subtitleId = array_pop( explode( '/', $downloadURL ) );
+            $subtitleName = (string)$link;
 
             // class="<originSite> off/on"
             list( $originSite ) = explode( ' ', (string)$li['class'] );
