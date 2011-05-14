@@ -20,7 +20,9 @@ class MkvManagerScraperSoustitreseu extends MkvManagerScraper
         {
             $tvShowEpisode = new TVEpisodeFile( $searchCriteria );
 
-            $this->searchShowCode = preg_replace( array( "/[^a-z0-9 ]i/", "/ /" ), array( '', '_' ), strtolower( $tvShowEpisode->showName ) );
+            $this->searchShowCode = preg_replace( array( "/[^a-z0-9 ]/i", "/ /" ), array( '', '_' ), strtolower( $tvShowEpisode->showName ) );
+	    if ( isset( $this->aliases[ $this->searchShowCode ] ) )
+		$this->searchShowCode = $this->aliases[ $this->searchShowCode ];
 
             $this->fileName = $searchCriteria;
             $this->searchSeason = $tvShowEpisode->seasonNumber;
@@ -44,7 +46,7 @@ class MkvManagerScraperSoustitreseu extends MkvManagerScraper
         $episodeNum = sprintf( '%dx%02d', $this->searchSeason, $this->searchEpisode );
 
         $ret = array();
-        $res = $doc->xpath( "//td[text()='$episodeNum']/ancestor::tr[//td/img[@title='fr']]/td[@class='filename']/a" );
+        $res = $doc->xpath( "//span[text()='$episodeNum']/ancestor::a[//span/img[@title='fr']]" );
 
         // no subtitles for this file
         if ( !count( $res ) )
@@ -208,6 +210,7 @@ class MkvManagerScraperSoustitreseu extends MkvManagerScraper
         'theitcrowd' => 'itcrowd',
         'thesimpsons' => 'simpsons',
         'mrsunshine2011' => 'mrsunshine',
+	'parenthood_2010' => 'parenthood',
     );
 }
 ?>
