@@ -41,6 +41,14 @@ return array(
     'MkvManagerScraperBetaSeries'   => 'mkvmanager/scraper_betaseries.php',
     'MkvManagerScraperSoustitreseu' => 'mkvmanager/scraper_soustitreseu.php',
     'MkvManagerScraperSubsynchro'   => 'mkvmanager/scraper_subsynchro.php',
+    'MkvManagerScraperAllocine2'    => 'mkvmanager/scraper_allocine2.php',
+    'MkvManagerScraperAllocine'     => 'mkvmanager/scraper_allocine.php',
+
+    'MkvManagerScraperAllocineSearchResult' => 'mkvmanager/scraper_allocine.php',
+    'MkvManagerScraperAllocineResult' => 'mkvmanager/scraper_allocine.php',
+    'MkvManagerScraperAllocinePerson' => 'mkvmanager/scraper_allocine.php',
+    'MkvManagerScraperAllocineActor' => 'mkvmanager/scraper_allocine.php',
+    'MkvManagerScraperAllocineTrailer' => 'mkvmanager/scraper_allocine.php',
 
     'MkvManagerScraperHTTPException' => 'mkvmanager/exceptions/scraper_http.php',
     'MkvManagerScraperHTMLException' => 'mkvmanager/exceptions/scraper_html.php',

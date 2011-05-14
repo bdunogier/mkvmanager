@@ -181,5 +181,19 @@ $value = substr( $value, 0, strrpos( $value, '/', $params['movies_path_element_c
             'movies' => $movieFolders,
         );
     }
+
+    /**
+     * Fetches the trailer URL for a movie based on its allocine ID
+     *
+     * @param string AllocineId
+     * @return array(trailers=>array(MkvManagerScraperAllocineTrailer))
+     */
+    public function doTrailer( $allocineId )
+    {
+        $scraper = new MkvManagerScraperAllocine2;
+        $infos = $scraper->getMovieDetails( $allocineId );
+
+        return array( 'trailers'=>$infos->trailers );
+    }
 }
 ?>
