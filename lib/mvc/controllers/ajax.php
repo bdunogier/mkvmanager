@@ -48,6 +48,10 @@ class mmAjaxController extends ezcMvcController
         return $result;
     }
 
+    /**
+     * Searches for a subtitle for the release $release
+     * @param string $release
+     */
     public function doSearchSubtitles()
     {
         $result = new ezcMvcResult;
@@ -82,6 +86,12 @@ class mmAjaxController extends ezcMvcController
         return $result;
     }
 
+    /**
+     * Download the subtitle $DownloadUrl for the release $VideoFile
+     *
+     * @param string $DownloadUrl
+     * @param string $VideoFile
+     */
     public function doDownloadSubtitles()
     {
         $tvShowPath = ezcConfigurationManager::getInstance()->getSetting( 'tv', 'GeneralSettings', 'SourcePath' );
