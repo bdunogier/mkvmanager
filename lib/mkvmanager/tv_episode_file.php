@@ -62,15 +62,16 @@ class TVEpisodeFile
 
     public function __get( $property )
     {
+    	$tvShowPath = ezcConfigurationManager::getInstance()->getSetting( 'tv', 'GeneralSettings', 'SourcePath' );
         switch( $property )
         {
             case 'hasSubtitleFile':
-                $basedirAndFile = "/home/download/downloads/complete/TV/Sorted/{$this->showName}/{$this->fullname}";
+                $basedirAndFile = "{$tvShowPath}/{$this->showName}/{$this->fullname}";
                 return ( file_exists( "$basedirAndFile.srt" ) || file_exists( "$basedirAndFile.ass" ) );
                 break;
 
             case 'subtitleFile':
-                $basedirAndFile = "/home/download/downloads/complete/TV/Sorted/{$this->showName}/{$this->fullname}";
+                $basedirAndFile = "{$tvShowPath}/{$this->showName}/{$this->fullname}";
                 if ( file_exists( "$basedirAndFile.ass" ) )
                     return "$basedirAndFile.ass";
                 elseif ( file_exists( "$basedirAndFile.srt" ) )
@@ -84,7 +85,7 @@ class TVEpisodeFile
                 break;
 
             case 'path':
-                return "/home/download/downloads/complete/TV/Sorted/{$this->showName}/{$this->filename}";
+                return "{$tvShowPath}/{$this->showName}/{$this->filename}";
                 break;
 
             case 'downloadedFile':
