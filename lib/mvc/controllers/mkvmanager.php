@@ -58,7 +58,8 @@ class mmMkvManagerController extends ezcMvcController
         if ( $this->image == '' )
             throw new ezcBaseValueException( 'image', $this->image );
 
-        $file = "/home/download/downloads/complete/TV/Sorted/" . str_replace( ':', '/', $this->image );
+        $tvShowPath = ezcConfigurationManager::getInstance()->getSetting( 'tv', 'GeneralSettings', 'SourcePath' );
+        $file = "{$tvShowPath}/" . str_replace( ':', '/', $this->image );
         // @todo Throw a dedicated extension
         if ( !file_exists( $file ) )
             throw new ezcBaseValueException( 'image', $file );
