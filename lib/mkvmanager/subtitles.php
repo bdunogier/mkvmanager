@@ -10,6 +10,7 @@ class mmMkvManagerSubtitles
 {
     public static function fetchFilesWithoutSubtitles()
     {
+        $tvShowPath = ezcConfigurationManager::getInstance()->getSetting( 'tv', 'GeneralSettings', 'SourcePath' );
         $list = array();
 
         try {
@@ -18,7 +19,7 @@ class mmMkvManagerSubtitles
             $iterator = new RecursiveIteratorIterator( $directoryIterator );*/
             try {
                 //foreach( new UnsortedEpisodesFilter( $iterator ) as $file )
-                foreach( glob( "/home/download/downloads/complete/TV/Sorted/*/*.{mkv,avi}", GLOB_BRACE ) as $file )
+                foreach( glob( "{$tvShowPath}/*/*.{mkv,avi}", GLOB_BRACE ) as $file )
                 {
                     if ( filesize( $file ) < ( 25 * 1024 * 1024 ) )
                         continue;
@@ -49,12 +50,13 @@ class mmMkvManagerSubtitles
 
     public static function fetchFiles()
     {
+        $tvShowPath = ezcConfigurationManager::getInstance()->getSetting( 'tv', 'GeneralSettings', 'SourcePath' );
         $list = array();
 
         try {
             try {
                 //foreach( new UnsortedEpisodesFilter( $iterator ) as $file )
-                foreach( glob( "/home/download/downloads/complete/TV/Sorted/*/*.{mkv,avi}", GLOB_BRACE ) as $file )
+                foreach( glob( "{$tvShowPath}/*/*.{mkv,avi}", GLOB_BRACE ) as $file )
                 {
                     if ( sprintf( "%u", filesize( $file ) ) < ( 25 * 1024 * 1024 ) )
                     {
