@@ -144,15 +144,24 @@ $value = substr( $value, 0, strrpos( $value, '/', $params['movies_path_element_c
         $tvShowPath = ezcConfigurationManager::getInstance()->getSetting( 'tv', 'GeneralSettings', 'SourcePath' );
         $shows = array();
         $byDate = array();
+        $notValidEpisode = array();
+
         foreach( mmMkvManagerSubtitles::fetchFiles() as $file )
         {
             $episode = new TVEpisodeFile( $file );
+            if( $episode->isValid )
+            {
             $show = new TVShowFolder( $file, $tvShowPath );
             if (!isset( $queueFiles[$episode->showName] ) )
                 $queueFiles[$episode->showName] = array();
             $shows[$episode->showName][] = $episode;
             $filemtime = filemtime( "{$tvShowPath}/{$episode->showName}/{$file}" );
             $byDate[$filemtime] = $episode;
+            }
+            else
+            {
+                $notValidEpisode[] = $episode;
+            }
         }
         krsort( $byDate );
         $latest = array_slice( $byDate, 0, 3 );
