@@ -171,8 +171,9 @@ $value = substr( $value, 0, strrpos( $value, '/', $params['movies_path_element_c
 
     public static function doMovies()
     {
-        $movieFolders = array();
-        foreach( glob( '/home/download/downloads/complete/Movies/*', GLOB_BRACE|GLOB_ONLYDIR ) as $movieFolder )
+        $moviesPath = ezcConfigurationManager::getInstance()->getSetting( 'movies', 'GeneralSettings', 'SourcePath' );
+    	$movieFolders = array();
+        foreach( glob( "{$moviesPath}/*", GLOB_BRACE|GLOB_ONLYDIR ) as $movieFolder )
         {
             $movieFolders[] = basename( $movieFolder );
         }
