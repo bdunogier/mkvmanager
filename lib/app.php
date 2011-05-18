@@ -100,32 +100,36 @@ EOF;
     {
         // callback that strips down a movie file path to the movie's path
 
+        $moviesPath = ezcConfigurationManager::getInstance()->getSetting( 'movies', 'GeneralSettings', 'SourcePath' );
+        // we need to know this since some of the next lines need it
+        $moviesPathElementCount = count( explode( "/", $moviesPath ) );
 
             /**
              * mmApp::doMovies()
              *
              * @return
              */
-            $callback = function( &$value, $key ) {
-$value = substr( $value, 0, strrpos( $value, '/', 5 ) );
+            $callback = function( &$value, $key, $params ) {
+$value = substr( $value, 0, strrpos( $value, '/', $params['movies_path_element_count'] ) );
 };
 
         // list of movie files, extensions stripped
-        $moviesFiles = glob( '/media/aggregateshares/Movies/*/*.{mkv,avi}', GLOB_BRACE );
-        array_walk( $moviesFiles, $callback );
+        $moviesFiles = glob( $moviesPath . '/*/*.{mkv,avi}', GLOB_BRACE );
+        array_walk( $moviesFiles, $callback, array( 'movies_path_element_count' => $moviesPathElementCount ) );
 
         // list of NFO files, extensions stripped
-        $moviesNFOs  = glob( '/media/aggregateshares/Movies/*/*.nfo' );
-        array_walk( $moviesNFOs, $callback );
+        $moviesNFOs  = glob( $moviesPath . '/*/*.nfo' );
+        array_walk( $moviesNFOs, $callback, array( 'movies_path_element_count' => $moviesPathElementCount ) );
 
         // the diff of both arrays gives us movies without NFOS (and NFOs without movies, but that's unlikely)
         $movies = array_diff( $moviesFiles, $moviesNFOs );
 
         // Transform the list to titles only
-        array_walk( $movies, function( &$value, $key ){
+        array_walk( $movies, function( &$value, $key, $params ){
             $parts = explode( '/', $value );
-            $value = $parts[4];
-        });
+            $movieElementIndex = $params['movies_path_element_count'];
+            $value = $parts[$movieElementIndex];
+        }, array( 'movies_path_element_count' => $moviesPathElementCount ) );
 
         return compact( 'movies' );
     }
