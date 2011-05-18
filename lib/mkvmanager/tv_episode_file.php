@@ -24,7 +24,7 @@ class TVEpisodeFile
         $this->fullname = $pathinfo['filename'];
         $this->extension = $pathinfo['extension'];
         if ( preg_match( '/^(.*?) - [sS]?([0-9]+)[xXeE]([0-9]+)(-[0-9]+)? - (.*)$/', $this->fullname, $matches ) )
-            list(, $this->showName, $this->seasonNumber, $this->episodeNumber, $this->episodeName ) = $matches;
+            list(, $this->showName, $this->seasonNumber, $this->episodeNumber, $this->episodeNumber2, $this->episodeName ) = $matches;
         $this->checkValidity();
     }
 
