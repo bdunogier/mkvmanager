@@ -25,6 +25,39 @@ class TVEpisodeFile
         $this->extension = $pathinfo['extension'];
         if ( preg_match( '/^(.*?) - ([0-9]+)x([0-9]+) - (.*)$/', $this->fullname, $matches ) )
             list(, $this->showName, $this->seasonNumber, $this->episodeNumber, $this->episodeName ) = $matches;
+        $this->checkValidity();
+    }
+
+    /**
+     * Loop against properties provided by requiredProperties()
+     * Set isValid to false if at least one was null
+     *
+     * @return void
+     */
+    private function checkValidity()
+    {
+        $valid = true;
+        foreach( self::requiredProperties() as $requiredProperty )
+        {
+            if( is_null( $this->$requiredProperty ) )
+            {
+               $valid = false;
+               break;
+            }
+
+        }
+        $this->isValid = $valid;
+    }
+
+    /**
+     * Return an array of the required properties needed to be a valid TVEpisodeFile object
+     * Used by checkValidity()
+     *
+     * @return array
+     */
+    static public function requiredProperties()
+    {
+		return array( 'showName', 'seasonNumber', 'episodeNumber', 'episodeName', 'fullname' );
     }
 
     public function __get( $property )
@@ -134,6 +167,12 @@ class TVEpisodeFile
      * @var string
      */
     public $fullname;
+
+    /**
+     * True if the episode has been successfully identified
+     * @var boolean
+     */
+    public $isValid;
 }
 
 ?>
