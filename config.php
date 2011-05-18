@@ -71,7 +71,10 @@ class customLazyCacheConfiguration implements ezcBaseConfigurationInitializer
 		switch ( $id )
 		{
 			case 'scrapers':
-				ezcCacheManager::createCache( 'scrapers', ROOT . '/tmp/cache/scrapers', 'ezcCacheStorageFilePlain', $options );
+				ezcCacheManager::createCache( 'scrapers',
+				                              ROOT . DIRECTORY_SEPARATOR . ezcConfigurationManager::getInstance()->getSetting( 'movies', 'ScraperSettings', 'TempPath' ),
+				                              'ezcCacheStorageFilePlain',
+				                              $options );
 				break;
 		}
 	}

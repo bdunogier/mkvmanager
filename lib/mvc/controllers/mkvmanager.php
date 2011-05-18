@@ -164,6 +164,7 @@ class mmMkvManagerController extends ezcMvcController
      */
     public function doMovieMerge()
     {
+        $moviesPath = ezcConfigurationManager::getInstance()->getSetting( 'movies', 'GeneralSettings', 'SourcePath' );
         $result = new ezcMvcResult;
         $result->variables['page_title'] = "{$this->Folder} :: Movies :: MKV Manager";
         $result->variables['movie'] = $this->Folder;
@@ -171,16 +172,16 @@ class mmMkvManagerController extends ezcMvcController
         $generator = new MKVMergeCommandGenerator();
 
         // video file, mandatory
-        $videoFiles = glob( "/home/download/downloads/complete/Movies/{$this->Folder}/{$this->Folder}.{mkv,avi}", GLOB_BRACE );
+        $videoFiles = glob( "{$moviesPath}/{$this->Folder}/{$this->Folder}.{mkv,avi}", GLOB_BRACE );
         if ( !count( $videoFiles ) )
         {
-            throw new InvalidArgumentException( "No files found matching pattern /home/download/downloads/complete/Movies/{$this->Folder}/{$this->Folder}.{mkv,avi}" );
+            throw new InvalidArgumentException( "No files found matching pattern {$moviesPath}/{$this->Folder}/{$this->Folder}.{mkv,avi}" );
         }
         $videoFiles = $videoFiles[0];
         $generator->addInputFile( new MKVMergeMediaInputFile( $videoFiles ) );
 
         // subtitle file(s), optional
-        $subtitlesFiles = glob( "/home/download/downloads/complete/Movies/{$this->Folder}/{$this->Folder}*.{srt,avi}", GLOB_BRACE );
+        $subtitlesFiles = glob( "{$moviesPath}/{$this->Folder}/{$this->Folder}*.{srt,avi}", GLOB_BRACE );
         if ( count( $subtitlesFiles ) )
         {
         }
