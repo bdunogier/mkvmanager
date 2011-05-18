@@ -141,16 +141,17 @@ $value = substr( $value, 0, strrpos( $value, '/', $params['movies_path_element_c
      */
     public static function doTVDashboard()
     {
+        $tvShowPath = ezcConfigurationManager::getInstance()->getSetting( 'tv', 'GeneralSettings', 'SourcePath' );
         $shows = array();
         $byDate = array();
         foreach( mmMkvManagerSubtitles::fetchFiles() as $file )
         {
             $episode = new TVEpisodeFile( $file );
-            $show = new TVShowFolder( $file, '/home/download/downloads/complete/TV/Sorted' );
+            $show = new TVShowFolder( $file, $tvShowPath );
             if (!isset( $queueFiles[$episode->showName] ) )
                 $queueFiles[$episode->showName] = array();
             $shows[$episode->showName][] = $episode;
-            $filemtime = filemtime( "/home/download/downloads/complete/TV/Sorted/{$episode->showName}/{$file}" );
+            $filemtime = filemtime( "{$tvShowPath}/{$episode->showName}/{$file}" );
             $byDate[$filemtime] = $episode;
         }
         krsort( $byDate );
