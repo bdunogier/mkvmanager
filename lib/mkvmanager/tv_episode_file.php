@@ -23,21 +23,55 @@ class TVEpisodeFile
         $this->filename = $filename;
         $this->fullname = $pathinfo['filename'];
         $this->extension = $pathinfo['extension'];
-        if ( preg_match( '/^(.*?) - ([0-9]+)x([0-9]+) - (.*)$/', $this->fullname, $matches ) )
-            list(, $this->showName, $this->seasonNumber, $this->episodeNumber, $this->episodeName ) = $matches;
+        if ( preg_match( '/^(.*?) - [sS]?([0-9]+)[xXeE]([0-9]+)(-[0-9]+)? - (.*)$/', $this->fullname, $matches ) )
+            list(, $this->showName, $this->seasonNumber, $this->episodeNumber, $this->episodeNumber2, $this->episodeName ) = $matches;
+        $this->checkValidity();
+    }
+
+    /**
+     * Loop against properties provided by requiredProperties()
+     * Set isValid to false if at least one was null
+     *
+     * @return void
+     */
+    private function checkValidity()
+    {
+        $valid = true;
+        foreach( self::requiredProperties() as $requiredProperty )
+        {
+            if( is_null( $this->$requiredProperty ) )
+            {
+               $valid = false;
+               break;
+            }
+
+        }
+        $this->isValid = $valid;
+    }
+
+    /**
+     * Return an array of the required properties needed to be a valid TVEpisodeFile object
+     * Used by checkValidity()
+     *
+     * @return array
+     */
+    static public function requiredProperties()
+    {
+		return array( 'showName', 'seasonNumber', 'episodeNumber', 'episodeName', 'fullname' );
     }
 
     public function __get( $property )
     {
+    	$tvShowPath = ezcConfigurationManager::getInstance()->getSetting( 'tv', 'GeneralSettings', 'SourcePath' );
         switch( $property )
         {
             case 'hasSubtitleFile':
-                $basedirAndFile = "/home/download/downloads/complete/TV/Sorted/{$this->showName}/{$this->fullname}";
+                $basedirAndFile = "{$tvShowPath}/{$this->showName}/{$this->fullname}";
                 return ( file_exists( "$basedirAndFile.srt" ) || file_exists( "$basedirAndFile.ass" ) );
                 break;
 
             case 'subtitleFile':
-                $basedirAndFile = "/home/download/downloads/complete/TV/Sorted/{$this->showName}/{$this->fullname}";
+                $basedirAndFile = "{$tvShowPath}/{$this->showName}/{$this->fullname}";
                 if ( file_exists( "$basedirAndFile.ass" ) )
                     return "$basedirAndFile.ass";
                 elseif ( file_exists( "$basedirAndFile.srt" ) )
@@ -51,7 +85,7 @@ class TVEpisodeFile
                 break;
 
             case 'path':
-                return "/home/download/downloads/complete/TV/Sorted/{$this->showName}/{$this->filename}";
+                return "{$tvShowPath}/{$this->showName}/{$this->filename}";
                 break;
 
             case 'downloadedFile':
@@ -112,6 +146,12 @@ class TVEpisodeFile
     public $episodeNumber;
 
     /**
+     * Episode number for double episode such as SXXEYY-ZZ
+     * @var integer
+     */
+    public $episodeNumber2;
+
+    /**
      * Episode name/title
      * @var string
      */
@@ -134,6 +174,12 @@ class TVEpisodeFile
      * @var string
      */
     public $fullname;
+
+    /**
+     * True if the episode has been successfully identified
+     * @var boolean
+     */
+    public $isValid;
 }
 
 ?>

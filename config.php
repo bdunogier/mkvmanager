@@ -11,6 +11,19 @@ ezcBase::setOptions( $options );
 // those in the /lib directory and the classes have the "tcl" prefix.
 ezcBase::addClassRepository( ROOT . "/lib", ROOT . "/lib/autoload", 'mm' );
 
+class mmLazySettingsConfiguration implements ezcBaseConfigurationInitializer
+{
+    public static function configureObject( $cfgManager )
+    {
+        $cfgManager->init( 'ezcConfigurationIniReader', dirname( __FILE__ ) . "/config" );
+    }
+}
+
+ezcBaseInit::setCallback(
+    'ezcInitConfigurationManager',
+    'mmLazySettingsConfiguration'
+);
+
 class mmLazyDatabaseConfiguration implements ezcBaseConfigurationInitializer
 {
     public static function configureObject( $instance )
@@ -21,7 +34,8 @@ class mmLazyDatabaseConfiguration implements ezcBaseConfigurationInitializer
                 return ezcDbFactory::create( 'sqlite://' . __DIR__ . '/tmp/mkvmanager.db' );
                 break;
             case 'sickbeard':
-                return ezcDbFactory::create( 'sqlite:///home/download/sickbeard/common/sickbeard.db' );
+                return ezcDbFactory::create( 'sqlite://' . ezcConfigurationManager::getInstance()
+                                                            ->getSetting( 'sickbeard', 'GeneralSettings', 'DatabasePath' ) );
                 break;
         }
     }
@@ -57,7 +71,10 @@ class customLazyCacheConfiguration implements ezcBaseConfigurationInitializer
 		switch ( $id )
 		{
 			case 'scrapers':
-				ezcCacheManager::createCache( 'scrapers', ROOT . '/tmp/cache/scrapers', 'ezcCacheStorageFilePlain', $options );
+				ezcCacheManager::createCache( 'scrapers',
+				                              ROOT . DIRECTORY_SEPARATOR . ezcConfigurationManager::getInstance()->getSetting( 'movies', 'ScraperSettings', 'TempPath' ),
+				                              'ezcCacheStorageFilePlain',
+				                              $options );
 				break;
 		}
 	}
