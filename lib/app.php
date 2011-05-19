@@ -100,32 +100,36 @@ EOF;
     {
         // callback that strips down a movie file path to the movie's path
 
+        $moviesPath = ezcConfigurationManager::getInstance()->getSetting( 'movies', 'GeneralSettings', 'SourcePath' );
+        // we need to know this since some of the next lines need it
+        $moviesPathElementCount = count( explode( "/", $moviesPath ) );
 
             /**
              * mmApp::doMovies()
              *
              * @return
              */
-            $callback = function( &$value, $key ) {
-$value = substr( $value, 0, strrpos( $value, '/', 5 ) );
+            $callback = function( &$value, $key, $params ) {
+$value = substr( $value, 0, strrpos( $value, '/', $params['movies_path_element_count'] ) );
 };
 
         // list of movie files, extensions stripped
-        $moviesFiles = glob( '/media/aggregateshares/Movies/*/*.{mkv,avi}', GLOB_BRACE );
-        array_walk( $moviesFiles, $callback );
+        $moviesFiles = glob( $moviesPath . '/*/*.{mkv,avi}', GLOB_BRACE );
+        array_walk( $moviesFiles, $callback, array( 'movies_path_element_count' => $moviesPathElementCount ) );
 
         // list of NFO files, extensions stripped
-        $moviesNFOs  = glob( '/media/aggregateshares/Movies/*/*.nfo' );
-        array_walk( $moviesNFOs, $callback );
+        $moviesNFOs  = glob( $moviesPath . '/*/*.nfo' );
+        array_walk( $moviesNFOs, $callback, array( 'movies_path_element_count' => $moviesPathElementCount ) );
 
         // the diff of both arrays gives us movies without NFOS (and NFOs without movies, but that's unlikely)
         $movies = array_diff( $moviesFiles, $moviesNFOs );
 
         // Transform the list to titles only
-        array_walk( $movies, function( &$value, $key ){
+        array_walk( $movies, function( &$value, $key, $params ){
             $parts = explode( '/', $value );
-            $value = $parts[4];
-        });
+            $movieElementIndex = $params['movies_path_element_count'];
+            $value = $parts[$movieElementIndex];
+        }, array( 'movies_path_element_count' => $moviesPathElementCount ) );
 
         return compact( 'movies' );
     }
@@ -137,17 +141,27 @@ $value = substr( $value, 0, strrpos( $value, '/', 5 ) );
      */
     public static function doTVDashboard()
     {
+        $tvShowPath = ezcConfigurationManager::getInstance()->getSetting( 'tv', 'GeneralSettings', 'SourcePath' );
         $shows = array();
         $byDate = array();
+        $notValidEpisode = array();
+
         foreach( mmMkvManagerSubtitles::fetchFiles() as $file )
         {
             $episode = new TVEpisodeFile( $file );
-            $show = new TVShowFolder( $file, '/home/download/downloads/complete/TV/Sorted' );
+            if( $episode->isValid )
+            {
+            $show = new TVShowFolder( $file, $tvShowPath );
             if (!isset( $queueFiles[$episode->showName] ) )
                 $queueFiles[$episode->showName] = array();
             $shows[$episode->showName][] = $episode;
-            $filemtime = filemtime( "/home/download/downloads/complete/TV/Sorted/{$episode->showName}/{$file}" );
+            $filemtime = filemtime( "{$tvShowPath}/{$episode->showName}/{$file}" );
             $byDate[$filemtime] = $episode;
+            }
+            else
+            {
+                $notValidEpisode[] = $episode;
+            }
         }
         krsort( $byDate );
         $latest = array_slice( $byDate, 0, 3 );
@@ -157,8 +171,9 @@ $value = substr( $value, 0, strrpos( $value, '/', 5 ) );
 
     public static function doMovies()
     {
-        $movieFolders = array();
-        foreach( glob( '/home/download/downloads/complete/Movies/*', GLOB_BRACE|GLOB_ONLYDIR ) as $movieFolder )
+        $moviesPath = ezcConfigurationManager::getInstance()->getSetting( 'movies', 'GeneralSettings', 'SourcePath' );
+    	$movieFolders = array();
+        foreach( glob( "{$moviesPath}/*", GLOB_BRACE|GLOB_ONLYDIR ) as $movieFolder )
         {
             $movieFolders[] = basename( $movieFolder );
         }

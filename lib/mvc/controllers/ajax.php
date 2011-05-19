@@ -84,12 +84,13 @@ class mmAjaxController extends ezcMvcController
 
     public function doDownloadSubtitles()
     {
+        $tvShowPath = ezcConfigurationManager::getInstance()->getSetting( 'tv', 'GeneralSettings', 'SourcePath' );
         $result = new ezcMvcResult;
 
         $downloadUrl = str_replace( '#', '/', $this->DownloadUrl );
 
         // subtitle save path
-        $targetPath = '/home/download/downloads/complete/TV/Sorted/';
+        $targetPath = $tvShowPath . DIRECTORY_SEPARATOR;
         $episodeFile = new TVEpisodeFile( $this->VideoFile );
 
         // add show name folder and check for existence
@@ -525,11 +526,12 @@ class mmAjaxController extends ezcMvcController
      */
     public function doMovieDownloadSubtitle()
     {
+        $moviesPath = ezcConfigurationManager::getInstance()->getSetting( 'movies', 'GeneralSettings', 'SourcePath' );
         $subtitleId = str_replace( array( '|', '~' ), array( '/', '.' ), $this->SubtitleId );
         $releaseFolder = $this->Folder;
 
         $scraper = new MkvManagerScraperSubsynchro();
-        $downloadedPath = $scraper->downloadSubtitle( $subtitleId, "/home/download/downloads/complete/Movies/$releaseFolder/$releaseFolder" );
+        $downloadedPath = $scraper->downloadSubtitle( $subtitleId, "$moviesPath/$releaseFolder/$releaseFolder" );
 
         $variables = array( 'status' => 'ok', 'path' => $downloadedPath );
 
