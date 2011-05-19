@@ -190,10 +190,10 @@ $value = substr( $value, 0, strrpos( $value, '/', $params['movies_path_element_c
      */
     public function doTrailer( $allocineId )
     {
-        $scraper = new MkvManagerScraperAllocine2;
+        $scraper = new MkvManagerScraperAllocine;
         $infos = $scraper->getMovieDetails( $allocineId );
 
-        return array( 'trailers'=>$infos->trailers );
+        return array( 'trailers' => $infos->trailers );
     }
 }
 ?>

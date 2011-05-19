@@ -1,0 +1,21 @@
+===============
+Scraper classes
+===============
+
+mm\Scraper
+
+TV
+==
+
+* namespace: mm\Scraper\TV\Subtitle
+  - ComBetaseries
+  - EuSoustitres
+* namespace: mm\Scraper\TV\Info
+*
+Movies
+======
+
+* namespace: mm\Scraper\Movie\Subtitle
+  - ComSubsynchro
+* namespace: mm\Scraper\Movie\Info
+  - ComAllocine

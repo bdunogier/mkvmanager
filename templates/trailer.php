@@ -2,6 +2,6 @@
 
 <ul>
 <?foreach ( $this->trailers as $trailer ):?>
-    <li><a href="<?=$trailer->href?>" title="<?=htmlentities( utf8_decode( $trailer->title ) )?>"><?=htmlentities( utf8_decode( $trailer->title ) )?></a></li>
+    <li><a href="<?=$trailer->url?>" title="<?=htmlentities( utf8_decode( $trailer->title ) )?>"><?=htmlentities( utf8_decode( $trailer->title ) )?></a></li>
 <?endforeach?>
 </ul>

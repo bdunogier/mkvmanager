@@ -14,6 +14,13 @@ require_once 'lib/mkvmanager/scraper_allocine2.php';
 require_once 'lib/mkvmanager/exceptions/scraper_html.php';
 require_once 'lib/mkvmanager/exceptions/scraper_http.php';
 
+require_once 'lib/Info/Movie/SearchResult.php';
+require_once 'lib/Info/Movie/Details.php';
+require_once 'lib/Info/Person.php';
+require_once 'lib/Info/Actor.php';
+require_once 'lib/Info/Trailer.php';
+require_once 'lib/Info/Director.php';
+
 class MkvManagerScraperAllocineTest extends PHPUnit_Framework_TestCase
 {
     public function testSearch()
@@ -140,6 +147,6 @@ class MkvManagerScraperAllocineTest extends PHPUnit_Framework_TestCase
         self::assertEquals( '2899b6063dfcc8bccc7d5c0d28287867', md5_file( $path ) );
     }*/
 
-    private static $class = 'MkvManagerScraperAllocine2';
+    private static $class = 'MkvManagerScraperAllocine';
 }
 ?>

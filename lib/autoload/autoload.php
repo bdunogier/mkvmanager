@@ -57,5 +57,12 @@ return array(
     'TVEpisodeDownloadedFile' => 'mkvmanager/tv_episode_downloaded_file.php',
     'TVShow' => 'mkvmanager/tv_show.php',
     'TVShowFolder' => 'mkvmanager/tv_show_folder.php',
+
+    'mm\Info\Movie\SearchResult' => 'Info/Movie/SearchResult.php',
+    'mm\Info\Movie\Details' => 'Info/Movie/Details.php',
+    'mm\Info\Person' => 'Info/Person.php',
+    'mm\Info\Actor' => 'Info/Actor.php',
+    'mm\Info\Director' => 'Info/Director.php',
+    'mm\Info\Trailer' => 'Info/Trailer.php',
 );
 ?>

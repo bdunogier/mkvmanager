@@ -1,48 +1,15 @@
 <?php
 /**
- * Scraper allocine
- * 1. search by string
- *    http://www.allocine.fr/recherche/?q=lord+of+the+rings )
- *    => HTML results list
- *    <div class="colcontent">
- *      <div class="rubric">
- *        <div class="vmargin10t">
- *        ...
- *        <div class="vmargin10b">
- *        4 résultats trouvés dans les titres de films.
- *        </div>
- *        <table class="totalwidth noborder purehtml">
- *          <tbody>
- *            <tr>
- *              <td>
- *                <a href="/film/fichefilm_gen_cfilm=38512.html">
- *                  <img src="http://images.allocine.fr/r_75_106/medias/nmedia/18/65/65/36/18880027.jpg" alt="The Lord of the Rings">
- *                </a>
- *              </td>
- *              <td>
- *                <div><div style="margin-top:-5px;">
- *                  <a href="/film/fichefilm_gen_cfilm=38512.html">
- *                    Le Seigneur des anneaux
- *                  </a>
- *                  (The Lord of the Rings)
- *                  <br>
- *                  <span class="fs11">
- *                  1978<br>
- *                  de Ralph Bakshi<br>
- *                  avec Christopher Guard, Michel Caccia<br>
- *                  </span>
- *                </div></div>
- *              </td>
- *            </tr>
- *          </tbody>
- *        </table>
- *    <results>
- *      <rs id="2003/kill-bill--volume-1.html" info="Kill Bill : Volume 1 - 3 releases - 3 fichiers">Kill Bill : Volume 1 (2003)</rs>
- *      <rs id="2003/kill-bill--volume-2.html" info="Kill Bill : Volume 2 - 2 releases - 2 fichiers">Kill Bill : Volume 2 (2003)</rs>
- *    </results>
- *    </code>
- * - search movie details
- *   http://www.allocine.fr/film/fichefilm_gen_cfilm=39187.html
+ * Scraper for allocine.fr using the json API
+ * 1. search
+ *
+ * 2. details
+ * http://api.allocine.fr/xml/movie?format=h264&version=2&json=0&partner=1&profile=large&code=129477
+ *
+ * 3. trailer
+ * get media id from details:
+ *   <media jsonListItem="1" class="video" code="18356598">
+ * http://www.allocine.fr/skin/video/AcVisionData_xml.asp?media=18356598
  */
 class MkvManagerScraperAllocine extends MkvManagerScraper
 {
@@ -53,50 +20,28 @@ class MkvManagerScraperAllocine extends MkvManagerScraper
      */
     public function searchMovies( $queryString )
     {
-        $this->params['q'] = $queryString;
+        $url = sprintf( "$this->baseURL/$this->searchURI", urlencode( $queryString ) );
 
-        $doc = $this->fetch( $this->searchURL );
+        $doc = $this->fetch( $url, 'parseFromXMLToXML' );
         $results = array();
-
-        list( $contentDiv ) = $doc->xpath( '//div[@class="colcontent"]' );
-        $contentDiv = simplexml_load_string( $contentDiv->asXML() );
-
-        $resultPhraseArray = $contentDiv->xpath( '//div[@class="vmargin10b "]' );
-        if ( !count( $resultPhraseArray ) )
+        foreach( $doc->movie as $movie )
         {
-            return false;
-        }
+            $result = new mm\Info\Movie\SearchResult();
 
-        list( $resultTable ) = $contentDiv->xpath( '//table' );
-        $resultTable = simplexml_load_string( $resultTable->asXML() );
-        foreach( $resultTable->xpath( '//tr[count(td)=2]') as $rowNode )
-        {
-            $result = new MkvManagerScraperAllocineSearchResult();
-
-            $rowNode = simplexml_load_string( $rowNode->asXML() );
-
-            list( $img ) = $rowNode->xpath( '//td//img' );
-            $result->thumbnail = (string)$img['src'];
-
-            list( $div ) = $rowNode->xpath( '//td//div/div' );
-            $result->originalTitle = trim( (string)$div, "()\t\n\r\0\x0B" );
-
-            list( $a ) = $rowNode->xpath( '//td//div//a' );
-            $result->title = trim( (string)$a );
-            $result->link = trim( (string)$a['href'] );
-            $result->allocineId = (int)substr( $result->link,
-                strrpos( $result->link, '=' ) + 1,
-                -5
-            );
-
-            list( $extraNode ) = $rowNode->xpath( '//span[@class="fs11"]' );
-            list( $year, $director, $with ) = explode( "\n", trim( (string)$extraNode ) );
-            $result->year = (int)$year;
-            $result->director = substr( $director, 3 );
-            $result->actors = explode( ', ', substr( $with, 5 ) );
+            $result->id = (int)$movie['code'];
+            $result->originalTitle = (string)$movie->originalTitle;
+            $result->title = (string)$movie->title;
+            $result->productionYear = (int)$movie->productionYear;
+            $result->releaseDate = (string)$movie->release->releaseDate;
+            $result->directorsShort = explode(', ', (string)$movie->castingShort->directors );
+            $result->actorsShort = explode( ', ', (string)$movie->castingShort->actors );
+            $result->thumbnail = (string)$movie->poster['href'];
 
             $results[] = $result;
         }
+
+        if ( !count( $results ) )
+            $results = false;
 
         return $results;
     }
@@ -108,218 +53,107 @@ class MkvManagerScraperAllocine extends MkvManagerScraper
      */
     public function getMovieDetails( $movieId )
     {
-        $url = sprintf( $this->detailsURL, $movieId );
-        $doc = $this->fetch( $url );
+        $url = sprintf( "$this->baseURL/$this->movieURI", $movieId );
 
-        // print_r( $doc );
-        list( $movieNode ) = $doc->xpath( '//div[@typeof="v:Movie"]' );
-        $xml = str_replace( array( 'src=" http:=""', 'class="-ico -icofavadd\' ' ), '', $movieNode->asXML() );
-        $movieNode = simplexml_load_string( $xml );
+        $doc = $this->fetch( $url, 'parseFromXMLToXML'  );
+        try {
+            $result = new mm\Info\Movie\Details();
+        } catch ( Exception $e ) {
+            error_log( print_r( $e, true ) );
+        }
 
-        $result = new MkvManagerScraperAllocineResult();
-        $result->allocineId = $movieId;
-        $result->link = $url;
-
-        // title
-        list( $titleNode ) = $movieNode->xpath( '//h1[@property="v:name"]' );
-        $result->title = trim( (string)$titleNode );
-
-        // poster thumbnail
-        list( $thumbnailNode ) = $movieNode->xpath( '//div[@class="poster"]//a/img' );
-        $result->thumbnail = trim( (string)$thumbnailNode['src'] );
-
-        // summary
-        list( $summaryNode ) = $movieNode->xpath( '//span[@property="v:summary"]' );
-        $result->summary = trim( (string)$summaryNode );
-
-        // directory
-        list( $directorNode ) = $movieNode->xpath( '//a[@rel="v:directedBy"]' );
-        $result->director = trim( (string)$directorNode );
+        $result->id = (int)$doc['code'];
+        $result->originalTitle = (string)$doc->originalTitle;
+        $result->title = (string)$doc->title;
+        $result->plot = (string)$doc->synopsisShort;
+        $result->synopsis = (string)$doc->synopsis;
+        $result->releaseDate = (string)$doc->release->releaseDate;
+        $result->productionYear = (string)$doc->productionYear;
+        $result->score = (float)$doc->statistics->pressRating + (float)$doc->statistics->userRating;
 
         // actors
-        foreach( $movieNode->xpath( '//a[@rel="v:starring"]' ) as $actor )
+        foreach( $doc->casting->castMember as $person )
         {
-            $result->actors[] = trim( (string)$actor );
-        }
+            if ( (string)$person->picture['href'] == '' )
+                continue;
 
-        // original title
-        list( $originalTitle ) = $movieNode->xpath( '//span[@class="purehtml"]/em' );
-        $result->originalTitle = trim( (string)$originalTitle );
-
-        // year
-        list( $year ) = $movieNode->xpath( '//a[@class="underline" and contains(@href, "?year=")]' );
-        $result->year = trim( (string)$year );
-
-        // genres
-        foreach( $movieNode->xpath( '//a[@class="underline" and contains(@href, "/film/tous/genre-")]') as $genre )
-        {
-            $result->genre[] = trim( (string)$genre );
-        }
-
-        // votes
-        list( $votesNode ) = $movieNode->xpath( '//p[@class="withstars"]/a[contains(@href, "/critiquepublic_")]/img' );
-        $result->score = (float)str_replace(',', '.', $votesNode['title'] ) * 2;
-
-        // trailers
-        $trailerButtonNodeArray = $movieNode->xpath( '//div[@class="btn_trailer"]/a' );
-        if ( count( $trailerButtonNodeArray ) )
-        {
-            // link to the trailers page, which will give us the full trailers & videos list
-            (string)$trailerPageLink = (string)$trailerButtonNodeArray[0]['href'];
-            $result->trailerPageLink = $trailerPageLink;
-
-            $trailerUrl = "{$this->siteURL}{$trailerPageLink}";
-            $trailerDoc = $this->fetch( $trailerUrl );
-            foreach( $trailerDoc->xpath( '//div[@id="carouselcontainer_BA"]//div[@class="datablock"]//div[@class="contenzone"]//a') as $trailerPageAnchor )
+            // actor
+            if ( (int)$person->activity['code'] == 8001 )
             {
-                $trailerPageLink = (string)$trailerPageAnchor['href'];
-                $trailerTitle = trim( (string)$trailerPageAnchor, "-\t\n\r\0\x0B" );
-                if ( substr( $trailerTitle, 0, 3 ) == " - " )
-                    $trailerTitle = substr( $trailerTitle, 3 );
-                $trailerUrl = "{$this->siteURL}{$trailerPageLink}";
-                $trailerDoc = $this->fetch( $trailerUrl );
-                $embeds = $trailerDoc->xpath( '//embed' );
-                if ( !count( $embeds ) )
+                if ( (string)$person->role == '' )
                     continue;
-                $trailerUrl = (string)$embed['href'];
+                $personResult = new mm\Info\Actor();
+                $personResult->name = (string)$person->person->name;
+                $personResult->image = (string)$person->picture[0]['href'];
+                $personResult->role = (string)$person->role;
+                $result->actors[] = $personResult;
+                continue;
+            }
 
-                $realTrailerUrl = str_replace(
-                    array( 'http://h.', '_b_004.mp4' ),
-                    array( 'http://hd.', '_hd.flv' ),
-                    $trailerUrl
-                );
-                if ( !file_exists( $realTrailerUrl ) )
-                    $realTrailerUrl = $trailerUrl;
-
-                $result->trailers[] = array( 'title' => $trailerTitle, 'href' => $realTrailerUrl );
+            // director
+            if ( (int)$person->activity['code'] == 8002 )
+            {
+                $personResult = new mm\Info\Director();
+                $personResult->name = (string)$person->person->name;
+                $personResult->image = (string)$person->picture[0]['href'];
+                $result->directors[] = $personResult;
+                continue;
             }
         }
 
-        // posters
-        $postersDoc = $this->fetch( sprintf( $this->postersURL, $movieId ) );
-        foreach( $postersDoc->xpath( '//a[contains(@href, "/film/fichefilm-' . $movieId . '/affiches/detail/")]') as $posterAnchor )
+        foreach( $doc->genreList->genre as $genre )
         {
-            $poster = array( 'thumbnail' => (string)$posterAnchor->img[0]['src'] );
-            $posterDetailsUrl = (string)$posterAnchor['href'];
-
-            $posterDetailsDoc = $this->fetch( "{$this->siteURL}{$posterDetailsUrl}" );
-            list( $fullImage ) = $posterDetailsDoc->xpath( '//a[@target="_blank" and contains(text(), "Agrandir")]' );
-            $poster['href'] = (string)$fullImage['href'];
-
-            $result->posters[] = $poster;
-
+            $result->genre[] = (string)$genre;
         }
+
+        foreach( $doc->mediaList->media as $media )
+        {
+            if ( (string)$media['class'] == 'picture' )
+            {
+                // affiches seulement
+                if ( (int)$media->type['code'] != 31001 and (int)$media->type['code'] != 31125 )
+                    continue;
+
+                $result->posters[] = (string)$media->thumbnail['href'];
+            }
+            elseif ( (string)$media['class'] == 'video' )
+            {
+                if ( (int)$media->type['code'] != 31003 )
+                    continue;
+                $trailerCode = (int)$media['code'];
+
+                $uri = $uri = sprintf( $this->trailerURI, $trailerCode );
+                $videoNode = $this->fetch( $uri, 'parseFromXMLToXMLWithUTF8Conversion' )->AcVisionVideo;
+                $trailerHref = false;
+                if ( (string)$videoNode['hd_path'] != '' )
+                    $trailerHref = (string)$videoNode['hd_path'];
+                elseif ( (string)$videoNode['md_path'] != '' )
+                    $trailerHref = (string)$videoNode['md_path'];
+                elseif ( (string)$videoNode['ld_path'] != '' )
+                    $trailerHref = (string)$videoNode['ld_path'];
+
+                if ( $trailerHref !== false )
+                {
+                    $trailerObject = new mm\Info\Trailer();
+                    $trailerObject->title = (string)$media->title;
+                    $trailerObject->url = $trailerHref;
+                    $trailerObject->language = (string)$media->version;
+                    $result->trailers[] = $trailerObject;
+                }
+            }
+        }
+
         return $result;
     }
 
-    public function get(){
-
-    }
-
-    protected $baseURL = 'http://www.allocine.fr';
-    protected $siteURL = 'http://www.allocine.fr';
-    protected $searchURL = 'http://www.allocine.fr/recherche/';
-    protected $detailsURL = 'http://www.allocine.fr/film/fichefilm_gen_cfilm=%d.html';
-    protected $postersURL = 'http://www.allocine.fr/film/fichefilm-%d/affiches/';
-}
-
-class MkvManagerScraperAllocineSearchResult
-{
-    /**
-     * Absolute URL to the movie thumbnail
-     * @var string
-     */
-    public $thumbnail;
-
-    /**
-     * Movie title in the original language
-     * @var string
-     */
-    public $originalTitle;
-
-    /**
-     * Movie title in french
-     * @var string
-     */
-    public $title;
-
-    /**
-     * Allocine relative link to the movie details page
-     * @var string
-     */
-    public $link;
-
-    /**
-     * Allocine movie page ID
-     * @var int
-     */
-    public $allocineId;
-
-    /**
-     * Movie release year
-     * @var int
-     */
-    public $productionYear;
-
-    /**
-     * @var string
-     */
-    public $directors;
-
-    /**
-     * Movie actors
-     * @var array( (string)name )
-     */
-    public $actors;
-
-    public static function __set_state( $array )
+    public function get()
     {
-        $object = new self;
-        foreach( $array as $property => $value )
-        {
-            if ( property_exists( $object, $property ))
-                $object->$property = $value;
-        }
-        return $object;
+
     }
-}
 
-class MkvManagerScraperAllocineResult extends MkvManagerScraperAllocineSearchResult
-{
-    public $plot;
-
-    public $synopsis;
-
-    /**
-     * Genre
-     * @var array(string)
-     */
-    public $genre;
-
-    public $score;
-
-    public $releaseDate;
-
-    public $trailers = array();
-
-    public $posters = array();
-}
-
-class MkvManagerScraperAllocinePerson
-{
-    public $name;
-    public $thumbnail;
-}
-
-class MkvManagerScraperAllocineActor extends MkvManagerScraperAllocinePerson
-{
-    public $role;
-}
-
-class MkvManagerScraperAllocineTrailer
-{
-    public $title;
-    public $href;
-    public $language;
+    protected $baseURL = 'http://api.allocine.fr';
+    protected $movieURI = 'xml/movie?code=%s&format=xml&media=mp4-lc&partner=YW5kcm9pZC12Mg&profile=large&version=2';
+    protected $searchURI = 'xml/search?partner=3&q=%s';
+    protected $trailerURI = 'http://www.allocine.fr/skin/video/AcVisionData_xml.asp?media=%d';
 }
 ?>
