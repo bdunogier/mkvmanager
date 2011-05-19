@@ -78,7 +78,7 @@ class mmMkvManagerDiskHelper
      */
     public static function parseEpisode( $episode )
     {
-        if ( !preg_match( '/([^\-]+) \- ([0-9]+)x([0-9]+) \- (.*?)(?:\.(avi|mkv))?/', $episode, $matches ) )
+        if ( !preg_match( '/([^\-]+) \- ([0-9]+)x([0-9\-]+) \- (.*?)(?:\.(avi|mkv))?/', $episode, $matches ) )
         {
             return false;
         }
