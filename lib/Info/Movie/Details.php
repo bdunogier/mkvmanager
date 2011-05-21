@@ -3,6 +3,16 @@ namespace mm\Info\Movie;
 
 class Details extends SearchResult
 {
+    public static function __set_state( $array )
+    {
+        $object = new self;
+        foreach ($array as $property => $value )
+        {
+            $object->$property = $value;
+        }
+        return $object;
+    }
+
     /**
      * Short movie summary
      * @var string
@@ -56,5 +66,11 @@ class Details extends SearchResult
      * @var array(mm\Info\Director
      */
     public $directors = array();
+
+    /**
+     * Movie duration, in minutes
+     * @var int
+     */
+    public $runtime;
 }
 ?>
