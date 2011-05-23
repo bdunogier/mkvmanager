@@ -43,12 +43,7 @@ return array(
     'MkvManagerScraperSubsynchro'   => 'mkvmanager/scraper_subsynchro.php',
     'MkvManagerScraperAllocine2'    => 'mkvmanager/scraper_allocine2.php',
     'MkvManagerScraperAllocine'     => 'mkvmanager/scraper_allocine.php',
-
-    'MkvManagerScraperAllocineSearchResult' => 'mkvmanager/scraper_allocine.php',
-    'MkvManagerScraperAllocineResult' => 'mkvmanager/scraper_allocine.php',
-    'MkvManagerScraperAllocinePerson' => 'mkvmanager/scraper_allocine.php',
-    'MkvManagerScraperAllocineActor' => 'mkvmanager/scraper_allocine.php',
-    'MkvManagerScraperAllocineTrailer' => 'mkvmanager/scraper_allocine.php',
+    'MkvManagerScraperTMDB'         => 'mkvmanager/scraper_tmdb.php',
 
     'MkvManagerScraperHTTPException' => 'mkvmanager/exceptions/scraper_http.php',
     'MkvManagerScraperHTMLException' => 'mkvmanager/exceptions/scraper_html.php',
@@ -64,5 +59,8 @@ return array(
     'mm\Info\Actor' => 'Info/Actor.php',
     'mm\Info\Director' => 'Info/Director.php',
     'mm\Info\Trailer' => 'Info/Trailer.php',
+    'mm\Info\Image' => 'Info/Image.php',
+
+    'mm\Xbmc\Nfo\Writers\Movie' => 'Xbmc/Nfo/Writers/Movie.php',
 );
 ?>
