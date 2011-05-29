@@ -20,6 +20,14 @@ class MkvManagerScraperAllocine extends MkvManagerScraper
      */
     public function searchMovies( $queryString )
     {
+        // allocine won't accept a year in the query string
+        if ( preg_match( '/^(.*) \(([0-9]{4})\)$/', $queryString, $m ) )
+        {
+            $queryString = $m[1];
+            $year = $m[2];
+        }
+        $queryString = preg_replace( "/(.')/", '', $queryString );
+
         $url = sprintf( "$this->baseURL/$this->searchURI", urlencode( $queryString ) );
 
         $doc = $this->fetch( $url, 'parseFromXMLToXML' );
