@@ -52,7 +52,7 @@ class MkvManagerScraperTMDB extends MkvManagerScraper
     /**
      * Fetches the details for the movie with id $movieId
      * @param int $movieId
-     * @return MkvManagerScraperAllocineResult
+     * @return array(mm\Info\Image)
      */
     public function getImages( $movieId )
     {

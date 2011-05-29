@@ -122,7 +122,7 @@ class MkvManagerScraperAllocine extends MkvManagerScraper
                 if ( (int)$media->type['code'] != 31001 and (int)$media->type['code'] != 31125 )
                     continue;
 
-                $result->posters[] = (string)$media->thumbnail['href'];
+                $result->posters[] = new \mm\Info\Image( 'poster', (string)$media->thumbnail['href'] );
             }
             elseif ( (string)$media['class'] == 'video' )
             {
