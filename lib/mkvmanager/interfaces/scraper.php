@@ -123,8 +123,7 @@ abstract class MkvManagerScraper
      */
     public function phpFileGetContentsErrorHandler( $errno, $errstr, $errfile, $errline, $errcontext )
     {
-
-        if ( $errno === E_WARNiNG )
+        if ( $errno === E_WARNING )
             throw new MkvManagerScraperNetworkException( $errcontext['url'] );
         else
             return false;
