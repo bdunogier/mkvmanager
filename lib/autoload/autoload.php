@@ -1,5 +1,5 @@
 <?php
-return array(
+$autoload = array(
     'MKVMergeCommand'                 => 'mkvmerge/command.php',
     'MKVMergeCommandQueue'            => 'mkvmerge/commandqueue.php',
     'MKVMergeCommandImportWindowsGUI' => 'mkvmerge/commandimportwindowsgui.php',
@@ -26,8 +26,9 @@ return array(
     'mmHtmlView'         => 'mvc/views/html.php',
     'mmAjaxView'         => 'mvc/views/ajax.php',
 
-    'mmMkvManagerController' => 'mvc/controllers/mkvmanager.php',
-    'mmAjaxController'       => 'mvc/controllers/ajax.php',
+    'mmMkvManagerController'   => 'mvc/controllers/mkvmanager.php',
+    'mmAjaxController'         => 'mvc/controllers/ajax.php',
+    'mm\Mvc\Controllers\Movie' => 'mvc/controllers/movie.php',
 
     'mmMvcResultStatusNotFound' => 'mvc/result_status/error_not_found.php',
     'mmMvcResultStatusError'    => 'mvc/result_status/error.php',
@@ -42,7 +43,9 @@ return array(
     'MkvManagerScraperSoustitreseu' => 'mkvmanager/scraper_soustitreseu.php',
     'MkvManagerScraperSubsynchro'   => 'mkvmanager/scraper_subsynchro.php',
     'MkvManagerScraperAllocine'     => 'mkvmanager/scraper_allocine.php',
+    '\MkvManagerScraperAllocine'     => 'mkvmanager/scraper_allocine.php',
     'MkvManagerScraperTMDB'         => 'mkvmanager/scraper_tmdb.php',
+    '\MkvManagerScraperTMDB'         => 'mkvmanager/scraper_tmdb.php',
 
     'MkvManagerScraperHTTPException' => 'mkvmanager/exceptions/scraper_http.php',
     'MkvManagerScraperHTMLException' => 'mkvmanager/exceptions/scraper_html.php',
@@ -62,4 +65,6 @@ return array(
 
     'mm\Xbmc\Nfo\Writers\Movie' => 'Xbmc/Nfo/Writers/Movie.php',
 );
+
+return $autoload;
 ?>

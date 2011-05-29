@@ -18,7 +18,11 @@ class mmMvcRouter extends ezcMvcRouter
             new ezcMvcRailsRoute( '/merge-queue/:items',   'mmMkvManagerController', 'mergeQueue' ),
             new ezcMvcRailsRoute( '/tvdashboard',          'mmMkvManagerController', 'TVDashboard' ),
             new ezcMvcRailsRoute( '/movies',               'mmMkvManagerController', 'Movies' ),
-            new ezcMvcRailsRoute( '/trailer/:AllocineId',  'mmMkvManagerController', 'Trailer' ),
+
+            new ezcMvcRailsRoute( '/nfo/movie/search/:folder',               'mm\Mvc\Controllers\Movie', 'NfoSearch' ),
+            new ezcMvcRailsRoute( '/nfo/movie/generate/:AllocineId/:TMDbId', 'mm\Mvc\Controllers\Movie', 'NfoGenerate' ),
+            new ezcMvcRailsRoute( '/nfo/movie/save',                         'mm\Mvc\Controllers\Movie', 'NfoSave' ),
+            new ezcMvcRailsRoute( '/nfo/movie/update-info',                  'mm\Mvc\Controllers\Movie', 'NfoUpdateInfo' ),
 
             new ezcMvcRailsRoute( '/movie-merge/:Folder',  'mmMkvManagerController', 'movieMerge' ),
 

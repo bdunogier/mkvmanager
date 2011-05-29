@@ -30,7 +30,8 @@ class mmMvcConfiguration implements ezcMvcDispatcherConfiguration
     function createView( ezcMvcRoutingInformation $routeInfo,
         ezcMvcRequest $request, ezcMvcResult $result )
     {
-        if ( $routeInfo->controllerClass == "mmAjaxController" )
+        if ( strpos( $routeInfo->matchedRoute, '/ajax/' ) !== false ||
+             $routeInfo->matchedRoute == '/nfo/movie/update-info' )
         {
             $view = new mmAjaxView( $request, $result );
         }
@@ -56,8 +57,6 @@ class mmMvcConfiguration implements ezcMvcDispatcherConfiguration
                     }
             }
         }
-
-
 
         return $view;
 

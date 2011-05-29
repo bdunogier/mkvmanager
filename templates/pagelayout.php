@@ -2,7 +2,8 @@
     <head>
     <title><?=$this->page_title?></title>
     <style type="text/css">
-    @import url(/css/global.css);
+    @import url('/css/global.css');
+    @import url('/css/jquery.lightbox-0.5.css');
     </style>
 
     <script type="text/javascript" src="/js/jquery-1.4.2.min.js"></script>

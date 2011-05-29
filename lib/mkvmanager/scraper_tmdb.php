@@ -38,7 +38,15 @@ class MkvManagerScraperTMDB extends MkvManagerScraper
             $result->title = (string)$movie->name;
             $result->productionYear = (int)$movie->released;
             $result->releaseDate = (string)$movie->released;
-            $result->thumbnail = (string)$movie->poster['href'];
+            $result->url = (string)$movie->url;
+
+            foreach( $movie->images->image as $image )
+            {
+                if ( $image['type'] == "poster" && $image['size'] == 'cover' )
+                {
+                    $result->thumbnail = (string)$image['url'];
+                }
+            }
 
             $results[] = $result;
         }

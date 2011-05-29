@@ -183,17 +183,36 @@ $value = substr( $value, 0, strrpos( $value, '/', $params['movies_path_element_c
     }
 
     /**
-     * Fetches the trailer URL for a movie based on its allocine ID
+     * Fetches the NFO for the movie id $AllocineId
      *
      * @param string AllocineId
-     * @return array(trailers=>array(MkvManagerScraperAllocineTrailer))
+     * @return array(nfo => string))
      */
-    public function doTrailer( $allocineId )
+    public function doNfo( $allocineId )
     {
         $scraper = new MkvManagerScraperAllocine;
         $infos = $scraper->getMovieDetails( $allocineId );
+        $writer = new \mm\Xbmc\Nfo\Writers\Movie( $infos );
 
-        return array( 'trailers' => $infos->trailers );
+        return array( 'nfo' => $writer->get() );
+    }
+
+    /**
+     * Fetches the NFO for the movie id $AllocineId
+     *
+     * @param string AllocineId
+     * @return array(nfo => string))
+     */
+    public function doSaveNfo( $allocineId, $movieFolder )
+    {
+        $scraper = new MkvManagerScraperAllocine;
+        $infos = $scraper->getMovieDetails( $allocineId );
+        $writer = new \mm\Xbmc\Nfo\Writers\Movie( $infos );
+
+        $nfoPath = ezcConfigurationManager::getInstance()->getSetting( 'movies', 'GeneralSettings', 'SourcePath' ) .
+            DIRECTORY_SEPARATOR . $movieFolder . DIRECTORY_SEPARATOR . "$movieFolder.nfo";
+
+        return array( 'nfo' => $writer->write( $nfoPath ) );
     }
 }
 ?>

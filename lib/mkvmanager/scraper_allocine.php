@@ -43,7 +43,11 @@ class MkvManagerScraperAllocine extends MkvManagerScraper
             $result->releaseDate = (string)$movie->release->releaseDate;
             $result->directorsShort = explode(', ', (string)$movie->castingShort->directors );
             $result->actorsShort = explode( ', ', (string)$movie->castingShort->actors );
+
             $result->thumbnail = (string)$movie->poster['href'];
+
+            $result->url = (string)$movie->linkList->link['href'];
+
 
             $results[] = $result;
         }

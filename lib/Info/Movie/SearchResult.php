@@ -56,5 +56,11 @@ class SearchResult
      * @var array(string)
      */
     public $actorsShort;
+
+    /**
+     * URL to the website page for the movie
+     * @var string
+     */
+    public $url;
 }
 ?>
