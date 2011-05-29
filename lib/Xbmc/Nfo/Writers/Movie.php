@@ -33,7 +33,7 @@ class Movie
     public function get()
     {
         $this->generateXml();
-        return $this->xml->asXML();
+        return $this->getDom()->saveXML();
     }
 
     /**
@@ -58,7 +58,21 @@ class Movie
         }
 
         $this->generateXml();
-        $this->xml->asXML( $filename );
+
+        file_put_contents( $filename, $this->get() );
+    }
+
+    /**
+     * Returns the DOMDocument from the SimpleXMLElement $this->xml
+     * Used to format the XML properly
+     *
+     * @return DOMDocument
+     */
+    private function getDom()
+    {
+        $dom = dom_import_simplexml( $this->xml )->ownerDocument;
+        $dom->formatOutput = true;
+        return $dom;
     }
 
     /**
@@ -79,9 +93,14 @@ class Movie
 
         if ( count( $this->info->trailers ) )
         {
-            foreach( $this->info->trailers as $index => $trailer )
+            $xml->trailer = $this->info->trailers[0]->url;
+        }
+
+        if ( count( $this->info->genre ) )
+        {
+            foreach( $this->info->genre as $genre )
             {
-                $xml->trailers->trailer[$index] = $trailer->url;
+                $xml->genres->genre[] = (string)$genre;
             }
         }
 
@@ -116,7 +135,8 @@ class Movie
         {
             foreach( $this->info->posters as $index => $poster )
             {
-                $xml->thumbs->thumb[$index] = $poster;
+                if ( $poster !== null )
+                    $xml->thumbs->thumb[] = (string)$poster;
             }
         }
 
@@ -124,7 +144,8 @@ class Movie
         {
             foreach( $this->info->fanarts as $index => $fanart )
             {
-                $xml->fanarts->thumb[$index] = $fanart;
+                if ( $fanart !== null )
+                    $xml->fanarts->thumb[] = (string)$fanart;
             }
         }
 

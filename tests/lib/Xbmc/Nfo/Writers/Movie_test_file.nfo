@@ -1,2 +1,93 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<movie><title>Largo Winch</title><originalTitle>Largo Winch</originalTitle><set></set><sorttitle></sorttitle><trailers><trailer>http://hd.fr.mediaplayer.allocine.fr/nmedia/18/64/71/36/18843610_fa2_vf_hd.flv</trailer><trailer>http://hd.fr.mediaplayer.allocine.fr/nmedia/18/64/71/36/18841169_fa1_vost_hd.flv</trailer></trailers><rating>6.4</rating><year>2008</year><outline>Les aventures de Largo Winch, un jeune héritier milliardaire fraîchement plongé dans les méandres de la haute finance.</outline><plot>Le milliardaire Nerio Winch est retrouvé noyé. Une mort forcément suspecte quand on sait qu'il s'agit du fondateur et principal actionnaire du puissant et tentaculaire Groupe W.Qui va hériter de cet empire économique ? Officiellement Nerio n'avait pas de famille. Mais il cachait un secret : un fils, Largo, adopté presque trente ans plus tôt dans un orphelinat bosniaque. Seul problème, ce jeune héritier vient d'être jeté dans une prison du fin fond de l'Amazonie. Accusé de trafic de drogue, il clame son innocence.Nerio assassiné. Largo emprisonné. Et si ces deux affaires faisaient partie d'un seul et même complot visant à prendre le contrôle de l'empire Winch ?</plot><tagline></tagline><runtime></runtime><actors><actor><name>Tomer Sisley</name><role>Largo Winch</role><thumb>http://images.allocine.fr/medias/nmedia/18/35/94/86/19667769.jpg</thumb></actor><actor><name>Kristin Scott Thomas</name><role>Ann Ferguson</role><thumb>http://images.allocine.fr/medias/nmedia/18/35/35/02/19481413.jpg</thumb></actor><actor><name>Miki Manojlovic</name><role>Nerio Winch</role><thumb>http://images.allocine.fr/medias/nmedia/18/64/19/63/19456916.jpg</thumb></actor><actor><name>Gilbert Melki</name><role>Freddy</role><thumb>http://images.allocine.fr/medias/nmedia/18/35/39/54/19638204.jpg</thumb></actor><actor><name>Mélanie Thierry</name><role>Lea / Naomi</role><thumb>http://images.allocine.fr/medias/nmedia/18/36/02/85/19587196.jpg</thumb></actor><actor><name>Anne Consigny</name><role>Hannah</role><thumb>http://images.allocine.fr/medias/nmedia/18/36/02/92/19122907.jpg</thumb></actor><actor><name>Karel Roden</name><role>Mikhail Korsky</role><thumb>http://images.allocine.fr/medias/nmedia/18/35/37/71/18758635.jpg</thumb></actor><actor><name>Rasha Bukvic</name><role>Goran</role><thumb>http://images.allocine.fr/medias/nmedia/18/68/22/51/19015286.jpg</thumb></actor><actor><name>Benjamin Siksou</name><role>Largo Winch adolescent</role><thumb>http://images.allocine.fr/medias/nmedia/18/79/94/12/19539760.jpg</thumb></actor><actor><name>Nicolas Vaude</name><role>Gauthier</role><thumb>http://images.allocine.fr/medias/nmedia/18/63/19/99/19667776.jpg</thumb></actor><actor><name>Bojana Panic</name><role>Melina</role><thumb>http://images.allocine.fr/medias/nmedia/18/63/79/28/18711023.jpg</thumb></actor><actor><name>André Oumansky</name><role>Jacques Wallenberg</role><thumb>http://images.allocine.fr/medias/nmedia/18/62/83/39/18654285.jpg</thumb></actor><actor><name>Vincent Haquin</name><role>Paramilitary</role><thumb>http://images.allocine.fr/medias/nmedia/18/83/78/92/19708011.jpg</thumb></actor><actor><name>Radivoje Bukvic</name><role>Goran</role><thumb>http://images.allocine.fr/medias/nmedia/18/63/14/26/18675660.jpg</thumb></actor></actors><director>Jérôme Salle</director><thumbs><thumb>http://images.allocine.fr/medias/nmedia/18/64/71/36/19020895.jpg</thumb></thumbs></movie>
+<movie>
+  <title>Largo Winch</title>
+  <originalTitle>Largo Winch</originalTitle>
+  <set></set>
+  <sorttitle></sorttitle>
+  <trailers>
+    <trailer>http://hd.fr.mediaplayer.allocine.fr/nmedia/18/64/71/36/18843610_fa2_vf_hd.flv</trailer>
+    <trailer>http://hd.fr.mediaplayer.allocine.fr/nmedia/18/64/71/36/18841169_fa1_vost_hd.flv</trailer>
+  </trailers>
+  <rating>6.4</rating>
+  <year>2008</year>
+  <outline>Les aventures de Largo Winch, un jeune héritier milliardaire fraîchement plongé dans les méandres de la haute finance.</outline>
+  <plot>Le milliardaire Nerio Winch est retrouvé noyé. Une mort forcément suspecte quand on sait qu'il s'agit du fondateur et principal actionnaire du puissant et tentaculaire Groupe W.Qui va hériter de cet empire économique ? Officiellement Nerio n'avait pas de famille. Mais il cachait un secret : un fils, Largo, adopté presque trente ans plus tôt dans un orphelinat bosniaque. Seul problème, ce jeune héritier vient d'être jeté dans une prison du fin fond de l'Amazonie. Accusé de trafic de drogue, il clame son innocence.Nerio assassiné. Largo emprisonné. Et si ces deux affaires faisaient partie d'un seul et même complot visant à prendre le contrôle de l'empire Winch ?</plot>
+  <tagline></tagline>
+  <runtime></runtime>
+  <actors>
+    <actor>
+      <name>Tomer Sisley</name>
+      <role>Largo Winch</role>
+      <thumb>http://images.allocine.fr/medias/nmedia/18/35/94/86/19667769.jpg</thumb>
+    </actor>
+    <actor>
+      <name>Kristin Scott Thomas</name>
+      <role>Ann Ferguson</role>
+      <thumb>http://images.allocine.fr/medias/nmedia/18/35/35/02/19481413.jpg</thumb>
+    </actor>
+    <actor>
+      <name>Miki Manojlovic</name>
+      <role>Nerio Winch</role>
+      <thumb>http://images.allocine.fr/medias/nmedia/18/64/19/63/19456916.jpg</thumb>
+    </actor>
+    <actor>
+      <name>Gilbert Melki</name>
+      <role>Freddy</role>
+      <thumb>http://images.allocine.fr/medias/nmedia/18/35/39/54/19638204.jpg</thumb>
+    </actor>
+    <actor>
+      <name>Mélanie Thierry</name>
+      <role>Lea / Naomi</role>
+      <thumb>http://images.allocine.fr/medias/nmedia/18/36/02/85/19587196.jpg</thumb>
+    </actor>
+    <actor>
+      <name>Anne Consigny</name>
+      <role>Hannah</role>
+      <thumb>http://images.allocine.fr/medias/nmedia/18/36/02/92/19122907.jpg</thumb>
+    </actor>
+    <actor>
+      <name>Karel Roden</name>
+      <role>Mikhail Korsky</role>
+      <thumb>http://images.allocine.fr/medias/nmedia/18/35/37/71/18758635.jpg</thumb>
+    </actor>
+    <actor>
+      <name>Rasha Bukvic</name>
+      <role>Goran</role>
+      <thumb>http://images.allocine.fr/medias/nmedia/18/68/22/51/19015286.jpg</thumb>
+    </actor>
+    <actor>
+      <name>Benjamin Siksou</name>
+      <role>Largo Winch adolescent</role>
+      <thumb>http://images.allocine.fr/medias/nmedia/18/79/94/12/19539760.jpg</thumb>
+    </actor>
+    <actor>
+      <name>Nicolas Vaude</name>
+      <role>Gauthier</role>
+      <thumb>http://images.allocine.fr/medias/nmedia/18/63/19/99/19667776.jpg</thumb>
+    </actor>
+    <actor>
+      <name>Bojana Panic</name>
+      <role>Melina</role>
+      <thumb>http://images.allocine.fr/medias/nmedia/18/63/79/28/18711023.jpg</thumb>
+    </actor>
+    <actor>
+      <name>André Oumansky</name>
+      <role>Jacques Wallenberg</role>
+      <thumb>http://images.allocine.fr/medias/nmedia/18/62/83/39/18654285.jpg</thumb>
+    </actor>
+    <actor>
+      <name>Vincent Haquin</name>
+      <role>Paramilitary</role>
+      <thumb>http://images.allocine.fr/medias/nmedia/18/83/78/92/19708011.jpg</thumb>
+    </actor>
+    <actor>
+      <name>Radivoje Bukvic</name>
+      <role>Goran</role>
+      <thumb>http://images.allocine.fr/medias/nmedia/18/63/14/26/18675660.jpg</thumb>
+    </actor>
+  </actors>
+  <director>Jérôme Salle</director>
+  <thumbs>
+    <thumb>http://images.allocine.fr/medias/nmedia/18/64/71/36/19020895.jpg</thumb>
+  </thumbs>
+</movie>
