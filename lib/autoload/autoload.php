@@ -41,7 +41,6 @@ return array(
     'MkvManagerScraperBetaSeries'   => 'mkvmanager/scraper_betaseries.php',
     'MkvManagerScraperSoustitreseu' => 'mkvmanager/scraper_soustitreseu.php',
     'MkvManagerScraperSubsynchro'   => 'mkvmanager/scraper_subsynchro.php',
-    'MkvManagerScraperAllocine2'    => 'mkvmanager/scraper_allocine2.php',
     'MkvManagerScraperAllocine'     => 'mkvmanager/scraper_allocine.php',
     'MkvManagerScraperTMDB'         => 'mkvmanager/scraper_tmdb.php',
 
