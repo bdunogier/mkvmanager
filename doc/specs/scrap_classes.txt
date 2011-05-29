@@ -1,0 +1,60 @@
+========================
+Scraper results analysis
+========================
+
+Movie informations
+==================
+
+Movie search result
+-------------------
+* each search result provides one movie information object
+* Class: mm\Info\Movie\SearchResult
+* properties
+  - string $originalTitle
+  - string $title
+  - string $link
+  - string $thumbnail
+  - string $id => allocineId
+  - string $productionYear
+  - array(string) $directorsShort
+  - array(string) $actorsShort
+
+Movie informations
+------------------
+* Class: mm\Info\Movie\Details
+* properties
+  - string $plot
+  - string $synopsis
+  - array(string) $genre
+  - float $score
+  - array(Trailer) $trailers
+  - array(Director) $directors
+  - array(Actor) $actors
+
+Person
+------
+Used for director, actors...
+
+* Class: mm\Info\Person
+* properties
+  - string $name
+  - string $picture
+
+Director
+--------
+* class mm\Info\Director extends mm\Info\Person
+
+Actor
+-----
+* class mm\Info\Actor extends mm\Info\Person
+* properties
+  - string $role (character in the movie)
+
+Trailer
+-------
+* class mm\Info\Trailer
+* a movie trailer
+* properties
+  - string $url
+  - string $title
+  - string $language

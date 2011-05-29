@@ -1,0 +1,28 @@
+==============
+Movie workflow
+==============
+
+Tasks
+=====
+
+Subtitles
+---------
+Search for movie / release / subtitle on the scraper
+Download the appropriate subtitle with the same name as the movie file
+Fix the subtitle, if required (FPS + Offset)
+
+Merge
+-----
+Generate the merge command for the movie
+Customize languages / track orders
+Start merging
+
+NFO
+---
+Search for the movie on the info scraper(s)
+Choose the trailer (if applicable)
+Choose the fanart (if applicable)
+- download the chosen one to disk, named <movieFileName>-fanart.jpg
+Choose the poster (if applicable)
+- download the chosen one to disk, named <movieFileName>.tbn
+Save the NFO to disk, named <movieFileName>.nfo
