@@ -24,7 +24,7 @@ class MkvManagerScraperTMDBTest extends PHPUnit_Framework_TestCase
     public function testSearch()
     {
         $scraper = new self::$class();
-        $scraper->isCacheEnabled = false;
+        MkvManagerScraper::$isCacheEnabled = false;
         $movies = $scraper->searchMovies( "lord of the rings" );
 
         /*$contents = array (
@@ -76,7 +76,7 @@ class MkvManagerScraperTMDBTest extends PHPUnit_Framework_TestCase
     public function testSearchNoMoviesResults()
     {
         $scraper = new self::$class();
-        $scraper->isCacheEnabled = false;
+        MkvManagerScraper::$isCacheEnabled = false;
         $movies = $scraper->searchMovies( "foobar" );
 
         self::assertFalse( $movies );
@@ -85,7 +85,7 @@ class MkvManagerScraperTMDBTest extends PHPUnit_Framework_TestCase
     public function testGetImages()
     {
         $scraper = new self::$class();
-        $scraper->isCacheEnabled = false;
+        MkvManagerScraper::$isCacheEnabled = false;
         $images = $scraper->getImages( 122 );
         print_r( $images );
     }

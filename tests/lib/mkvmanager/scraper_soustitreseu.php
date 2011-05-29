@@ -18,7 +18,7 @@ class MkvManagerScraperSoustitreseuTest extends PHPUnit_Framework_TestCase
     public function testScrap()
     {
         $scraper = new MkvManagerScraperSoustitreseu( "Fringe - 3x19 - Lysergic Acid Diethylamide.mkv", "Fringe.S03E19.720p.HDTV.X264-DIMENSION.mkv" );
-        $scraper->isCacheEnabled = false;
+        MkvManagerScraper::$isCacheEnabled = false;
         $subtitles = $scraper->get();
         print_r( $subtitles );
     }

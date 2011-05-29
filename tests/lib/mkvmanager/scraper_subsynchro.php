@@ -17,7 +17,7 @@ class MkvManagerScraperSubsynchroTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->scraper = new MkvManagerScraperSubsynchro();
-        $this->scraper->isCacheEnabled = false;
+        MkvManagerScraper::$isCacheEnabled = false;
     }
 
     public function testSearch()

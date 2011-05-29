@@ -26,7 +26,7 @@ class MkvManagerScraperAllocineTest extends PHPUnit_Framework_TestCase
     public function testSearch()
     {
         $scraper = new self::$class();
-        $scraper->isCacheEnabled = false;
+        MkvManagerScraper::$isCacheEnabled = false;
         $movies = $scraper->searchMovies( "lord of the rings" );
 
         $contents = array (
@@ -78,7 +78,7 @@ class MkvManagerScraperAllocineTest extends PHPUnit_Framework_TestCase
     public function testSearchNoMoviesResults()
     {
         $scraper = new self::$class();
-        $scraper->isCacheEnabled = false;
+        MkvManagerScraper::$isCacheEnabled = false;
         $movies = $scraper->searchMovies( "foobar" );
 
         self::assertFalse( $movies );
@@ -87,7 +87,7 @@ class MkvManagerScraperAllocineTest extends PHPUnit_Framework_TestCase
     public function testSearchNoResults()
     {
         $scraper = new self::$class();
-        $scraper->isCacheEnabled = false;
+        MkvManagerScraper::$isCacheEnabled = false;
         $movies = $scraper->searchMovies( md5( "abc" ) );
 
         self::assertFalse( $movies );
@@ -96,7 +96,7 @@ class MkvManagerScraperAllocineTest extends PHPUnit_Framework_TestCase
     public function testGetMovieDetails()
     {
         $scraper = new self::$class;
-        $scraper->isCacheEnabled = false;
+        MkvManagerScraper::$isCacheEnabled = false;
         $movie = $scraper->getMovieDetails( 128357 );
 
         print_r( $movie );
@@ -105,7 +105,7 @@ class MkvManagerScraperAllocineTest extends PHPUnit_Framework_TestCase
     /*public function testReleasesList()
     {
         $scraper = new MkvManagerScraperSubsynchro();
-        $scraper->isCacheEnabled = false;
+        MkvManagerScraper::$isCacheEnabled = false;
         $releases = $scraper->releasesList( "2003/kill-bill--volume-1.html" );
 
         $contents = array (
@@ -131,7 +131,7 @@ class MkvManagerScraperAllocineTest extends PHPUnit_Framework_TestCase
     public function testGetReleaseSubtitles()
     {
         $scraper = new MkvManagerScraperSubsynchro();
-        $scraper->isCacheEnabled = false;
+        MkvManagerScraper::$isCacheEnabled = false;
         $subtitles = $scraper->getReleaseSubtitles( "2003/kill-bill--volume-1/kill-bill-2003-720p-bluray-x264-septic.html" );
 
         $contents = array( '2003/kill-bill--volume-1/kill-bill-2003-720p-bluray-x264-septic/fichier-3914.html' );
@@ -142,7 +142,7 @@ class MkvManagerScraperAllocineTest extends PHPUnit_Framework_TestCase
     public function testDownloadSubtitle()
     {
         $scraper = new MkvManagerScraperSubsynchro();
-        $scraper->isCacheEnabled = false;
+        MkvManagerScraper::$isCacheEnabled = false;
         $path = $scraper->downloadSubtitle( "2001/monstres--cie/monsters-inc-2001-bdrip-h264-5-1ch-secretmyth/fichier-5584.html" );
         self::assertEquals( '2899b6063dfcc8bccc7d5c0d28287867', md5_file( $path ) );
     }*/
