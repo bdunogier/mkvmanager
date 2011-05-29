@@ -9,7 +9,7 @@ class mmMkvManagerController extends ezcMvcController
     public function doFatal()
     {
         $result = new ezcMvcResult;
-        $result->variables['exception'] = isset( $this->request->variables['exception'] );
+        $result->variables['exception'] = isset( $this->request->variables['exception'] ) ? $this->request->variables['exception'] : false;
         $result->variables['page_title'] = "An error has occured";
         return $result;
     }
