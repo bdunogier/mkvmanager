@@ -1,6 +1,9 @@
 <?php
 namespace mm\Info;
 
+/**
+ * A movie trailer
+ */
 class Trailer
 {
     public static function __set_state( $array )
@@ -11,6 +14,11 @@ class Trailer
             $object->$property = $value;
         }
         return $object;
+    }
+
+    public function __toString()
+    {
+        return $this->url;
     }
 
     /**
