@@ -12,7 +12,7 @@ if ( !is_writeable( $storageDir ) )
     die();
 }
 
-$pm = new mmProcessManager();
+$daemon = new mm\Daemon\Daemon();
 
 if ( DAEMON_MODE )
 {
@@ -21,9 +21,9 @@ if ( DAEMON_MODE )
     declare( ticks=1 );
 
     // Trap signals that we expect to recieve
-    pcntl_signal( SIGCHLD, array( $pm, 'childHandler' ) );
-    pcntl_signal( SIGUSR1, array( $pm, 'childHandler' ) );
-    pcntl_signal( SIGALRM, array( $pm, 'childHandler' ) );
+    pcntl_signal( SIGCHLD, array( $daemon, 'childHandler' ) );
+    pcntl_signal( SIGUSR1, array( $daemon, 'childHandler' ) );
+    pcntl_signal( SIGALRM, array( $daemon, 'childHandler' ) );
 
     $pid = pcntl_fork();
     if ( $pid < 0 )
@@ -83,7 +83,6 @@ else
 }
 
 // actual execution
-$daemon = new mm\Daemon\Daemon();
 $daemon->run();
 
 class Output

@@ -60,7 +60,7 @@ class Daemon
         // depending on the priority (#1 = downloads, #2 = merge), return the next operation
         // when an operation finishes, the slot is cleaned up, and one more of the same type can resume
 
-        return mmMergeOperation::next()
+        return mmMergeOperation::next();
     }
 
     /**
@@ -106,10 +106,11 @@ class Daemon
         // check if this job is in the signal queue already
         if( isset( $this->signalQueue[$pid] ) )
         {
-            Output::instance->write( "found $pid in the signal queue, processing it now" );
+            Output::instance()->write( "found $pid in the signal queue, processing it now" );
             $this->childSignalHandler( SIGCHLD, $pid, $this->signalQueue[$pid] );
             unset( $this->signalQueue[$pid] );
         }
+    }
 
     /**
      * Child process signal handler
@@ -131,7 +132,7 @@ class Daemon
                 $exitCode = pcntl_wexitstatus( $status );
                 if ( $exitCode != 0 )
                 {
-                    Output::instance->write( "Process #{$pid} of object version #".$this->currentJobs[$pid]->attribute( 'ezcontentobject_version_id' ) . " exited with status {$exitCode}" );
+                    Output::instance()->write( "Process #{$pid} of object version #".$this->currentJobs[$pid]->attribute( 'ezcontentobject_version_id' ) . " exited with status {$exitCode}" );
                     // this is required as the MySQL connection might be closed anytime by a fork
                     // this method is asynchronous, and might be triggered by any signal
                     // the only way is to use a dedicated DB connection, and close it afterwards
