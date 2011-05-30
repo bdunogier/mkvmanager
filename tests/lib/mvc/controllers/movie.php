@@ -1,12 +1,10 @@
 <?php
-ini_set( 'include_path', ".:/usr/share/php");
+include "tests/config.php";
 
 if ( !defined('PHPUnit_MAIN_METHOD' ) )
 {
     define('PHPUnit_MAIN_METHOD', 'mmMvcControllersMovieTest::main' );
 }
-
-require 'ezc/Base/ezc_bootstrap.php';
 
 require_once 'lib/mvc/controllers/movie.php';
 require_once 'lib/mkvmanager/interfaces/scraper.php';
@@ -161,7 +159,16 @@ class mmMvcControllersMovieTest extends PHPUnit_Framework_TestCase
 
     public function testDoNfoSave()
     {
-        $this->markTestSkipped( 'Not implemented' );
+        $request = new ezcMvcRequest();
+        $request->variables['info'] = $this->getMovieInfo( true );
+        $request->variables['folder'] = "The return of the king (2003)";
+
+        $controller = new mm\Mvc\Controllers\Movie( 'NfoSave', $request );
+        $result = $controller->createResult();
+
+        self::assertEquals( 'tests/runtime/storage/Movies/The return of the king (2003)/The return of the king (2003).nfo', $result->variables['filepath_nfo'] );
+        self::assertFileEquals( 'tests/lib/mvc/controllers/movie_doSaveNfo.nfo', $result->variables['filepath_nfo'] );
+        @unlink( $result->variables['filepath_nfo'] );
     }
 
     private function getMovieInfo( $asObject = false )

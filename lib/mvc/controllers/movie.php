@@ -144,16 +144,34 @@ class Movie extends \ezcMvcController
     /**
      * Saves a NFO
      *
+     * @param string $this->folder
+     * @param string $this->info
+     *
      * @return ezcMvcResult
      */
     public function doNfoSave()
     {
         $result = new \ezcMvcResult();
 
-        $info = eval( "return {$this->info};");
-        $nfoWriter = new NfoWriter( $info );
+        $basepath =
+            ezcConfigurationManager::getInstance()->getSetting( 'movies', 'GeneralSettings', 'SourcePath' ) .
+            DIRECTORY_SEPARATOR .
+            $this->folder . DIRECTORY_SEPARATOR;
+        $nfoFilepath = "{$basepath}{$this->folder}.nfo";
+        $posterFilepath = "{$basepath}{$this->folder}.tbn";
+        $fanartFilepath = "{$basepath}{$this->folder}-fanart.jpg";
+        $trailerFilepath = "{$basepath}{$this->folder}-trailer.flv";
 
-        $result->variables['NFO'] = $nfoWriter->write( $filename );
+        $result->variables['filepath_nfo'] = $nfoFilepath;
+        $result->variables['filepath_poster'] = $posterFilepath;
+        $result->variables['filepath_fanart'] = $fanartFilepath;
+        $result->variables['filepath_trailer'] = $trailerFilepath;
+
+        $nfoWriter = new NfoWriter( $this->info );
+        $nfoWriter->write( $nfoFilepath );
+        $nfoWriter->downloadTrailer( $trailerFilepath );
+        $nfoWriter->downloadMainPoster( $posterFilepath );
+        $nfoWriter->downloadMainFanart( $fanartFilepath );
 
         return $result;
     }
