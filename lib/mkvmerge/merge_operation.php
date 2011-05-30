@@ -221,6 +221,18 @@ class mmMergeOperation implements mm\Daemon\BackgroundOperation
         Output::instance()->write( "Done" );
     }
 
+    /**
+     * Resets the operation to pending
+     */
+    public function reset()
+    {
+        $this->status = self::STATUS_PENDING;
+        $this->startTime = 0;
+        $this->endTime = 0;
+        $this->message = '';
+        $this->store();
+    }
+
     const STATUS_ARCHIVED = 4;
     const STATUS_PENDING = 3;
     const STATUS_RUNNING = 2;

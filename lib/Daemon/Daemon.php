@@ -12,7 +12,9 @@
  * This class executes the daemon and manages the processes
  */
 namespace mm\Daemon;
-use mm\Daemon\ProcessManager as PM;
+use \ezcDbInstance as ezcDbInstance;
+use \Output as Output;
+
 class Daemon
 {
     public function __construct()
@@ -33,7 +35,7 @@ class Daemon
             $pid = $this->fork();
 
             // fork failed
-            if ( $pid = -1 )
+            if ( $pid == -1 )
             {
                 Output::instance()->write( 'Error forking process, aborting merge' );
                 continue;
@@ -60,7 +62,7 @@ class Daemon
         // depending on the priority (#1 = downloads, #2 = merge), return the next operation
         // when an operation finishes, the slot is cleaned up, and one more of the same type can resume
 
-        return mmMergeOperation::next();
+        return \mmMergeOperation::next();
     }
 
     /**
@@ -92,7 +94,8 @@ class Daemon
     private function closeDatabaseConnection()
     {
         // close the database instance
-        ezcPersistentSessionInstance::get()->database = null;
+        $db = ezcDbInstance::get();
+        $db = null;
     }
 
     /**

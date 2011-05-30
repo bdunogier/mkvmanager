@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
-// define( 'DAEMON_MODE', false );
-define( 'DAEMON_MODE', true );
+define( 'DAEMON_MODE', false );
+// define( 'DAEMON_MODE', true );
 include 'config.php';
 
 // check if media target folder is writeable
@@ -110,7 +110,7 @@ class Output
     public static function instance()
     {
         if ( self::$instance !== null )
-            return $instance;
+            return self::$instance;
         else
             throw new RuntimeException( "Output was not instanciated" );
     }
