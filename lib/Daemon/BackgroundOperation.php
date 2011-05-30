@@ -12,7 +12,8 @@
 /**
  * This interface is used to implement a runnable operation
  */
-namespace mm_Daemon;
+namespace mm\Daemon;
+
 interface BackgroundOperation
 {
     public function run();
