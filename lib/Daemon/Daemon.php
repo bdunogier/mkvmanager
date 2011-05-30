@@ -14,6 +14,7 @@
 namespace mm\Daemon;
 use \ezcDbInstance as ezcDbInstance;
 use \Output as Output;
+use \mm\Daemon\BackgroundOperation as BackgroundOperation;
 
 class Daemon
 {
@@ -43,7 +44,7 @@ class Daemon
 
             if ( $pid > 0 )
             {
-                $pm->addJob( $pid, $operation );
+                $this->addJob( $pid, $operation );
                 continue;
             }
 
@@ -102,7 +103,7 @@ class Daemon
      * Adds the job to the processes queue
      * @param int $job
      */
-    public function addJob( $pid, mm\Daemon\BackgroundOperation $operation )
+    public function addJob( $pid, BackgroundOperation $operation )
     {
         $this->runningOperations[$pid] = $operation;
 
