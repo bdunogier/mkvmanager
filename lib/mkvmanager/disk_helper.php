@@ -58,11 +58,18 @@ class mmMkvManagerDiskHelper
                     $latestEpisodePath = $path;
                 }
             }
-            $return['LatestEpisode'] = $latestEpisodePath;
-            list( , , , $return['RecommendedDisk'] ) = explode( '/', $latestEpisodePath );
-            $lastEpisodeDiskFreespace = diskfreespace( $latestEpisodePath );
+            if ( !isset( $latestEpisodePath ) )
+            {
+                $return['bestfit'] = 'none';
+            }
+            else
+            {
+                $return['LatestEpisode'] = $latestEpisodePath;
+                list( , , , $return['RecommendedDisk'] ) = explode( '/', $latestEpisodePath );
+                $lastEpisodeDiskFreespace = diskfreespace( $latestEpisodePath );
 
-            $return['RecommendedDiskHasFreeSpace'] = ( $targetFilesize  > $lastEpisodeDiskFreespace ) ? 'false' : 'true';
+                $return['RecommendedDiskHasFreeSpace'] = ( $targetFilesize  > $lastEpisodeDiskFreespace ) ? 'false' : 'true';
+            }
         }
 
         return $return;
