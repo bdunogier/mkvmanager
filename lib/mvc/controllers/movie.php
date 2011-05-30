@@ -8,13 +8,14 @@
 
 namespace mm\Mvc\Controllers;
 use \mm\Xbmc\Nfo\Writers\Movie as NfoWriter;
+use \ezcConfigurationManager as ezcConfigurationManager;
 
 class Movie extends \ezcMvcController
 {
     /**
      * Searches for the movie $this->query on movie scrapers
      *
-     * @param string $this->query
+     * @param string $this->folder
      *
      * @return ezcMvcResult
      */
@@ -23,6 +24,7 @@ class Movie extends \ezcMvcController
         $query = $this->folder;
         $result = new \ezcMvcResult();
         $result->variables['page_title'] = "{$query} :: Search for Movie NFO :: MKV Manager";
+        $result->variables['generateUrl'] = "/nfo/movie/generate/" . urlencode( $query );
         foreach( array( 'allocine' => '\MkvManagerScraperAllocine', 'tmdb' => '\MkvManagerScraperTMDB' ) as $identifier => $scraperClass )
         {
             $scraper = new $scraperClass();
@@ -33,8 +35,9 @@ class Movie extends \ezcMvcController
     }
 
     /**
-     * Generates the NFO for the movie ids $this->AllocineId and $this->TBDbId
+     * Generates the NFO for the movie located in $this->folder ids $this->AllocineId and $this->TBDbId
      *
+     * @param $this->folder The movie folder in the movies storage directory
      * @param $this->AllocineId
      * @param $this->TBDbId
      *
@@ -44,6 +47,7 @@ class Movie extends \ezcMvcController
     {
         $result = new \ezcMvcResult();
         $result->variables['page_title'] = "Generate NFO :: MKV Manager";
+        $result->variables['saveUrl'] = "/nfo/movie/save/" . urlencode( $this->folder );
 
         $allocineId = $this->AllocineId;
         $TMDbId = $this->TMDbId;

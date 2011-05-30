@@ -19,10 +19,10 @@ class mmMvcRouter extends ezcMvcRouter
             new ezcMvcRailsRoute( '/tvdashboard',          'mmMkvManagerController', 'TVDashboard' ),
             new ezcMvcRailsRoute( '/movies',               'mmMkvManagerController', 'Movies' ),
 
-            new ezcMvcRailsRoute( '/nfo/movie/search/:folder',               'mm\Mvc\Controllers\Movie', 'NfoSearch' ),
-            new ezcMvcRailsRoute( '/nfo/movie/generate/:AllocineId/:TMDbId', 'mm\Mvc\Controllers\Movie', 'NfoGenerate' ),
-            new ezcMvcRailsRoute( '/nfo/movie/save',                         'mm\Mvc\Controllers\Movie', 'NfoSave' ),
-            new ezcMvcRailsRoute( '/nfo/movie/update-info',                  'mm\Mvc\Controllers\Movie', 'NfoUpdateInfo' ),
+            new ezcMvcRailsRoute( '/nfo/movie/search/:folder',                       'mm\Mvc\Controllers\Movie', 'NfoSearch' ),
+            new ezcMvcRailsRoute( '/nfo/movie/generate/:folder/:AllocineId/:TMDbId', 'mm\Mvc\Controllers\Movie', 'NfoGenerate' ),
+            new ezcMvcRailsRoute( '/nfo/movie/save/:folder',                         'mm\Mvc\Controllers\Movie', 'NfoSave' ),
+            new ezcMvcRailsRoute( '/nfo/movie/update-info',                          'mm\Mvc\Controllers\Movie', 'NfoUpdateInfo' ),
 
             new ezcMvcRailsRoute( '/movie-merge/:Folder',  'mmMkvManagerController', 'movieMerge' ),
 
@@ -37,6 +37,7 @@ class mmMvcRouter extends ezcMvcRouter
             new ezcMvcRailsRoute( '/ajax/queue-command',                       'mmAjaxController', 'queueCommand' ),
             new ezcMvcRailsRoute( '/ajax/merge-queue/:items',                  'mmAjaxController', 'mergeQueue' ),
             new ezcMvcRailsRoute( '/ajax/sourcefiles/archive/:hash',           'mmAjaxController', 'sourcefileArchive' ),
+
             new ezcMvcRailsRoute( '/ajax/generate-command/:VideoFile',         'mmAjaxController', 'generateCommand' ),
 
             new ezcMvcRailsRoute( '/ajax/movie-search/:Release',                       'mmAjaxController', 'movieSearch' ),

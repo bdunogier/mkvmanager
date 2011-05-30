@@ -45,6 +45,7 @@ class mmMvcControllersMovieTest extends PHPUnit_Framework_TestCase
     public function testDoNfoGenerate()
     {
         $request = new ezcMvcRequest();
+        $request->variables['folder'] = "The return of the king (2003)";
         $request->variables['AllocineId'] = 39187;
         $request->variables['TMDbId'] = 122;
 
