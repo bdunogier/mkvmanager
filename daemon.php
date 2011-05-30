@@ -93,6 +93,7 @@ class Output
     function __construct( $fp )
     {
         $this->fp = $fp;
+        self::$instance = $this;
     }
 
     function write( $message )
@@ -111,6 +112,8 @@ class Output
     {
         if ( self::$instance !== null )
             return $instance;
+        else
+            throw new RuntimeException( "Output was not instanciated" );
     }
 
     private static $instance = null;
