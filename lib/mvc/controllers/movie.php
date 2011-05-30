@@ -86,7 +86,7 @@ class Movie extends \ezcMvcController
      *
      * The result is viewed using AJAX
      *
-     * @param string $info exported mm\Info\Movie\Details
+     * @param mm\Info\Movie\Details $info
      * @param string $actionType
      * @param string $actionValue
      *
@@ -96,8 +96,8 @@ class Movie extends \ezcMvcController
     {
         $result = new \ezcMvcResult();
 
-        $info = eval( "return {$this->info};");
         $actionValue = (int)$this->actionValue;
+        $info = $this->info;
 
         switch( $this->actionType )
         {

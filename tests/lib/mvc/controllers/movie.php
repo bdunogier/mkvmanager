@@ -56,12 +56,12 @@ class mmMvcControllersMovieTest extends PHPUnit_Framework_TestCase
 
     public function testDoNfoUpdateInfoSelectTrailer()
     {
-        $originalInfo = eval( "return " . $this->getMovieInfo() . ";" );
+        $originalInfo = $this->getMovieInfo( true );
         $oldTrailer = clone $originalInfo->trailers[0];
         $newTrailer = clone $originalInfo->trailers[2];
 
         $request = new ezcMvcRequest();
-        $request->variables['info'] = $this->getMovieInfo();
+        $request->variables['info'] = $this->getMovieInfo( true );
         $request->variables['actionType'] = "SelectTrailer";
         $request->variables['actionValue'] = "2";
 
@@ -77,12 +77,12 @@ class mmMvcControllersMovieTest extends PHPUnit_Framework_TestCase
 
     public function testDoNfoUpdateInfoSelectMainPoster()
     {
-        $originalInfo = eval( "return " . $this->getMovieInfo() . ";" );
+        $originalInfo = $this->getMovieInfo( true );
         $oldPoster = clone $originalInfo->posters[0];
         $newPoster = clone $originalInfo->posters[2];
 
         $request = new ezcMvcRequest();
-        $request->variables['info'] = $this->getMovieInfo();
+        $request->variables['info'] = $this->getMovieInfo( true );
         $request->variables['actionType'] = "SelectMainPoster";
         $request->variables['actionValue'] = "2";
 
@@ -98,12 +98,12 @@ class mmMvcControllersMovieTest extends PHPUnit_Framework_TestCase
 
     public function testDoNfoUpdateInfoSelectMainFanart()
     {
-        $originalInfo = eval( "return " . $this->getMovieInfo() . ";" );
+        $originalInfo = $this->getMovieInfo( true );
         $oldFanart = clone $originalInfo->fanarts[0];
         $newFanart = clone $originalInfo->fanarts[2];
 
         $request = new ezcMvcRequest();
-        $request->variables['info'] = $this->getMovieInfo();
+        $request->variables['info'] = $this->getMovieInfo( true );
         $request->variables['actionType'] = "SelectMainFanart";
         $request->variables['actionValue'] = "2";
 
@@ -119,11 +119,11 @@ class mmMvcControllersMovieTest extends PHPUnit_Framework_TestCase
 
     public function testDoNfoUpdateInfoDisableFanart()
     {
-        $originalInfo = eval( "return " . $this->getMovieInfo() . ";" );
+        $originalInfo = $this->getMovieInfo( true );
         $fanart = clone $originalInfo->fanarts[2];
 
         $request = new ezcMvcRequest();
-        $request->variables['info'] = $this->getMovieInfo();
+        $request->variables['info'] = $this->getMovieInfo( true );
         $request->variables['actionType'] = "DisableFanart";
         $request->variables['actionValue'] = "2";
 
@@ -140,11 +140,11 @@ class mmMvcControllersMovieTest extends PHPUnit_Framework_TestCase
 
     public function testDoNfoUpdateInfoDisablePoster()
     {
-        $originalInfo = eval( "return " . $this->getMovieInfo() . ";" );
+        $originalInfo = $this->getMovieInfo( true );
         $poster = clone $originalInfo->posters[2];
 
         $request = new ezcMvcRequest();
-        $request->variables['info'] = $this->getMovieInfo();
+        $request->variables['info'] = $this->getMovieInfo( true );
         $request->variables['actionType'] = "DisablePoster";
         $request->variables['actionValue'] = "2";
 
@@ -163,9 +163,9 @@ class mmMvcControllersMovieTest extends PHPUnit_Framework_TestCase
         $this->markTestSkipped( 'Not implemented' );
     }
 
-    private function getMovieInfo()
+    private function getMovieInfo( $asObject = false )
     {
-        return "mm\Info\Movie\Details::__set_state(array(
+        $return = "mm\Info\Movie\Details::__set_state(array(
            'plot' => 'La lutte d\'un peloton de Marines contre une invasion d\'aliens dans les rues de Los Angeles...',
            'synopsis' => 'Au camp Pendleton, base militaire située à proximité de Los Angeles, un groupe de Marines, dirigé par le sergent Michael Nantz, est appelé à riposter immédiatement à l\'une des nombreuses attaques qui touchent les littoraux à travers le monde. Le sergent Nantz et ses hommes vont mener une bataille acharnée contre un ennemi mystérieux qui est déterminé à s\'emparer de l\'approvisionnement en eau et à détruire tout sur son passage.',
            'genre' =>
@@ -543,6 +543,8 @@ class mmMvcControllersMovieTest extends PHPUnit_Framework_TestCase
            'actorsShort' => NULL,
            'url' => NULL,
         ))";
+
+        return ( $asObject ? eval( "return $return;" ) : $return );
     }
 }
 ?>
