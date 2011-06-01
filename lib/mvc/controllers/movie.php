@@ -24,11 +24,41 @@ class Movie extends \ezcMvcController
         $query = $this->folder;
         $result = new \ezcMvcResult();
         $result->variables['page_title'] = "{$query} :: Search for Movie NFO :: MKV Manager";
-        $result->variables['generateUrl'] = "/nfo/movie/generate/" . urlencode( $query );
         foreach( array( 'allocine' => '\MkvManagerScraperAllocine', 'tmdb' => '\MkvManagerScraperTMDB' ) as $identifier => $scraperClass )
         {
             $scraper = new $scraperClass();
-            $result->variables["results_{$identifier}"] = $scraper->searchMovies( $query );
+            $scrapResults = $scraper->searchMovies( $query );
+
+            foreach( $scrapResults as $scrapResult )
+            {
+                $resultHash = strtolower( "{$scrapResult->originalTitle} ({$scrapResult->productionYear})" );
+                if( !isset( $result->variables["results"][$resultHash] ) )
+                {
+                    $mergedResult = new \stdClass;
+                    $mergedResult->originalTitle = $scrapResult->originalTitle;
+                    $mergedResult->title = $scrapResult->title;
+                    $mergedResult->thumbnail = $scrapResult->thumbnail;
+                    $mergedResult->productionYear = $scrapResult->productionYear;
+                    $mergedResult->{"id_$identifier"} = $scrapResult->id;
+                    $mergedResult->{"url_$identifier"} = $scrapResult->url;
+                    $result->variables["results"][$resultHash] = $mergedResult;
+                }
+                else
+                {
+                    $result->variables["results"][$resultHash]->{"id_$identifier"} = $scrapResult->id;
+                    $result->variables["results"][$resultHash]->{"url_$identifier"} = $scrapResult->url;
+                }
+            }
+
+            foreach( $result->variables["results"] as $mergedResult )
+            {
+                $mergedResult->generateUrl = sprintf(
+                    "/nfo/movie/generate/%s/%s/%s",
+                    urlencode( $query ),
+                    isset( $mergedResult->id_allocine ) ? $mergedResult->id_allocine : 'none',
+                    isset( $mergedResult->id_tmdb ) ? $mergedResult->id_tmdb : 'none'
+                );
+            }
         }
 
         return $result;
