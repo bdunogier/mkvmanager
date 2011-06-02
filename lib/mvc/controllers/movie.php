@@ -78,6 +78,7 @@ class Movie extends \ezcMvcController
         $result = new \ezcMvcResult();
         $result->variables['page_title'] = "Generate NFO :: MKV Manager";
         $result->variables['saveUrl'] = "/nfo/movie/save/" . urlencode( $this->folder );
+        $result->variables['generateUrl'] = $this->request->uri;
 
         $allocineId = $this->AllocineId;
         $TMDbId = $this->TMDbId;

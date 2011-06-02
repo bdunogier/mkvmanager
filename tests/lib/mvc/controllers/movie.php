@@ -46,11 +46,18 @@ class mmMvcControllersMovieTest extends PHPUnit_Framework_TestCase
         $request->variables['folder'] = "The return of the king (2003)";
         $request->variables['AllocineId'] = 39187;
         $request->variables['TMDbId'] = 122;
+        $request->uri = '/nfo/movie/generate/' . urlencode( "The return of the king (2003)" ) . '/39187/122';
 
         $controller = new mm\Mvc\Controllers\Movie( 'NfoGenerate', $request );
         $result = $controller->createResult();
 
         self::assertType( 'ezcMvcResult', $result );
+        self::assertEquals( '/nfo/movie/generate/The+return+of+the+king+%282003%29/39187/122', $result->variables['generateUrl'] );
+        self::assertEquals( '/nfo/movie/save/The+return+of+the+king+%282003%29', $result->variables['saveUrl'] );
+        self::assertEquals(
+            file_get_contents( str_replace( '.php', '_doGenerateNfo.nfo', __FILE__ ) ),
+            $result->variables['nfo']
+        );
     }
 
     public function testDoNfoUpdateInfoSelectTrailer()
