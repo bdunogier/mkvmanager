@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
-// define( 'DAEMON_MODE', false );
-define( 'DAEMON_MODE', true );
+define( 'DAEMON_MODE', false );
+// define( 'DAEMON_MODE', true );
 include 'config.php';
 
 // check if media target folder is writeable
@@ -12,6 +12,8 @@ if ( !is_writeable( $storageDir ) )
     die();
 }
 
+$daemon = new mm\Daemon\Daemon();
+
 if ( DAEMON_MODE )
 {
     $out = new Output( STDOUT );
@@ -19,9 +21,9 @@ if ( DAEMON_MODE )
     declare( ticks=1 );
 
     // Trap signals that we expect to recieve
-    pcntl_signal( SIGCHLD, 'childHandler' );
-    pcntl_signal( SIGUSR1, 'childHandler' );
-    pcntl_signal( SIGALRM, 'childHandler' );
+    pcntl_signal( SIGCHLD, array( $daemon, 'childHandler' ) );
+    pcntl_signal( SIGUSR1, array( $daemon, 'childHandler' ) );
+    pcntl_signal( SIGALRM, array( $daemon, 'childHandler' ) );
 
     $pid = pcntl_fork();
     if ( $pid < 0 )
@@ -74,57 +76,14 @@ if ( DAEMON_MODE )
 
     // kill the parent !
     posix_kill( $parentProcessID, SIGUSR1 );
-
 }
 else
 {
     $out = new Output( STDOUT );
 }
 
-while( true )
-{
-    if ( !$operation = mmMergeOperation::next() )
-    {
-        sleep( 1 );
-        continue;
-    }
-    $result = '';
-	$return = '';
-
-    // mark operation as running
-    $operation->status = mmMergeOperation::STATUS_RUNNING;
-    $operation->startTime = time();
-    ezcPersistentSessionInstance::get()->update( $operation );
-
-    $commandObject = $operation->commandObject;
-    $out->write( "Merge: {$commandObject->conversionType} '{$commandObject->title}'" );
-    // @todo Use pcntl_exec instead, to avoid errors
-    exec( "{$operation->command} 2>&1 >/dev/null", $result, $return );
-	$out->write( "Done" );
-
-	$status = ( $return !== 0 ) ? -1 : 0;
-
-	$operation->status = ( $status == 0 ) ? mmMergeOperation::STATUS_DONE : mmMergeOperation::STATUS_ERROR;
-    $operation->message = implode( "\n", $result );
-    $operation->endTime = time();
-    ezcPersistentSessionInstance::get()->update( $operation );
-
-	unset( $result, $return, $operation, $commandObject );
-}
-
-/**
- * Signal handler
- * @param int $signo Signal number
- */
-function childHandler( $signo )
-{
-    switch( $signo )
-    {
-        case SIGALRM: exit( 1 ); break;
-        case SIGUSR1: exit( 0 ); break;
-        case SIGCHLD: exit( 1 ); break;
-    }
-}
+// actual execution
+$daemon->run();
 
 class Output
 {
@@ -133,6 +92,7 @@ class Output
     function __construct( $fp )
     {
         $this->fp = $fp;
+        self::$instance = $this;
     }
 
     function write( $message )
@@ -143,5 +103,18 @@ class Output
         }
         fputs( $this->fp, "[" . date('Y/m/d H:i:s') . "] $message\n" );
     }
+
+    /**
+     * @return Output
+     */
+    public static function instance()
+    {
+        if ( self::$instance !== null )
+            return self::$instance;
+        else
+            throw new RuntimeException( "Output was not instanciated" );
+    }
+
+    private static $instance = null;
 }
 ?>

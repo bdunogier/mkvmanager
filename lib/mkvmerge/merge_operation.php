@@ -14,7 +14,7 @@
 *
 * @property-read MKVMergeCommand commandObject
 **/
-class mmMergeOperation
+class mmMergeOperation implements mm\Daemon\BackgroundOperation
 {
     public $hash = null;
     public $startTime = null;
@@ -183,6 +183,54 @@ class mmMergeOperation
             }
         }
         return $return;
+    }
+
+    /**
+     * Updates the stored version of the process
+     */
+    public function update()
+    {
+        ezcPersistentSessionInstance::get()->update( $this );
+    }
+
+    /**
+     * Processes the merge operation
+     */
+    public function run()
+    {
+        Output::instance()->write( "Merge: {$this->commandObject->conversionType} '{$this->commandObject->title}'" );
+
+        $result = '';
+        $return = '';
+
+        // mark operation as running
+        $this->status = self::STATUS_RUNNING;
+        $this->startTime = time();
+        $this->update();
+
+        // @todo Use pcntl_exec instead, to avoid errors
+        exec( "{$this->command} 2>&1 >/dev/null", $result, $return );
+
+        $status = ( $return !== 0 ) ? -1 : 0;
+
+        $this->status = ( $status == 0 ) ? self::STATUS_DONE : self::STATUS_ERROR;
+        $this->message = implode( "\n", $result );
+        $this->endTime = time();
+        $this->update();
+
+        Output::instance()->write( "Done" );
+    }
+
+    /**
+     * Resets the operation to pending
+     */
+    public function reset()
+    {
+        $this->status = self::STATUS_PENDING;
+        $this->startTime = 0;
+        $this->endTime = 0;
+        $this->message = '';
+        $this->store();
     }
 
     const STATUS_ARCHIVED = 4;
