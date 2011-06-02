@@ -52,7 +52,7 @@ class mmMvcControllersMovieTest extends PHPUnit_Framework_TestCase
         $result = $controller->createResult();
 
         self::assertType( 'ezcMvcResult', $result );
-        self::assertEquals( '/nfo/movie/generate/The+return+of+the+king+%282003%29/39187/122', $result->variables['generateUrl'] );
+        self::assertEquals( '/nfo/movie/update-info', $result->variables['updateUrl'] );
         self::assertEquals( '/nfo/movie/save/The+return+of+the+king+%282003%29', $result->variables['saveUrl'] );
         self::assertEquals(
             file_get_contents( str_replace( '.php', '_doGenerateNfo.nfo', __FILE__ ) ),
