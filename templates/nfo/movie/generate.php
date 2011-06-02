@@ -32,7 +32,7 @@ $(document).ready(function() {
     /**
      * SelectMainPoster action apply callback
      */
-    $("form.frmNfoPosterAction").bind( 'applyAction', function( e, actionType, actionValue ) {
+    $("form.frmNfoPosterAction,").bind( 'applyAction', function( e, actionType, actionValue ) {
         console.log( 'frmNfoPosterAction.applyAction', [e, actionType, actionValue] );
         postersDiv = $('#divPosters');
 
@@ -77,7 +77,56 @@ $(document).ready(function() {
             default:
                 alert('[frmNfoPosterAction.applyAction] Unknown action ' + actionType );
         }
+    });
 
+    /**
+     * SelectMainFanart action apply callback
+     */
+    $("form.frmNfoFanartAction,").bind( 'applyAction', function( e, actionType, actionValue ) {
+        console.log( 'frmNfoFanartAction.applyAction', [e, actionType, actionValue] );
+        fanartsDiv = $('#divFanarts');
+
+        switch ( actionType )
+        {
+            case 'SelectMainFanart':
+                // update selected poster's actionValue
+                selectedFanart = $("#divFanarts div.fanartContainer:eq(" + actionValue + ")");
+                selectedFanart.find("input[name='actionValue']").val(0);
+
+                // update first poster's actionValue
+                firstFanart = fanartsDiv.find("div.fanartContainer:eq(0)");
+                firstFanart.find("input[name='actionValue']").val(actionValue);
+
+                // move top poster where selected one is
+                if ( actionValue != 1 )
+                {
+                    previousFanart = selectedFanart.prev();
+                    previousFanart.after( firstFanart );
+                }
+
+                // move selectedPoster to the top
+                fanartsDiv.prepend( selectedFanart );
+                break;
+
+            case 'DisableFanart':
+                // slice out everything from the disbled element to the end,
+                overflow = $('#divFanarts div.fanartContainer')
+                    .slice( actionValue )
+                    // detach everything
+                    .detach()
+                    // slice the removed one out
+                    .slice(1)
+                    // decrease the index for all the detached elements before removing
+                    .each( function(index,element){
+                        actionValueElement = $(this).find("input[name='actionValue']");
+                        actionValueElement.val( actionValueElement.val() - 1 );
+                });
+                fanartsDiv.append( overflow );
+                break;
+
+            default:
+                alert('[frmNfoFanartAction.applyAction] Unknown action ' + actionType );
+        }
     });
 
     /**
@@ -147,6 +196,18 @@ $(document).ready(function() {
 </div>
 
 <h2>Fanarts</h2>
+<div id="divFanarts">
+    <?foreach( $this->infos->fanarts as $fanartIndex => $fanart):?>
+    <div class="fanartContainer">
+        <img src="<?=$fanart->thumbnailUrl ?: $fanart->fullUrl?>" width="200" />
+        <form class="frmNfoAction frmNfoFanartAction">
+            <input type="button" name="SelectMainFanart" value="Set as main" />
+            <input type="button" name="DisableFanart" value="Disable" />
+            <input type="hidden" name="actionValue" value="<?=$fanartIndex?>" />
+        </form>
+    </div>
+    <?endforeach?>
+</div>
 
 <h2>NFO</h2>
 <pre id="nfo"><?=htmlentities( utf8_decode( $this->nfo ) )?></pre>
