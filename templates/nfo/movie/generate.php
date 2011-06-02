@@ -41,7 +41,6 @@ $(document).ready(function() {
             case 'SelectMainPoster':
                 // update selected poster's actionValue
                 selectedPoster = $("#divPosters div.posterContainer:eq(" + actionValue + ")");
-                console.log(selectedPoster);
                 selectedPoster.find("input[name='actionValue']").val(0);
 
                 // update first poster's actionValue
@@ -49,18 +48,28 @@ $(document).ready(function() {
                 firstPoster.find("input[name='actionValue']").val(actionValue);
 
                 // move top poster where selected one is
-                previousPoster = selectedPoster.prev();
-                previousPoster.insertAfter( firstPoster );
+                if ( actionValue != 1 )
+                {
+                    previousPoster = selectedPoster.prev();
+                    previousPoster.after( firstPoster );
+                }
 
                 // move selectedPoster to the top
                 postersDiv.prepend( selectedPoster );
                 break;
 
             case 'DisablePoster':
-                overflow = $('#divPosters div.posterContainer').slice( actionValue ).detach().slice(1);
-                overflow.each( function(index,element){
-                    actionValueElement = $(this).find("input[name='actionValue']");
-                    actionValueElement.val( actionValueElement.val() - 1 );
+                // slice out everything from the disbled element to the end,
+                overflow = $('#divPosters div.posterContainer')
+                    .slice( actionValue )
+                    // detach everything
+                    .detach()
+                    // slice the removed one out
+                    .slice(1)
+                    // decrease the index for all the detached elements before removing
+                    .each( function(index,element){
+                        actionValueElement = $(this).find("input[name='actionValue']");
+                        actionValueElement.val( actionValueElement.val() - 1 );
                 });
                 postersDiv.append( overflow );
                 break;
