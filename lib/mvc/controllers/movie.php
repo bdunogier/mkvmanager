@@ -168,7 +168,7 @@ class Movie extends \ezcMvcController
         $result->variables['info'] = var_export( $info, true );
 
         $nfoWriter = new NfoWriter( $info );
-        $result->variables['NFO'] = $nfoWriter->get();
+        $result->variables['nfo'] = $nfoWriter->get();
         return $result;
     }
 

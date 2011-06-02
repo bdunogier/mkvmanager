@@ -79,6 +79,10 @@ class mmMvcControllersMovieTest extends PHPUnit_Framework_TestCase
         $updatedInfo = eval( "return " . $result->variables['info'] . ";" );
 
         self::assertEquals( $newTrailer, $updatedInfo->trailers[0] );
+        self::assertArrayHasKey( 'nfo', $result->variables );
+        self::assertArrayHasKey( 'info', $result->variables );
+        self::assertArrayHasKey( 'status', $result->variables );
+        self::assertEquals( 'ok', $result->variables['status'] );
     }
 
     public function testDoNfoUpdateInfoSelectMainPoster()
