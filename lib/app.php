@@ -119,6 +119,15 @@ $value = substr( $value, 0, strrpos( $value, '/', $params['movies_path_element_c
 
         // list of NFO files, extensions stripped
         $moviesNFOs  = glob( $moviesPath . '/*/*.nfo' );
+        foreach( $moviesNFOs as $key => $filename )
+        {
+            $dom = new DOMDocument();
+            if( ! @$dom->load( $filename ))
+            {
+                unset( $moviesNFOs[$key] );
+            }
+        }
+        reset( $moviesNFOs );
         array_walk( $moviesNFOs, $callback, array( 'movies_path_element_count' => $moviesPathElementCount ) );
 
         // the diff of both arrays gives us movies without NFOS (and NFOs without movies, but that's unlikely)
