@@ -12,9 +12,10 @@
  * This class executes the daemon and manages the processes
  */
 namespace mm\Daemon;
-use \ezcDbInstance as ezcDbInstance;
-use \Output as Output;
-use \mm\Daemon\BackgroundOperation as BackgroundOperation;
+use ezcDbInstance as ezcDbInstance;
+use Output as Output;
+use mm\Daemon\BackgroundOperation;
+use mmMergeOperation;
 
 class Daemon
 {
@@ -29,9 +30,13 @@ class Daemon
         {
             if ( !$operation = $this->next() )
             {
+                Output::instance()->write( 'No operation' );
                 sleep( 1 );
                 continue;
             }
+
+            $operation->status = mmMergeOperation::STATUS_RUNNING;
+            $operation->update();
 
             $pid = $this->fork();
 
@@ -63,7 +68,7 @@ class Daemon
         // depending on the priority (#1 = downloads, #2 = merge), return the next operation
         // when an operation finishes, the slot is cleaned up, and one more of the same type can resume
 
-        return \mmMergeOperation::next();
+        return mmMergeOperation::next();
     }
 
     /**
