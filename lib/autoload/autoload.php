@@ -16,8 +16,6 @@ $autoload = array(
     'MKVMergeCommandVideoTrack'       => 'mkvmerge/command_track_video.php',
     'MKVMergeMediaAnalyzer'           => 'mkvmerge/media_analyzer.php',
 
-    'mmMergeOperation' => 'mkvmerge/merge_operation.php',
-
     'mmApp' => 'app.php',
 
     'mmMvcConfiguration' => 'mvc/config.php',
@@ -67,6 +65,13 @@ $autoload = array(
 
     'mm\Daemon\Daemon' => 'Daemon/Daemon.php',
     'mm\Daemon\BackgroundOperation' => 'Daemon/BackgroundOperation.php',
+    'mm\Daemon\Queue' => 'Daemon/Queue.php',
+    'mm\Daemon\QueueItem' => 'Daemon/QueueItem.php',
+    'mm\Daemon\Output' => 'Daemon/Output.php',
+
+    'mm\Operations\Merge' => 'Operations/merge.php',
+    'mm\Operations\HttpDownload' => 'Operations/http_download.php',
+    'mm\Operations\Example' => 'Operations/example.php',
 );
 
 return $autoload;

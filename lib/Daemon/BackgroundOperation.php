@@ -16,8 +16,21 @@ namespace mm\Daemon;
 
 interface BackgroundOperation
 {
+    /**
+     * Run the operation
+     */
     public function run();
 
+    /**
+     * Resets the operation
+     */
     public function reset();
+
+    /**
+     * Reports the operation progress, as an integer (1-100)
+     *
+     * @return integer
+     */
+    public function progress();
 }
 ?>

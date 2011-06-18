@@ -12,10 +12,7 @@
  * This class executes the daemon and manages the processes
  */
 namespace mm\Daemon;
-use ezcDbInstance as ezcDbInstance;
-use Output as Output;
-use mm\Daemon\BackgroundOperation;
-use mmMergeOperation;
+use ezcDbInstance;
 
 class Daemon
 {
@@ -35,7 +32,7 @@ class Daemon
                 continue;
             }
 
-            $operation->status = mmMergeOperation::STATUS_RUNNING;
+            $operation->status = QueueItem::STATUS_RUNNING;
             $operation->update();
 
             $pid = $this->fork();
@@ -53,6 +50,7 @@ class Daemon
                 continue;
             }
 
+            Output::instance()->write( "Running operation {$operation->hash}" );
             $operation->run();
             exit;
         }
@@ -68,7 +66,7 @@ class Daemon
         // depending on the priority (#1 = downloads, #2 = merge), return the next operation
         // when an operation finishes, the slot is cleaned up, and one more of the same type can resume
 
-        return mmMergeOperation::next();
+        return Queue::getNextItem();
     }
 
     /**
@@ -108,7 +106,7 @@ class Daemon
      * Adds the job to the processes queue
      * @param int $job
      */
-    public function addJob( $pid, BackgroundOperation $operation )
+    public function addJob( $pid, QueueItem $operation )
     {
         $this->runningOperations[$pid] = $operation;
 
@@ -141,7 +139,7 @@ class Daemon
                 $exitCode = pcntl_wexitstatus( $status );
                 if ( $exitCode != 0 )
                 {
-                    Output::instance()->write( "Process #{$pid} of object version #".$this->currentJobs[$pid]->attribute( 'ezcontentobject_version_id' ) . " exited with status {$exitCode}" );
+                    Output::instance()->write( "Process of operation " . $this->runningOperations[$pid]->hash . " exited with status {$exitCode}" );
                     // this is required as the MySQL connection might be closed anytime by a fork
                     // this method is asynchronous, and might be triggered by any signal
                     // the only way is to use a dedicated DB connection, and close it afterwards

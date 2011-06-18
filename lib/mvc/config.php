@@ -137,7 +137,7 @@ class mmMvcConfiguration implements ezcMvcDispatcherConfiguration
 
             case '/nfo/movie/save/:folder':
                 // @todo Transform back into an object with an eval
-                $request->variables['info'] = eval( "return {$_POST['Info']};");
+                $request->variables['info'] = eval( "return {$_POST['info']};");
                 break;
         }
     }
