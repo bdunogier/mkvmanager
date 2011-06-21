@@ -16,12 +16,19 @@
 **/
 namespace mm\Operations;
 use mm\Daemon\BackgroundOperation;
+use mm\Daemon\QueueItem;
+use MKVMergeCommand;
 
 class Merge implements BackgroundOperation
 {
     public $command = null;
     public $targetFile = null;
     public $targetFileSize = null;
+
+    /**
+     * @var mm\Daemon\QueueItem
+     */
+    private $queueItem;
 
     /**
      * Constructs a new merge operation for the command $command
@@ -53,22 +60,6 @@ class Merge implements BackgroundOperation
     }
 
     /**
-     * Returns a merge operation's progress, as a rounded percentage
-     *
-     * @return int
-     */
-    public function progress()
-    {
-        try {
-            $currentTargetSize = mmMkvManagerDiskHelper::bigFileSize( $this->targetFile );
-        } catch( ezcBaseFileNotFoundException $e ) {
-            return 0;
-        }
-
-        return round( $currentTargetSize / $this->targetFileSize * 100 );
-    }
-
-    /**
      * Checks if any of the source files still exist
      *
      * @return bool
@@ -83,7 +74,6 @@ class Merge implements BackgroundOperation
         {
             if ( file_exists( $file['pathname'] ) && filesize( $file['pathname'] ) > 0 )
             {
-                error_log( $file['pathname'] );
                 $return = true;
                 break;
             }
@@ -98,15 +88,27 @@ class Merge implements BackgroundOperation
     {
         // Output::instance()->write( "Merge: {$this->commandObject->conversionType} '{$this->commandObject->title}'" );
 
-        $result = '';
-        $return = '';
+        $procFp = popen( $this->command, 'r' );
 
-        // @todo Use pcntl_exec instead, to avoid errors
-        exec( "{$this->command} 2>&1 >/dev/null", $result, $return );
+        $output = array();
+        // @todo Add error control
+        do
+        {
+            $line = fread( $procFp, 2048 );
+            $output[] = $line;
+            if ( preg_match( '/Progress: ([0-9]+)%/', $line, $m ) )
+            {
+                $this->queueItem->progress = (int)$m[1];
+            }
+            $this->queueItem->message = implode( "\n", $output );
+            $this->queueItem->update();
+            usleep( 1000 );
+        } while( !feof( $procFp ) );
 
-        $status = ( $return !== 0 ) ? -1 : 0;
+        pclose( $procFp );
 
-        return ( $status == 0 );
+        return true;
+        // return ( $status == 0 );
         // $this->message = implode( "\n", $result );
 
         // Output::instance()->write( "Done" );
@@ -114,12 +116,21 @@ class Merge implements BackgroundOperation
 
     public function __set_state( array $state )
     {
-        $object = new self;
-        $object->command = $state['command'];
+        $object = new self( $state['command'] );
         $object->targetFile = $state['targetFile'];
         $object->targetFileSize = $state['targetFileSize'];
 
         return $object;
+    }
+
+    public function reset()
+    {
+
+    }
+
+    public function setQueueItem( QueueItem $queueItem )
+    {
+        $this->queueItem = $queueItem;
     }
 }
 ?>

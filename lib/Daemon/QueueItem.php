@@ -107,10 +107,10 @@ class QueueItem
 
     public function progress()
     {
-        if ( $this->object->hasAsynchronousProgressSupport() )
-            return $this->progress;
-        else
+        if ( $this->object instanceof NoProgressBackgroundOperation )
             return $this->object->progress();
+        else
+            return $this->progress;
     }
 
     public function __set_state( array $state )

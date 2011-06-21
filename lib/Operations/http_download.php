@@ -1,6 +1,6 @@
 <?php
 namespace mm\Operations;
-use mm\Daemon\BackgroundOperation;
+use mm\Daemon\AsynchronousProgressBackgroundOperation;
 use mm\Daemon\QueueItem;
 use ezcPersistentSessionInstance;
 
@@ -65,7 +65,7 @@ class HttpDownload implements BackgroundOperation
 
     public function progress()
     {
-        return 0;
+        return false;
     }
 
     public function __set_state( array $state )

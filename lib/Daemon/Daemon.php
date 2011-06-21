@@ -27,7 +27,7 @@ class Daemon
         {
             if ( !$operation = $this->next() )
             {
-                Output::instance()->write( 'No operation' );
+                // Output::instance()->write( 'No operation' );
                 sleep( 1 );
                 continue;
             }

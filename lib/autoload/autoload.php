@@ -64,6 +64,7 @@ $autoload = array(
     'mm\Xbmc\Nfo\Writers\Movie' => 'Xbmc/Nfo/Writers/Movie.php',
 
     'mm\Daemon\Daemon' => 'Daemon/Daemon.php',
+    'mm\Daemon\NoProgressBackgroundOperation' => 'Daemon/NoProgressBackgroundOperation.php',
     'mm\Daemon\BackgroundOperation' => 'Daemon/BackgroundOperation.php',
     'mm\Daemon\Queue' => 'Daemon/Queue.php',
     'mm\Daemon\QueueItem' => 'Daemon/QueueItem.php',
