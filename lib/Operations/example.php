@@ -29,7 +29,7 @@ class Example implements BackgroundOperation
      */
     public function progress()
     {
-        return trim( array_pop( file( $this->filename ) ) );
+        return trim( array_pop( file( $this->filename ) ) ) * 10;
     }
 
     /**

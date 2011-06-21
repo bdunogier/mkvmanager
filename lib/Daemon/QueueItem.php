@@ -19,6 +19,7 @@ class QueueItem
     public $objectString = null;
     public $object = null;
     public $pid = -1;
+    public $progress = null;
 
     public function __construct( BackgroundOperation $operation = null )
     {
@@ -26,9 +27,15 @@ class QueueItem
         $this->startTime = 0;
         $this->endTime = 0;
         $this->status = self::STATUS_PENDING;
-        $this->object = $operation;
-        $this->objectString = var_export( $this->object, true );
-        $this->hash = sha1( var_export( $this, true ) );
+        $this->progress = 0;
+
+        if ( $operation !== null )
+        {
+            $this->object = $operation;
+            $this->objectString = var_export( $this->object, true );
+            $this->hash = sha1( var_export( $this, true ) );
+            $this->object->setQueueItem( $this );
+        }
     }
 
     public function getState()
@@ -41,6 +48,8 @@ class QueueItem
         $result['status'] = $this->status;
         $result['message'] = $this->message;
         $result['objectString'] = $this->objectString;
+        $result['pid'] = $this->pid;
+        $result['progress'] = $this->progress;
         return $result;
     }
 
@@ -51,6 +60,7 @@ class QueueItem
             $this->$key = $value;
         }
         $this->object = eval( "return $this->objectString;" );
+        $this->object->setQueueItem( $this );
     }
 
     /**
@@ -93,6 +103,19 @@ class QueueItem
     public function run()
     {
         $this->object->run();
+    }
+
+    public function progress()
+    {
+        if ( $this->object->hasAsynchronousProgressSupport() )
+            return $this->progress;
+        else
+            return $this->object->progress();
+    }
+
+    public function __set_state( array $state )
+    {
+
     }
 
     /**

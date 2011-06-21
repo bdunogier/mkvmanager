@@ -11,7 +11,8 @@
  * object_string TEXT,
  * status INTEGER,
  * pid INTEGER,
- * message TEXT );
+ * message TEXT,
+ * progress INTEGER );
  */
 $def = new ezcPersistentObjectDefinition();
 $def->table = "operations_queue";
@@ -57,6 +58,11 @@ $def->properties['message'] = new ezcPersistentObjectProperty;
 $def->properties['message']->columnName = 'message';
 $def->properties['message']->propertyName = 'message';
 $def->properties['message']->propertyType = ezcPersistentObjectProperty::PHP_TYPE_STRING;
+
+$def->properties['progress'] = new ezcPersistentObjectProperty;
+$def->properties['progress']->columnName = 'progress';
+$def->properties['progress']->propertyName = 'progress';
+$def->properties['progress']->propertyType = ezcPersistentObjectProperty::PHP_TYPE_INT;
 
 return $def;
 ?>

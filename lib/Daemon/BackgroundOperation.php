@@ -32,5 +32,11 @@ interface BackgroundOperation
      * @return integer
      */
     public function progress();
+
+    /**
+     * Indicates if the operation supports self update of progress
+     * through the queue object
+     */
+    public function hasAsynchronousProgressSupport();
 }
 ?>
