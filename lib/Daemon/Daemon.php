@@ -33,6 +33,7 @@ class Daemon
             }
 
             $operation->status = QueueItem::STATUS_RUNNING;
+            $operation->startTime = time();
             $operation->update();
 
             $pid = $this->fork();
@@ -52,6 +53,11 @@ class Daemon
 
             Output::instance()->write( "Running operation {$operation->hash}" );
             $operation->run();
+
+            $operation->status = QueueItem::STATUS_DONE;
+            $operation->endTime = time();
+            $operation->update();
+
             exit;
         }
     }

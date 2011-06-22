@@ -25,6 +25,7 @@ class Merge implements BackgroundOperation
     public $targetFile = null;
     public $targetFileSize = null;
 
+
     /**
      * @var mm\Daemon\QueueItem
      */
@@ -39,9 +40,8 @@ class Merge implements BackgroundOperation
     {
         $this->command = $command;
 
-        $commandObject = new MKVMergeCommand( $command );
-        $this->targetFile = $commandObject->targetPath;
-        $this->targetFileSize = $commandObject->TargetSize;
+        $this->targetFile = $this->commandObject->targetPath;
+        $this->targetFileSize = $this->commandObject->TargetSize;
     }
 
     public function __get( $property )
@@ -57,28 +57,6 @@ class Merge implements BackgroundOperation
         }
 
         return $value;
-    }
-
-    /**
-     * Checks if any of the source files still exist
-     *
-     * @return bool
-     */
-    public function sourceFilesExist()
-    {
-        $return = false;
-
-        $command = $this->commandObject;
-        $files = array_merge( $command->VideoFiles, $command->SubtitleFiles );
-        foreach( $files as $file )
-        {
-            if ( file_exists( $file['pathname'] ) && filesize( $file['pathname'] ) > 0 )
-            {
-                $return = true;
-                break;
-            }
-        }
-        return $return;
     }
 
     /**
@@ -131,6 +109,11 @@ class Merge implements BackgroundOperation
     public function setQueueItem( QueueItem $queueItem )
     {
         $this->queueItem = $queueItem;
+    }
+
+    public function __toString()
+    {
+        return "MKV merge => {$this->commandObject->title}";
     }
 }
 ?>

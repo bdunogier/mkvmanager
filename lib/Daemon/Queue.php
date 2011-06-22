@@ -53,6 +53,20 @@ class Queue
         else
             return false;
     }
+
+    /**
+     * Fetches the currently running items
+     *
+     * @return array( mm\Daemon\QueueItem )
+     */
+    public static function fetchRunningItems( array $statuses )
+    {
+        $session = ezcPersistentSessionInstance::get();
+        $q = $session->createFindQuery( 'mm\Daemon\QueueItem' );
+        $q->where( $q->expr->eq( 'status', QueueItem::STATUS_RUNNING ) )
+          ->orderBy( 'create_time' );
+        return $session->find( $q );
+    }
 }
 
 class AlreadyQueuedException extends ezcBaseException

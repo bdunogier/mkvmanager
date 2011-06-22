@@ -5,6 +5,7 @@
  * SQL CREATE:
  * CREATE TABLE operations_queue (
  * hash TEXT PRIMARY KEY,
+ * title TEXT,
  * create_time INTEGER,
  * start_time INTEGER,
  * end_time INTEGER,
@@ -23,6 +24,11 @@ $def->idProperty->columnName = 'hash';
 $def->idProperty->propertyName = 'hash';
 $def->idProperty->propertyType = ezcPersistentObjectProperty::PHP_TYPE_STRING;
 $def->idProperty->generator = new ezcPersistentGeneratorDefinition( 'ezcPersistentManualGenerator' );
+
+$def->properties['title'] = new ezcPersistentObjectProperty;
+$def->properties['title']->columnName = 'title';
+$def->properties['title']->propertyName = 'title';
+$def->properties['title']->propertyType = ezcPersistentObjectProperty::PHP_TYPE_STRING;
 
 $def->properties['createTime'] = new ezcPersistentObjectProperty;
 $def->properties['createTime']->columnName = 'create_time';

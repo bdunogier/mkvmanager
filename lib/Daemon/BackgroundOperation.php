@@ -25,5 +25,12 @@ interface BackgroundOperation
      * Resets the operation
      */
     public function reset();
+
+    /**
+     * The operation's title
+     *
+     * @return string
+     */
+    public function __toString();
 }
 ?>
