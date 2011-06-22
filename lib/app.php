@@ -102,7 +102,8 @@ EOF;
 
         $moviesPath = ezcConfigurationManager::getInstance()->getSetting( 'movies', 'GeneralSettings', 'SourcePath' );
         // we need to know this since some of the next lines need it
-        $moviesPathElementCount = count( explode( "/", $moviesPath ) );
+        $moviesPathLength = strlen( $moviesPath );
+        $slashElementCount = count( explode( "/", $moviesPath ) );
 
             /**
              * mmApp::doMovies()
@@ -110,12 +111,12 @@ EOF;
              * @return
              */
             $callback = function( &$value, $key, $params ) {
-$value = substr( $value, 0, strrpos( $value, '/', $params['movies_path_element_count'] ) );
+$value = substr( $value, 0, strpos( $value, '/', $params['movies_path_element_count'] ) );
 };
 
         // list of movie files, extensions stripped
         $moviesFiles = glob( $moviesPath . '/*/*.{mkv,avi}', GLOB_BRACE );
-        array_walk( $moviesFiles, $callback, array( 'movies_path_element_count' => $moviesPathElementCount ) );
+        array_walk( $moviesFiles, $callback, array( 'movies_path_element_count' => $moviesPathLength+1 ));
 
         // list of NFO files, extensions stripped
         $moviesNFOs  = glob( $moviesPath . '/*/*.nfo' );
@@ -128,7 +129,7 @@ $value = substr( $value, 0, strrpos( $value, '/', $params['movies_path_element_c
             }
         }
         reset( $moviesNFOs );
-        array_walk( $moviesNFOs, $callback, array( 'movies_path_element_count' => $moviesPathElementCount ) );
+        array_walk( $moviesNFOs, $callback, array( 'movies_path_element_count' => $moviesPathLength+1 ) );
 
         // the diff of both arrays gives us movies without NFOS (and NFOs without movies, but that's unlikely)
         $movies = array_diff( $moviesFiles, $moviesNFOs );
@@ -138,7 +139,9 @@ $value = substr( $value, 0, strrpos( $value, '/', $params['movies_path_element_c
             $parts = explode( '/', $value );
             $movieElementIndex = $params['movies_path_element_count'];
             $value = $parts[$movieElementIndex];
-        }, array( 'movies_path_element_count' => $moviesPathElementCount ) );
+        }, array( 'movies_path_element_count' => $slashElementCount ) );
+
+        sort( $movies );
 
         return compact( 'movies' );
     }
