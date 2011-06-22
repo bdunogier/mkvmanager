@@ -221,6 +221,7 @@ $(document).ready(function() {
 
 <!-- nfo save form -->
 <form method="post" action="<?=$this->saveUrl?>">
+    <input type="hidden" name="info" value="<?=htmlentities( utf8_decode( var_export( $this->infos, true ) ) )?>">
     <input type="submit" value="Save NFO" />
 </form>
 </h1>

@@ -63,7 +63,7 @@ class Movie
 
         $this->generateXml();
 
-        file_put_contents( $filename, $this->get() );
+        file_put_contents( $filename, utf8_encode( $this->get() ));
     }
 
     /**
