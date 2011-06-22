@@ -115,8 +115,14 @@ $value = substr( $value, 0, strpos( $value, '/', $params['movies_path_element_co
 };
 
         // list of movie files, extensions stripped
-        $moviesFiles = glob( $moviesPath . '/*/*.{mkv,avi}', GLOB_BRACE );
-        array_walk( $moviesFiles, $callback, array( 'movies_path_element_count' => $moviesPathLength+1 ));
+        $simpleMoviesFormat = glob( $moviesPath . '/*/*.{mkv,avi}', GLOB_BRACE );
+        array_walk( $simpleMoviesFormat, $callback, array( 'movies_path_element_count' => $moviesPathLength+1 ));
+
+        // list of movie folder having a bluray rip format
+        $bdmvMoviesFormat = glob( $moviesPath . '/*/BDMV/index.bdmv', GLOB_BRACE );
+        array_walk( $bdmvMoviesFormat, $callback, array( 'movies_path_element_count' => $moviesPathLength+1 ));
+
+        $moviesFiles = array_merge( $bdmvMoviesFormat, $simpleMoviesFormat );
 
         // list of NFO files, extensions stripped
         $moviesNFOs  = glob( $moviesPath . '/*/*.nfo' );
