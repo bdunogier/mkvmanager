@@ -51,7 +51,7 @@ class Daemon
                 continue;
             }
 
-            Output::instance()->write( "Running operation {$operation->hash}" );
+            Output::instance()->write( "Running operation {$operation->title} [{$operation->hash}]" );
             $operation->run();
 
             $operation->status = QueueItem::STATUS_DONE;
