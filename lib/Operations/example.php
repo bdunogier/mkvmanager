@@ -7,7 +7,7 @@
 namespace mm\Operations;
 use mm\Daemon\BackgroundOperation;
 
-class Example implements BackgroundOperation
+class Example extends Base implements NoProgressBackgroundOperation
 {
     /**
      * Constructs a new example operation that writes $string to $filename

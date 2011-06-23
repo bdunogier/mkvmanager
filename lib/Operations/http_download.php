@@ -11,7 +11,7 @@ use ezcPersistentSessionInstance;
  * $download = new mm\Operation\HttpDownload( 'http://example.com/file.zip', '/tmp/file.zip' );
  * mm\Daemon\Queue::add( $download );
  */
-class HttpDownload implements BackgroundOperation
+class HttpDownload extends Base implements BackgroundOperation
 {
     /**
      * Creates an http download operation of $source to $target
@@ -54,7 +54,7 @@ class HttpDownload implements BackgroundOperation
         if ( $progress > $previousProgress)
         {
             $previousProgress = $progress;
-            $this->updateProgress( $progress );
+            $this->updateQueueItem( $progress );
         }
     }
 
@@ -63,41 +63,15 @@ class HttpDownload implements BackgroundOperation
 
     }
 
-    public function progress()
-    {
-        return false;
-    }
-
     public function __set_state( array $state )
     {
         return new self( $state['source'], $state['target'] );
-    }
-
-    public function setQueueItem( QueueItem $queueItem )
-    {
-        $this->queueItem = $queueItem;
-    }
-
-    public function hasAsynchronousProgressSupport()
-    {
-        return true;
-    }
-
-    private function updateProgress( $progress )
-    {
-        $this->queueItem->progress = $progress;
-        $this->queueItem->update();
     }
 
     public function __toString()
     {
         return "HTTP download: $this->source";
     }
-
-    /**
-     * @var mm\Daemon\QueueItem
-     */
-    private $queueItem;
 
     public $source;
     public $target;

@@ -1,35 +1,29 @@
 <?php
 /**
-* SQL Table:
-* CREATE TABLE commands (
-* hash TEXT PRIMARY KEY,
-* start_time INTEGER,
-* end_time INTEGER,
-* command TEXT,
-* target_file TEXT,
-* target_file_size INTEGER,
-* pid INTEGER,
-* status INTEGER,
-* message TEXT );
-*
-* @property-read MKVMergeCommand commandObject
-**/
+ * File containing the mm\Operations\Merge class
+ *
+ * @package mm
+ * @subpackage Operations
+ */
+
+/**
+ * An operation that merges source files to an MKV file
+ *
+ * @package mm
+ * @subpackage Operations
+ *
+ * @property-read MKVMergeCommand commandObject
+ * @property-read string targetFile
+ * @property-read string targetFileSize
+ **/
 namespace mm\Operations;
 use mm\Daemon\BackgroundOperation;
 use mm\Daemon\QueueItem;
 use MKVMergeCommand;
 
-class Merge implements BackgroundOperation
+class Merge extends Base implements BackgroundOperation
 {
     public $command = null;
-    public $targetFile = null;
-    public $targetFileSize = null;
-
-
-    /**
-     * @var mm\Daemon\QueueItem
-     */
-    private $queueItem;
 
     /**
      * Constructs a new merge operation for the command $command
@@ -39,9 +33,6 @@ class Merge implements BackgroundOperation
     public function __construct( $command )
     {
         $this->command = $command;
-
-        $this->targetFile = $this->commandObject->targetPath;
-        $this->targetFileSize = $this->commandObject->TargetSize;
     }
 
     public function __get( $property )
@@ -50,6 +41,14 @@ class Merge implements BackgroundOperation
         {
             case 'commandObject':
                 $value = new MKVMergeCommand( $this->command );
+                break;
+
+            case 'targetFile':
+                $value = $this->commandObject->targetPath;
+                break;
+
+            case 'targetFileSize':
+                $value = $this->commandObject->TargetSize;
                 break;
 
             default:
@@ -64,8 +63,6 @@ class Merge implements BackgroundOperation
      */
     public function run()
     {
-        // Output::instance()->write( "Merge: {$this->commandObject->conversionType} '{$this->commandObject->title}'" );
-
         $procFp = popen( $this->command, 'r' );
 
         $output = array();
@@ -74,29 +71,24 @@ class Merge implements BackgroundOperation
         {
             $line = fread( $procFp, 2048 );
             $output[] = $line;
+
+            // @todo preg_match_all + pick the last one
             if ( preg_match( '/Progress: ([0-9]+)%/', $line, $m ) )
             {
-                $this->queueItem->progress = (int)$m[1];
+                $progress = (int)$m[1];
+                $this->updateQueueItem( $progress, implode( "\n", $output ) );
             }
-            $this->queueItem->message = implode( "\n", $output );
-            $this->queueItem->update();
             usleep( 1000 );
         } while( !feof( $procFp ) );
 
         pclose( $procFp );
 
         return true;
-        // return ( $status == 0 );
-        // $this->message = implode( "\n", $result );
-
-        // Output::instance()->write( "Done" );
     }
 
     public function __set_state( array $state )
     {
         $object = new self( $state['command'] );
-        $object->targetFile = $state['targetFile'];
-        $object->targetFileSize = $state['targetFileSize'];
 
         return $object;
     }
@@ -104,11 +96,6 @@ class Merge implements BackgroundOperation
     public function reset()
     {
 
-    }
-
-    public function setQueueItem( QueueItem $queueItem )
-    {
-        $this->queueItem = $queueItem;
     }
 
     public function __toString()
