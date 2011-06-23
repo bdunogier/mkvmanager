@@ -83,6 +83,8 @@ class Merge extends Base implements BackgroundOperation
 
         pclose( $procFp );
 
+        $this->updateQueueItem( 100 );
+
         return true;
     }
 

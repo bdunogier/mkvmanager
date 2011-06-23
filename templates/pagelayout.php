@@ -19,14 +19,14 @@
         }
         mm.statusBar.processing = true;
         $.get(
-            '/ajax/merge-active-status',
+            '/ajax/daemon/queue-contents/running/Merge',
             function success( r ) {
                 var timeout;
                 if ( r.message != 'no-operation')
                 {
                     $("#statuspanel").html(
-                        '<progress id="pbStatus" max="100" value="' + r.progress + '"></progress>' +
-                        '<div id="pbStatusText">'+r.file+'</div>');
+                        '<progress id="pbStatus" max="100" value="' + r.queue[0].progress + '"></progress>' +
+                        '<div id="pbStatusText">'+r.queue[0].title+'</div>');
                     timeout = 50;
                 }
                 else

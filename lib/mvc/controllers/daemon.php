@@ -17,16 +17,19 @@ class Daemon extends ezcMvcController
      */
     public function doQueueContents()
     {
-        if ( !isset( $this->type ) )
+        switch( $this->status )
         {
-            switch( $type )
-            {
-                case 'archived': $type = QueueItem::STATUS_ARCHIVED; break;
-                case 'done':     $type = QueueItem::STATUS_DONE; break;
-                case 'error':    $type = QueueItem::STATUS_ERROR; break;
-                case 'pending':  $type = QueueItem::STATUS_PENDING; break;
-                case 'running':  $type = QueueItem::STATUS_RUNNING; break;
-            }
+            case 'archived': $status = QueueItem::STATUS_ARCHIVED; break;
+            case 'done':     $status = QueueItem::STATUS_DONE; break;
+            case 'error':    $status = QueueItem::STATUS_ERROR; break;
+            case 'pending':  $status = QueueItem::STATUS_PENDING; break;
+            case 'running':  $status = QueueItem::STATUS_RUNNING; break;
+            default: $status = null;
+        }
+
+        if ( isset( $this->type ) )
+        {
+            $type = $this->type;
         }
         else
         {
@@ -34,7 +37,7 @@ class Daemon extends ezcMvcController
         }
 
         $items = array();
-        foreach( Queue::fetchItems( $this->status, $type ) as $queueItem )
+        foreach( Queue::fetchItems( $status, $type ) as $queueItem )
         {
             $item = new stdClass;
             $item->hash = $queueItem->hash;
@@ -45,7 +48,10 @@ class Daemon extends ezcMvcController
 
         $result = new ezcMvcResult;
         $result->variables['status'] = 'ok';
-        $result->variables['queue'] = $items;
+        if ( !count( $items ) )
+            $result->variables['message'] = 'no-operation';
+        else
+            $result->variables['queue'] = $items;
         return $result;
     }
 }

@@ -71,7 +71,7 @@ class Queue
         $q->where( $q->expr->eq( 'status', $status ) )
           ->orderBy( 'create_time' );
         if ( $type !== null )
-            $q->where( $q->expr->eq( 'type', $type ) );
+            $q->where( $q->expr->eq( 'type', $q->bindValue( $type ) ) );
         return $session->find( $q );
     }
 }
