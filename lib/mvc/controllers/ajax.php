@@ -226,7 +226,7 @@ class mmAjaxController extends ezcMvcController
         $command = $_POST['MergeCommand'];
 
         try {
-            $mergeOperation = mmMergeOperation::queue( $command );
+            $queueOperation = mm\Daemon\Queue::add( new mm\Operations\Merge( $command ) );
         } catch( Exception $e ) {
             $result->variables['result'] = 'ko';
             $result->variables['message'] = $e->getMessage();
@@ -235,9 +235,9 @@ class mmAjaxController extends ezcMvcController
         }
 
         $result->variables['status'] = 'ok';
-        $result->variables['operation_hash'] = $mergeOperation->hash;
-        $result->variables['target_size'] = $mergeOperation->targetFileSize;
-        $result->variables['target_file'] = $mergeOperation->targetFile;
+        $result->variables['operation_hash'] = $queueOperation->hash;
+        $result->variables['target_size'] = $queueOperation->object->targetFileSize;
+        $result->variables['target_file'] = $queueOperation->object->targetFile;
         $result->variables['command'] = $command;
 
         return $result;

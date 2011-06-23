@@ -24,9 +24,10 @@ $autoload = array(
     'mmHtmlView'         => 'mvc/views/html.php',
     'mmAjaxView'         => 'mvc/views/ajax.php',
 
-    'mmMkvManagerController'   => 'mvc/controllers/mkvmanager.php',
-    'mmAjaxController'         => 'mvc/controllers/ajax.php',
-    'mm\Mvc\Controllers\Movie' => 'mvc/controllers/movie.php',
+    'mmMkvManagerController'    => 'mvc/controllers/mkvmanager.php',
+    'mmAjaxController'          => 'mvc/controllers/ajax.php',
+    'mm\Mvc\Controllers\Movie'  => 'mvc/controllers/movie.php',
+    'mm\Mvc\Controllers\Daemon' => 'mvc/controllers/daemon.php',
 
     'mmMvcResultStatusNotFound' => 'mvc/result_status/error_not_found.php',
     'mmMvcResultStatusError'    => 'mvc/result_status/error.php',
@@ -70,6 +71,7 @@ $autoload = array(
     'mm\Daemon\QueueItem' => 'Daemon/QueueItem.php',
     'mm\Daemon\Output' => 'Daemon/Output.php',
 
+    'mm\Operations\Base' => 'Operations/base.php',
     'mm\Operations\Merge' => 'Operations/merge.php',
     'mm\Operations\HttpDownload' => 'Operations/http_download.php',
     'mm\Operations\Example' => 'Operations/example.php',

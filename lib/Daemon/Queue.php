@@ -57,14 +57,21 @@ class Queue
     /**
      * Fetches the currently running items
      *
+     * @param int status one of QueueItem::STATUS_ARCHIVED, QueueItem::STATUS_DONE, QueueItem::STATUS_ERROR, QueueItem::STATUS_PENDING, QueueItem::STATUS_RUNNING
+     * @param string $type
+     *
      * @return array( mm\Daemon\QueueItem )
      */
-    public static function fetchRunningItems( array $statuses )
+    public static function fetchItems( $status, $type = null)
     {
+        if ( !in_array( $type, array( QueueItem::STATUS_ARCHIVED, QueueItem::STATUS_DONE, QueueItem::STATUS_ERROR, QueueItem::STATUS_PENDING, QueueItem::STATUS_RUNNING ) ) )
+            throw new ezcBaseValueException( 'type', $type );
         $session = ezcPersistentSessionInstance::get();
         $q = $session->createFindQuery( 'mm\Daemon\QueueItem' );
-        $q->where( $q->expr->eq( 'status', QueueItem::STATUS_RUNNING ) )
+        $q->where( $q->expr->eq( 'status', $status ) )
           ->orderBy( 'create_time' );
+        if ( $type !== null )
+            $q->where( $q->expr->eq( 'type', $type ) );
         return $session->find( $q );
     }
 }
