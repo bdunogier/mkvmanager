@@ -1,29 +1,21 @@
 <?php
 /**
  * Persistent object definition for mm\Daemon\QueueItem
- *
- * SQL CREATE:
- * CREATE TABLE operations_queue (
- * hash TEXT PRIMARY KEY,
- * title TEXT,
- * create_time INTEGER,
- * start_time INTEGER,
- * end_time INTEGER,
- * object_string TEXT,
- * status INTEGER,
- * pid INTEGER,
- * message TEXT,
- * progress INTEGER );
  */
 $def = new ezcPersistentObjectDefinition();
-$def->table = "operations_queue";
-$def->class = "mm\\Daemon\\QueueItem";
+$def->table = 'operations_queue';
+$def->class = 'mm\Daemon\QueueItem';
 
 $def->idProperty = new ezcPersistentObjectIdProperty;
 $def->idProperty->columnName = 'hash';
 $def->idProperty->propertyName = 'hash';
 $def->idProperty->propertyType = ezcPersistentObjectProperty::PHP_TYPE_STRING;
 $def->idProperty->generator = new ezcPersistentGeneratorDefinition( 'ezcPersistentManualGenerator' );
+
+$def->properties['type'] = new ezcPersistentObjectProperty;
+$def->properties['type']->columnName = 'type';
+$def->properties['type']->propertyName = 'type';
+$def->properties['type']->propertyType = ezcPersistentObjectProperty::PHP_TYPE_STRING;
 
 $def->properties['title'] = new ezcPersistentObjectProperty;
 $def->properties['title']->columnName = 'title';
