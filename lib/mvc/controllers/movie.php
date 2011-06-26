@@ -39,6 +39,7 @@ class Movie extends \ezcMvcController
                     $mergedResult->title = $scrapResult->title;
                     $mergedResult->thumbnail = $scrapResult->thumbnail;
                     $mergedResult->productionYear = $scrapResult->productionYear;
+                    $mergedResult->releaseYear = $scrapResult->releaseYear;
                     $mergedResult->{"id_$identifier"} = $scrapResult->id;
                     $mergedResult->{"url_$identifier"} = $scrapResult->url;
                     $result->variables["results"][$resultHash] = $mergedResult;

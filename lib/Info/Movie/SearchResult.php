@@ -46,6 +46,12 @@ class SearchResult
     public $releaseDate;
 
     /**
+     * Year the movie was released
+     * @var string
+     */
+    public $releaseYear;
+
+    /**
      * Short list of directors (names only)
      * @var array(string)
      */

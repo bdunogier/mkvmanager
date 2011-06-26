@@ -41,6 +41,7 @@ class MkvManagerScraperAllocine extends MkvManagerScraper
             $result->title = (string)$movie->title;
             $result->productionYear = (int)$movie->productionYear;
             $result->releaseDate = (string)$movie->release->releaseDate;
+            $result->releaseYear = $movie->release->releaseDate == "" ? (int)$movie->productionYear : substr( $movie->release->releaseDate, 0, 4 );
             $result->directorsShort = explode(', ', (string)$movie->castingShort->directors );
             $result->actorsShort = explode( ', ', (string)$movie->castingShort->actors );
 
