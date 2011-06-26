@@ -79,6 +79,8 @@ class MkvManagerScraperTMDB extends MkvManagerScraper
         }
 
         $result = array();
+        if( isset( $doc->movies->movie->images->backdrop ))
+        {
         foreach( $doc->movies->movie->images->backdrop as $image )
         {
             $imageObject = new mm\Info\Image;
@@ -99,7 +101,9 @@ class MkvManagerScraperTMDB extends MkvManagerScraper
             }
             $result[] = $imageObject;
         }
-
+        }
+        if( isset( $doc->movies->movie->images->poster ))
+        {
         foreach( $doc->movies->movie->images->poster as $image )
         {
             $imageObject = new mm\Info\Image;
@@ -119,6 +123,7 @@ class MkvManagerScraperTMDB extends MkvManagerScraper
                 }
             }
             $result[] = $imageObject;
+        }
         }
 
         return $result;

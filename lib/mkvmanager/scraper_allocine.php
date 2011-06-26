@@ -84,6 +84,8 @@ class MkvManagerScraperAllocine extends MkvManagerScraper
         $result->score = (float)$doc->statistics->pressRating + (float)$doc->statistics->userRating;
 
         // actors
+        if( isset( $doc->casting->castMember ) )
+        {
         foreach( $doc->casting->castMember as $person )
         {
             if ( (string)$person->picture['href'] == '' )
@@ -112,12 +114,18 @@ class MkvManagerScraperAllocine extends MkvManagerScraper
                 continue;
             }
         }
+        }
 
+        if( isset( $doc->genreList->genre ) )
+        {
         foreach( $doc->genreList->genre as $genre )
         {
             $result->genre[] = (string)$genre;
         }
+        }
 
+        if( isset( $doc->mediaList->media ) )
+        {
         foreach( $doc->mediaList->media as $media )
         {
             if ( (string)$media['class'] == 'picture' )
@@ -153,6 +161,7 @@ class MkvManagerScraperAllocine extends MkvManagerScraper
                     $result->trailers[] = $trailerObject;
                 }
             }
+        }
         }
 
         return $result;
