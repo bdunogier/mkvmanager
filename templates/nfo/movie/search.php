@@ -1,3 +1,4 @@
+<? if( count( $this->results ) > 0 ): ?>
 <table>
     <? foreach( $this->results as $result ): ?>
     <tr>
@@ -12,3 +13,6 @@
     </tr>
     <? endforeach ?>
 </table>
+<?else:?>
+<h3>No result. Sorry.</h3>
+<?endif?>
