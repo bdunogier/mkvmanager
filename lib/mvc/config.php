@@ -56,6 +56,16 @@ class mmMvcConfiguration implements ezcMvcDispatcherConfiguration
                         $result->variables['__request'] = $request;
                     }
             }
+            $topMenuConfig = ezcConfigurationManager::getInstance()->getSetting( 'mkvmanager', 'TopMenu', 'Items' );
+            $topMenu = array();
+            foreach ( $topMenuConfig as $topMenuIdentifier => $topMenuItem )
+            {
+                list( $url, $text ) = explode( ";", $topMenuItem );
+                $topMenu[] = array( "url" => $url,
+                                    "text" => $text,
+                                    "identifier" => $topMenuIdentifier );
+            }
+            $result->variables['top_menu'] = $topMenu;
         }
 
         return $view;
