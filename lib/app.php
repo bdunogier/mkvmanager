@@ -115,7 +115,7 @@ $value = substr( $value, 0, strpos( $value, '/', $params['movies_path_element_co
 };
 
         // list of movie files, extensions stripped
-        $simpleMoviesFormat = glob( $moviesPath . '/*/*.{mkv,avi}', GLOB_BRACE );
+        $simpleMoviesFormat = glob( $moviesPath . '/*/*.{mkv,avi,iso}', GLOB_BRACE );
         array_walk( $simpleMoviesFormat, $callback, array( 'movies_path_element_count' => $moviesPathLength+1 ));
 
         // list of movie folder having a bluray rip format
