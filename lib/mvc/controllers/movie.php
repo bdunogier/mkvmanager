@@ -7,8 +7,11 @@
  */
 
 namespace mm\Mvc\Controllers;
-use \mm\Xbmc\Nfo\Writers\Movie as NfoWriter;
-use \ezcConfigurationManager as ezcConfigurationManager;
+use mm\Xbmc\Nfo\Writers\Movie as NfoWriter;
+use ezcConfigurationManager as ezcConfigurationManager;
+use mm\Daemon;
+use mm\Operations;
+use stdClass;
 
 class Movie extends \ezcMvcController
 {
@@ -184,6 +187,9 @@ class Movie extends \ezcMvcController
     {
         $result = new \ezcMvcResult();
 
+        $result->variables['page_title'] = "{$this->folder} :: Save NFO :: MKV Manager";
+        $result->variables['movie'] = $this->folder;
+
         $basepath =
             ezcConfigurationManager::getInstance()->getSetting( 'movies', 'GeneralSettings', 'SourcePath' ) .
             DIRECTORY_SEPARATOR .
@@ -193,16 +199,46 @@ class Movie extends \ezcMvcController
         $fanartFilepath = "{$basepath}{$this->folder}-fanart.jpg";
         $trailerFilepath = "{$basepath}{$this->folder}-trailer.flv";
 
-        $result->variables['filepath_nfo'] = $nfoFilepath;
-        $result->variables['filepath_poster'] = $posterFilepath;
-        $result->variables['filepath_fanart'] = $fanartFilepath;
-        $result->variables['filepath_trailer'] = $trailerFilepath;
-
         $nfoWriter = new NfoWriter( $this->info );
+
+        $result->variables['operations'] = array();
+
+        // write NFO to disk
         $nfoWriter->write( $nfoFilepath );
-        $nfoWriter->downloadTrailer( $trailerFilepath );
-        $nfoWriter->downloadMainPoster( $posterFilepath );
-        $nfoWriter->downloadMainFanart( $fanartFilepath );
+        $operation = Daemon\Queue::add(
+            new Operations\NfoWriter( $this->info, $nfoFilePath )
+        );
+        $result->variables['operations'][] = (object)array(
+            'title' => $operation->title,
+            'hash' => $operation->hash,
+        );
+
+        // trailer
+        $operation = Daemon\Queue::add(
+            new Operations\HttpDownload( $nfoWriter->getMainPoster(), $posterFilepath )
+        );
+        $result->variables['operations'][] = (object)array(
+            'title' => $operation->title,
+            'hash' => $operation->hash,
+        );
+
+        // trailer
+        $operation = Daemon\Queue::add(
+            new Operations\HttpDownload( $nfoWriter->getMainFanart(), $fanartFilepath )
+        );
+        $result->variables['operations'][] = (object)array(
+            'title' => $operation->title,
+            'hash' => $operation->hash,
+        );
+
+        // trailer
+        $operation = Daemon\Queue::add(
+            new Operations\HttpDownload( $nfoWriter->getTrailer(), $trailerFilepath )
+        );
+        $result->variables['operations'][] = (object)array(
+            'title' => $operation->title,
+            'hash' => $operation->hash,
+        );
 
         return $result;
     }

@@ -129,14 +129,16 @@ class mmMvcConfiguration implements ezcMvcDispatcherConfiguration
         switch ( $routeInfo->matchedRoute )
         {
             case '/nfo/movie/update-info':
-                // @todo Transform back into an object with an eval
                 $request->variables['info'] = eval( "return {$_POST['info']};");
                 $request->variables['actionType'] = $_POST['actionType'];
                 $request->variables['actionValue'] = $_POST['actionValue'];
                 break;
 
             case '/nfo/movie/save/:folder':
-                // @todo Transform back into an object with an eval
+                $request->variables['info'] = eval( "return {$_POST['info']};");
+                break;
+
+            case '/nfo/movie/save/:folder':
                 $request->variables['info'] = eval( "return {$_POST['info']};");
                 break;
         }

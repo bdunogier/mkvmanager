@@ -74,6 +74,20 @@ class Queue
             $q->where( $q->expr->eq( 'type', $q->bindValue( $type ) ) );
         return $session->find( $q );
     }
+
+    /**
+     * Fetches a series of items based on their $hashes
+     * @param array $hashes
+     * @return array( QueueItem )
+     */
+    public static function fetchItemsByHash( array $hashes )
+    {
+        $session = ezcPersistentSessionInstance::get();
+        $q = $session->createFindQuery( 'mm\Daemon\QueueItem' );
+        $q->where( $q->expr->in( 'hash', $hashes ) )
+          ->orderBy( 'create_time' );
+        return $session->find( $q );
+    }
 }
 
 class AlreadyQueuedException extends ezcBaseException

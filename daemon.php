@@ -3,8 +3,7 @@
 use mm\Daemon\Daemon;
 use mm\Daemon\Output;
 
-define( 'DAEMON_MODE', false );
-// define( 'DAEMON_MODE', true );
+define( 'DAEMON_MODE', true );
 include 'config.php';
 
 // check if media target folder is writeable

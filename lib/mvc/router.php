@@ -40,6 +40,7 @@ class mmMvcRouter extends ezcMvcRouter
 
             new ezcMvcRailsRoute( '/ajax/daemon/queue-contents/:status',       'mm\Mvc\Controllers\Daemon', 'queueContents' ),
             new ezcMvcRailsRoute( '/ajax/daemon/queue-contents/:status/:type', 'mm\Mvc\Controllers\Daemon', 'queueContents' ),
+            new ezcMvcRailsRoute( '/ajax/daemon/progress/:hashes',             'mm\Mvc\Controllers\Daemon', 'progress' ),
 
             new ezcMvcRailsRoute( '/ajax/generate-command/:VideoFile',         'mmAjaxController', 'generateCommand' ),
 

@@ -247,6 +247,7 @@ class MkvManagerScraperBetaSeries extends MkvManagerScraper
         'theitcrowd' => 'itcrowd',
         'thesimpsons' => 'simpsons',
         'mrsunshine2011' => 'mrsunshine',
+        'breakingin' => 'breaking-in',
     );
 }
 ?>

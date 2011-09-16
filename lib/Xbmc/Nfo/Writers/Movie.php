@@ -15,9 +15,7 @@
  * Uses an Info\Movie\Details object to generate an XBMC NFO
  */
 namespace mm\Xbmc\Nfo\Writers;
-use \ezcBaseFileNotFoundException as ezcBaseFileNotFoundException;
-use \ezcBaseFilePermissionException as ezcBaseFilePermissionException;
-use \ezcBaseFileException as ezcBaseFileException;
+use ezcBaseFileNotFoundException, ezcBaseFilePermissionException, ezcBaseFileException;
 
 class Movie
 {
@@ -157,6 +155,36 @@ class Movie
     }
 
     /**
+     * Returns the url of the main poster
+     *
+     * @return string
+     */
+    public function getMainPoster()
+    {
+        return (string)$this->info->posters[0];
+    }
+
+    /**
+     * Returns the url of the main fanart
+     *
+     * @return string
+     */
+    public function getMainFanart()
+    {
+        return (string)$this->info->fanarts[0];
+    }
+
+    /**
+     * Returns the url of the trailer
+     *
+     * @return string
+     */
+    public function getTrailer()
+    {
+        return (string)$this->info->trailers[0];
+    }
+
+    /**
      * Downloads and saves the main movie poster to $filepath
      *
      * @param string $filepath
@@ -199,6 +227,11 @@ class Movie
     private function download( $file, $targetpath )
     {
         return copy( $file, $targetpath );
+    }
+
+    public function __set_state( array $state )
+    {
+        return new self( $state['info'] );
     }
 
     /**

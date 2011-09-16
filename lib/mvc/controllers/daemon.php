@@ -54,5 +54,16 @@ class Daemon extends ezcMvcController
             $result->variables['queue'] = $items;
         return $result;
     }
+
+    /**
+     * Return the progress for a set of operations
+     *
+     * @param string $hashes a comma separated list of operations hashes
+     * @return ezcMvcResult
+     */
+    public function doProgress()
+    {
+        $result = new ezcMvcResult;
+    }
 }
 ?>

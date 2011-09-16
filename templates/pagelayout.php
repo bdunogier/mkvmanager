@@ -18,9 +18,9 @@
             return
         }
         mm.statusBar.processing = true;
-        $.get(
-            '/ajax/daemon/queue-contents/running/Merge',
-            function success( r ) {
+            $.get(
+                '/ajax/daemon/queue-contents/running/Merge',
+                function success( r ) {
                 var timeout;
                 if ( r.message != 'no-operation')
                 {

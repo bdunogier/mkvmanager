@@ -75,6 +75,7 @@ $autoload = array(
     'mm\Operations\Merge' => 'Operations/merge.php',
     'mm\Operations\HttpDownload' => 'Operations/http_download.php',
     'mm\Operations\Example' => 'Operations/example.php',
+    'mm\Operations\NfoWriter' => 'Operations/nfo_writer.php',
 );
 
 return $autoload;
