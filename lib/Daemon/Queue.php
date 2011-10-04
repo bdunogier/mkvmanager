@@ -62,7 +62,7 @@ class Queue
      *
      * @return array( mm\Daemon\QueueItem )
      */
-    public static function fetchItems( $status, $type = null)
+    public static function fetchItems( $status, $type = null )
     {
         if ( !in_array( $type, array( QueueItem::STATUS_ARCHIVED, QueueItem::STATUS_DONE, QueueItem::STATUS_ERROR, QueueItem::STATUS_PENDING, QueueItem::STATUS_RUNNING ) ) )
             throw new ezcBaseValueException( 'type', $type );

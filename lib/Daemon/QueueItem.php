@@ -145,7 +145,5 @@ class QueueItem
     const STATUS_RUNNING = 2;
     const STATUS_ERROR = 1;
     const STATUS_DONE = 0;
-
 }
-
 ?>
