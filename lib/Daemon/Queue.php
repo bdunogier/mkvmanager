@@ -43,15 +43,19 @@ class Queue
     {
         $session = ezcPersistentSessionInstance::get();
 
-        $query = $session->createFindQuery( 'mm\\Daemon\\QueueItem' );
-        $query->where( $query->expr->eq( 'status', $query->bindValue( QueueItem::STATUS_PENDING ) ) )
-              ->limit( 1 );
-        $pendingOperations = $session->find( $query );
+        if ( count( self::fetchItems( QueueItem::STATUS_RUNNING ) ) === 0 )
+        {
+            $query = $session->createFindQuery( 'mm\\Daemon\\QueueItem' );
+            $query->where( $query->expr->eq( 'status', $query->bindValue( QueueItem::STATUS_PENDING ) ) )
+                  // @todo add orderBy
+                  ->limit( 1 );
+            $pendingOperations = $session->find( $query );
 
-        if ( count( $pendingOperations ) == 1 )
-            return array_pop( $pendingOperations );
-        else
-            return false;
+            if ( count( $pendingOperations ) == 1 )
+                return array_pop( $pendingOperations );
+        }
+
+        return false;
     }
 
     /**
