@@ -27,11 +27,16 @@ class Movie extends \ezcMvcController
         $query = $this->folder;
         $result = new \ezcMvcResult();
         $result->variables['page_title'] = "{$query} :: Search for Movie NFO :: MKV Manager";
+
+        $hasResults = false;
         foreach( array( 'allocine' => '\MkvManagerScraperAllocine', 'tmdb' => '\MkvManagerScraperTMDB' ) as $identifier => $scraperClass )
         {
             $scraper = new $scraperClass();
             $scrapResults = $scraper->searchMovies( $query );
 
+            if( $scrapResults !== false )
+            {
+            $hasResults = true;
             foreach( $scrapResults as $scrapResult )
             {
                 $resultHash = strtolower( "{$scrapResult->originalTitle} ({$scrapResult->productionYear})" );
@@ -42,6 +47,7 @@ class Movie extends \ezcMvcController
                     $mergedResult->title = $scrapResult->title;
                     $mergedResult->thumbnail = $scrapResult->thumbnail;
                     $mergedResult->productionYear = $scrapResult->productionYear;
+                    $mergedResult->releaseYear = $scrapResult->releaseYear;
                     $mergedResult->{"id_$identifier"} = $scrapResult->id;
                     $mergedResult->{"url_$identifier"} = $scrapResult->url;
                     $result->variables["results"][$resultHash] = $mergedResult;
@@ -62,7 +68,10 @@ class Movie extends \ezcMvcController
                     isset( $mergedResult->id_tmdb ) ? $mergedResult->id_tmdb : 'none'
                 );
             }
+            }
         }
+        if( !$hasResults )
+            $result->variables["results"] = array();
 
         return $result;
     }

@@ -38,6 +38,7 @@ class MkvManagerScraperTMDB extends MkvManagerScraper
             $result->title = (string)$movie->name;
             $result->productionYear = (int)$movie->released;
             $result->releaseDate = (string)$movie->released;
+            $result->releaseYear = substr( $movie->released, 0, 4 );
             $result->url = (string)$movie->url;
 
             foreach( $movie->images->image as $image )
@@ -79,6 +80,8 @@ class MkvManagerScraperTMDB extends MkvManagerScraper
         }
 
         $result = array();
+        if( isset( $doc->movies->movie->images->backdrop ))
+        {
         foreach( $doc->movies->movie->images->backdrop as $image )
         {
             $imageObject = new mm\Info\Image;
@@ -99,7 +102,9 @@ class MkvManagerScraperTMDB extends MkvManagerScraper
             }
             $result[] = $imageObject;
         }
-
+        }
+        if( isset( $doc->movies->movie->images->poster ))
+        {
         foreach( $doc->movies->movie->images->poster as $image )
         {
             $imageObject = new mm\Info\Image;
@@ -119,6 +124,7 @@ class MkvManagerScraperTMDB extends MkvManagerScraper
                 }
             }
             $result[] = $imageObject;
+        }
         }
 
         return $result;
