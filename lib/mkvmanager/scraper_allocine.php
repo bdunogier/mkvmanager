@@ -119,13 +119,12 @@ class MkvManagerScraperAllocine extends MkvManagerScraper
 
         if( isset( $doc->genreList->genre ) )
         {
-        foreach( $doc->genreList->genre as $genre )
-        {
-            $result->genre[] = (string)$genre;
-        }
+            foreach( $doc->genreList->genre as $genre )
+            {
+                $result->genre[] = (string)$genre;
+            }
         }
 
-<<<<<<< HEAD
         if( isset( $doc->mediaList->media ) )
         {
             foreach( $doc->mediaList->media as $media )
@@ -164,7 +163,6 @@ class MkvManagerScraperAllocine extends MkvManagerScraper
                     }
                 }
             }
-        }
         }
 
         return $result;
