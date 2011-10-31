@@ -50,6 +50,11 @@ class mmMkvManagerDiskHelper
                     continue;
 
                 $path = realpath( $path );
+
+                // broken link => ignore
+                if ( $path == false )
+                    continue;
+
                 // 100 episodes per season really should do it, right ?
                 $absoluteEpisodeNumber = ( $episodeInfo['season'] * 100 ) + $episodeInfo['episode'];
                 if ( $absoluteEpisodeNumber > $maxEpisodeNumber )
