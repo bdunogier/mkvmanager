@@ -126,9 +126,9 @@ class MKVMergeCommand
         $data['TargetSize'] = $this->TargetSize;
 
         if ( $this->appendSymLink === true )
-            $data['Command'] .= "; ln -s \"{$this->target}\" \"{$this->linkTarget}\"";
+            $data['Command'] .= "; ln -s '$this->target' '$this->linkTarget'";
         if ( $this->appendDoneText === true )
-            $data['Command'] .= "; echo \"Done converting {$this->title}\"";
+            $data['Command'] .= "; echo \"Done converting '$this->title'";
 
         return $data;
     }
@@ -144,10 +144,10 @@ class MKVMergeCommand
         $string = $this->command;
         if ( $this->appendSymLink === true )
         {
-            $string .= "; if [ ! -f \"{$this->linkTarget}\" ]; then ln -fs \"{$this->target}\" \"{$this->linkTarget}\"; fi";
+            $string .= "; if [ ! -f '$this->linkTarget' ]; then ln -fs '$this->target' '$this->linkTarget'; fi";
         }
         if ( $this->appendDoneText === true )
-            $string .= "; echo \"Done converting {$this->title}\"";
+            $string .= "; echo \"Done converting $this->title\"";
 
         return $string;
     }
