@@ -38,7 +38,10 @@ filter:alpha(opacity=100);
 -moz-opacity:1;
 }
 
+#nfo
+{
 
+}
 </style>
 <script type="text/javascript" src="/js/jquery-1.4.2.min.js"></script>
 <script type="text/javascript">

@@ -65,7 +65,8 @@ class MKVMergeCommandImportWindowsGUI
                 if ( !$charsetFound )
                 {
                     $finfo = new finfo( FILEINFO_MIME_ENCODING );
-                    $encoding = strtoupper( $finfo->file( $subFileName ) );
+                    $encoding = strtoupper( $finfo->file( ltrim( $subFileName, '+' ) ) );
+
                     // assume iso by default
                     if ( $encoding == 'UNKNOWN-8BIT' )
                         $encoding = "ISO-8859-1";
