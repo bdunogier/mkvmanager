@@ -203,7 +203,7 @@ class Movie extends \ezcMvcController
             ezcConfigurationManager::getInstance()->getSetting( 'movies', 'GeneralSettings', 'SourcePath' ) .
             DIRECTORY_SEPARATOR .
             $this->folder . DIRECTORY_SEPARATOR;
-        $nfoFilepath = "{$basepath}{$this->folder}.nfo";
+        $nfoFilePath = "{$basepath}{$this->folder}.nfo";
         $posterFilepath = "{$basepath}{$this->folder}.tbn";
         $fanartFilepath = "{$basepath}{$this->folder}-fanart.jpg";
         $trailerFilepath = "{$basepath}{$this->folder}-trailer.flv";
@@ -213,7 +213,7 @@ class Movie extends \ezcMvcController
         $result->variables['operations'] = array();
 
         // write NFO to disk
-        $nfoWriter->write( $nfoFilepath );
+        $nfoWriter->write( $nfoFilePath );
         $operation = Daemon\Queue::add(
             new Operations\NfoWriter( $this->info, $nfoFilePath )
         );
