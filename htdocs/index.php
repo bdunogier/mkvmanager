@@ -1,6 +1,7 @@
 <?php
 // Include the configuration file
 include '../config.php';
+include '../check.php';
 
 // Instantiate the dispatcher configuration object.
 $config = new mmMvcConfiguration();
