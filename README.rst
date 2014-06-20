@@ -2,6 +2,8 @@
 MKV Auto-merge
 ==============
 
+[![Analytics](https://ga-beacon.appspot.com/UA-52121860-1/mkvmanager/readme)](https://github.com/igrigorik/ga-beacon)
+
 Idée de base
 ============
 Le merge est effectué par un crontab/daemon qui dépile une queue de conversions.
